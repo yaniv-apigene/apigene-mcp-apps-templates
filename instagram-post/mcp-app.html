@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MCP App: Instagram Post</title>
+  <!--
+    Instagram Post MCP App
+    
+    Displays Instagram post information including:
+    - Profile header with username and verification badge
+    - Post media (photos/videos)
+    - Post caption and engagement metrics
+    - Comments section
+    - Tagged users and co-authors
+    
+    Message Format:
+    {
+      jsonrpc: '2.0',
+      method: 'ui/notifications/tool-result',
+      params: { structuredContent: <instagram post data> }
+    }
+    
+    Expected data format:
+    {
+      status_code: 200,
+      body: [{
+        user_posted: string,
+        description: string,
+        likes: number,
+        num_comments: number,
+        photos: string[],
+        videos: string[],
+        latest_comments: [...],
+        ...
+      }]
+    }
+  -->
+  <link rel="stylesheet" href="src/global.css">
+  <link rel="stylesheet" href="src/mcp-app.css">
+  <!-- 
+    CSP Configuration Note:
+    This app displays images and videos from Instagram CDN.
+    The MCP server must configure CSP with:
+    resourceDomains: ["https://scontent-*.cdninstagram.com", "https://*.cdninstagram.com"]
+  -->
+</head>
+<body>
+  <div id="app">
+    <div class="loading">
+      <div class="loading-content">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <div class="loading-text">
+          <p class="loading-message">Loading post data</p>
+          <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/mcp-app.ts"></script>
+</body>
+</html>
