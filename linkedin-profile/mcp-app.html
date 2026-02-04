@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MCP App: LinkedIn Profile</title>
+  <!--
+    LinkedIn Profile Template for MCP Apps
+    
+    This template displays LinkedIn profile data including:
+    - Profile header with avatar, name, location, company
+    - About section
+    - Education details
+    - People also viewed
+    - Recommendations
+    - Languages
+    - Connection stats
+    
+    Message Format:
+    {
+      jsonrpc: '2.0',
+      method: 'ui/notifications/tool-result',
+      params: { structuredContent: <linkedin profile data> }
+    }
+    
+    See README.md for detailed guidelines.
+  -->
+  <link rel="stylesheet" href="src/global.css">
+  <link rel="stylesheet" href="src/mcp-app.css">
+  <!-- 
+    CSP Configuration Note:
+    If this app uses external resources (fonts, images, scripts, APIs), you MUST configure
+    CSP metadata in your MCP server's resources/read handler. See CSP_GUIDE.md for details.
+    
+    External dependencies require CSP configuration:
+    - External fonts → add to resourceDomains
+    - External images → add to resourceDomains  
+    - External scripts/styles → add to resourceDomains
+    - API calls → add to connectDomains
+    - Iframes → add to frameDomains
+    
+    LinkedIn profile images are loaded from media.licdn.com and static.licdn.com
+    Requires: resourceDomains: ["https://media.licdn.com", "https://static.licdn.com"]
+  -->
+</head>
+<body>
+  <div id="app">
+    <div class="loading">
+      <div class="loading-content">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <div class="loading-text">
+          <p class="loading-message">Loading LinkedIn profile</p>
+          <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/mcp-app.ts"></script>
+</body>
+</html>
