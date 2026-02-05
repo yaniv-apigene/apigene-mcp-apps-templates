@@ -9,17 +9,25 @@ This is a generic base template for creating MCP (Model Context Protocol) apps. 
    cp -r base-mcp-template my-app-mcp
    ```
 
-2. **Update the HTML title**
+2. **Configure app metadata**
+   - Edit `src/mcp-app.ts` and update the constants at the top:
+     ```typescript
+     const APP_NAME = "My App Name";      // Your app name
+     const APP_VERSION = "1.0.0";        // Your app version
+     const PROTOCOL_VERSION = "2026-01-26"; // MCP Apps protocol version (keep as-is)
+     ```
+
+3. **Update the HTML title**
    - Edit `mcp-app.html` and change the title tag
 
-3. **Implement your rendering logic**
+4. **Implement your rendering logic**
    - Edit `src/mcp-app.ts` and implement the `renderData()` function
    - Add template-specific utility functions as needed
 
-4. **Add your styles**
+5. **Add your styles**
    - Edit `src/mcp-app.css` and add your template-specific styles
 
-5. **Add external dependencies (if needed)**
+6. **Add external dependencies (if needed)**
    - Edit `mcp-app.html` and add script tags for libraries like Chart.js, D3.js, etc.
 
 ## File Structure
@@ -548,7 +556,8 @@ function renderData(data: any) {
 - `ui/notifications/initialized` - Initialization (optional)
 
 **Sent:**
-- `ui/initialize` - Initialize app
+- `ui/initialize` - Initialize app (includes `clientInfo`, `protocolVersion`, `appCapabilities`)
+- `ui/notifications/initialized` - Sent after successful initialization
 - `ui/request-display-mode` - Request display mode change
 - `ui/notifications/size-changed` - Notify size change
 

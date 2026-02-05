@@ -6,6 +6,14 @@
    Includes 3D rendering support with Three.js and LDrawLoader.
    ============================================ */
 
+/* ============================================
+   APP CONFIGURATION
+   ============================================ */
+
+const APP_NAME = "Rebrickable";
+const APP_VERSION = "2.0.0";
+const PROTOCOL_VERSION = "2026-01-26"; // MCP Apps protocol version
+
 // Three.js and LDrawLoader are loaded via script tags in HTML
 declare const THREE: any;
 declare const LDrawLoader: any;
@@ -398,6 +406,37 @@ window.addEventListener('message', function(event: MessageEvent) {
     return;
   }
   
+  // Handle requests that require responses (like ui/resource-teardown)
+  if (msg.id !== undefined && msg.method === 'ui/resource-teardown') {
+    const reason = msg.params?.reason || 'Resource teardown requested';
+    
+    // Clean up resources
+    // - Clear any timers
+    if (sizeChangeTimeout) {
+      clearTimeout(sizeChangeTimeout);
+      sizeChangeTimeout = null;
+    }
+    
+    // - Disconnect observers
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+      resizeObserver = null;
+    }
+    
+    // - Clean up 3D viewers (Three.js scenes, renderers, etc.)
+    // Note: Three.js cleanup would require tracking all scene instances
+    // For now, the DOM removal will handle most cleanup
+    
+    // Send response to host
+    window.parent.postMessage({
+      jsonrpc: "2.0",
+      id: msg.id,
+      result: {}
+    }, '*');
+    
+    return; // Don't process further
+  }
+  
   if (msg.id !== undefined && !msg.method) {
     return;
   }
@@ -422,12 +461,31 @@ window.addEventListener('message', function(event: MessageEvent) {
       if (msg.params?.displayMode) {
         handleDisplayModeChange(msg.params.displayMode);
       }
+      // Re-render if needed (e.g., for 3D viewers that need theme updates)
       break;
       
     case 'ui/notifications/tool-input':
+      // Tool input notification - Host MUST send this with complete tool arguments
+      const toolArguments = msg.params?.arguments;
+      if (toolArguments) {
+        // Store tool arguments for reference (may be needed for context)
+        console.log('Tool input received:', toolArguments);
+        // Example: Could show loading state with input parameters
+      }
+      break;
+      
+    case 'ui/notifications/tool-cancelled':
+      // Tool cancellation notification - Host MUST send this if tool is cancelled
+      const reason = msg.params?.reason || 'Tool execution was cancelled';
+      showError(`Operation cancelled: ${reason}`);
+      // Clean up any ongoing operations
+      // - Stop timers
+      // - Cancel pending requests
+      // - Reset UI state
       break;
       
     case 'ui/notifications/initialized':
+      // Initialization notification (optional - handle if needed)
       break;
       
     default:
@@ -572,8 +630,22 @@ function setupSizeObserver() {
 sendRequest('ui/initialize', {
   appCapabilities: {
     availableDisplayModes: ["inline", "fullscreen"]
-  }
-}).then((ctx: any) => {
+  },
+  clientInfo: {
+    name: APP_NAME,
+    version: APP_VERSION
+  },
+  protocolVersion: PROTOCOL_VERSION
+}).then((result: any) => {
+  // Extract host context from initialization result
+  const ctx = result.hostContext || result;
+  
+  // Extract host capabilities for future use
+  const hostCapabilities = result.hostCapabilities;
+  
+  // Send initialized notification after successful initialization
+  sendNotification('ui/notifications/initialized', {});
+  
   if (ctx?.theme === 'dark') {
     document.body.classList.add('dark');
   } else if (ctx?.theme === 'light') {
@@ -603,3 +675,7 @@ sendRequest('ui/initialize', {
 
 initializeDarkMode();
 setupSizeObserver();
+
+// Export empty object to ensure this file is treated as an ES module
+// This prevents TypeScript from treating top-level declarations as global
+export {};

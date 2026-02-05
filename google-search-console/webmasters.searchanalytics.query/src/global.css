@@ -1,6 +1,10 @@
 /* ============================================
    COMMON BASE STYLES (Shared across all templates)
-   Google Material Design inspired
+   ============================================
+   
+   These styles are shared across all MCP app templates.
+   Do not modify this file - it provides the base styling
+   that ensures consistency across all apps.
    ============================================ */
 
 * {
@@ -15,17 +19,17 @@ html, body {
 }
 
 body {
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  padding: 0;
-  background: #f8f9fa;
-  color: #202124;
-  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  padding: 24px;
+  background: #f5f7fa;
+  color: #1a1a1a;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body.dark {
-  background: #202124;
+  background: #0f1419;
   color: #e8eaed;
 }
 
@@ -34,8 +38,20 @@ body.dark {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 400px;
+  min-height: 300px;
   padding: 60px 20px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .loading-content {
@@ -47,44 +63,123 @@ body.dark {
 
 .spinner-container {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .spinner {
-  display: inline-block;
   width: 48px;
   height: 48px;
-  border: 4px solid rgba(66, 133, 244, 0.2);
-  border-top-color: #4285f4;
+  border: 3px solid transparent;
+  border-top: 3px solid #1a73e8;
+  border-right: 3px solid #1a73e8;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.9s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  position: relative;
+  z-index: 2;
+}
+
+.spinner-ring {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border: 3px solid transparent;
+  border-top: 3px solid rgba(26, 115, 232, 0.2);
+  border-right: 3px solid rgba(26, 115, 232, 0.2);
+  border-radius: 50%;
+  animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
+  z-index: 1;
 }
 
 body.dark .spinner {
-  border-color: rgba(138, 180, 248, 0.2);
   border-top-color: #8ab4f8;
+  border-right-color: #8ab4f8;
 }
 
-.loading-text {
-  font-size: 14px;
-  font-weight: 400;
-  color: #5f6368;
-  font-family: 'Roboto', sans-serif;
-}
-
-body.dark .loading-text {
-  color: #9aa0a6;
+body.dark .spinner-ring {
+  border-top-color: rgba(138, 180, 248, 0.2);
+  border-right-color: rgba(138, 180, 248, 0.2);
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.loading-message {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #5f6368;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+body.dark .loading-message {
+  color: #9aa0a6;
+}
+
+.loading-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+}
+
+.loading-dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #1a73e8;
+  animation: pulse 1.4s ease-in-out infinite;
+  opacity: 0.4;
+}
+
+body.dark .loading-dots .dot {
+  background-color: #8ab4f8;
+}
+
+.loading-dots .dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dots .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
 /* Empty State */
 .empty {
   text-align: center;
-  padding: 80px 20px;
+  padding: 60px 20px;
   color: #5f6368;
 }
 
@@ -99,7 +194,6 @@ body.dark .empty {
   border-radius: 8px;
   padding: 16px;
   color: #c5221f;
-  margin: 24px;
 }
 
 body.dark .error {
@@ -110,11 +204,11 @@ body.dark .error {
 
 /* Fullscreen mode styles */
 body.fullscreen-mode {
-  padding: 0;
+  padding: 20px;
   height: 100vh;
   overflow-y: auto;
 }
 
-body.fullscreen-mode .dashboard-container {
+body.fullscreen-mode .container {
   max-width: 100%;
 }

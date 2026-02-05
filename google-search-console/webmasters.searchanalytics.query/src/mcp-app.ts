@@ -1,14 +1,48 @@
 /* ============================================
-   MCP PROTOCOL MESSAGE FORMAT
+   BASE TEMPLATE FOR MCP APPS
+   ============================================
+   
+   This file contains all common logic shared across MCP apps.
+   Customize the sections marked with "TEMPLATE-SPECIFIC" below.
+   
+   Common Features:
+   - MCP Protocol message handling (JSON-RPC 2.0)
+   - Dark mode support
+   - Display mode handling (inline/fullscreen)
+   - Size change notifications
+   - Data extraction utilities
+   - Error handling
+   
+   See README.md for customization guidelines.
+   ============================================ */
+
+/* ============================================
+   APP CONFIGURATION
+   ============================================
+   TEMPLATE-SPECIFIC: Update these values for your app
+   ============================================ */
+
+const APP_NAME = "Google Search Console";
+const APP_VERSION = "1.0.0";
+const PROTOCOL_VERSION = "2026-01-26"; // MCP Apps protocol version
+
+/* ============================================
+   EXTERNAL DEPENDENCIES
+   ============================================
+   If you use external libraries (like Chart.js), declare them here.
    ============================================ */
 
 // Chart.js is loaded via script tag in HTML
 declare const Chart: any;
 
 /* ============================================
-   COMMON UTILITY FUNCTIONS (From base template)
+   COMMON UTILITY FUNCTIONS
    ============================================ */
 
+/**
+ * Extract data from MCP protocol messages
+ * Handles standard JSON-RPC 2.0 format from run-action.html
+ */
 function extractData(msg: any) {
   if (msg?.params?.structuredContent !== undefined) {
     return msg.params.structuredContent;
@@ -19,22 +53,30 @@ function extractData(msg: any) {
   return msg;
 }
 
+/**
+ * Unwrap nested API response structures
+ * Handles various wrapper formats from different MCP clients
+ */
 function unwrapData(data: any): any {
   if (!data) return null;
   
+  // Format 1: Standard table format { columns: [], rows: [] }
   if (data.columns || (Array.isArray(data.rows) && data.rows.length > 0) || 
       (typeof data === 'object' && !data.message)) {
     return data;
   }
   
+  // Format 2: Nested in message.template_data (3rd party MCP clients)
   if (data.message?.template_data) {
     return data.message.template_data;
   }
   
+  // Format 3: Nested in message.response_content (3rd party MCP clients)
   if (data.message?.response_content) {
     return data.message.response_content;
   }
   
+  // Format 4: Common nested patterns
   if (data.data?.results) return data.data.results;
   if (data.data?.items) return data.data.items;
   if (data.data?.records) return data.data.records;
@@ -42,10 +84,12 @@ function unwrapData(data: any): any {
   if (data.items) return data.items;
   if (data.records) return data.records;
   
+  // Format 5: Direct rows array
   if (Array.isArray(data.rows)) {
     return data;
   }
   
+  // Format 6: If data itself is an array
   if (Array.isArray(data)) {
     return { rows: data };
   }
@@ -53,6 +97,9 @@ function unwrapData(data: any): any {
   return data;
 }
 
+/**
+ * Initialize dark mode based on system preference
+ */
 function initializeDarkMode() {
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     document.body.classList.add('dark');
@@ -63,6 +110,9 @@ function initializeDarkMode() {
   });
 }
 
+/**
+ * Escape HTML to prevent XSS attacks
+ */
 function escapeHtml(str: any): string {
   if (typeof str !== "string") return str;
   const div = document.createElement('div');
@@ -70,6 +120,9 @@ function escapeHtml(str: any): string {
   return div.innerHTML;
 }
 
+/**
+ * Show error message in the app
+ */
 function showError(message: string) {
   const app = document.getElementById('app');
   if (app) {
@@ -77,12 +130,28 @@ function showError(message: string) {
   }
 }
 
+/**
+ * Show empty state message
+ * Override the default message by passing a custom message
+ */
 function showEmpty(message: string = 'No data available.') {
   const app = document.getElementById('app');
   if (app) {
     app.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
   }
 }
+
+/* ============================================
+   TEMPLATE-SPECIFIC FUNCTIONS
+   ============================================
+   
+   Add your template-specific utility functions here.
+   Examples:
+   - Data normalization functions
+   - Formatting functions (dates, numbers, etc.)
+   - Data transformation functions
+   - Chart rendering functions (if using Chart.js)
+   ============================================ */
 
 /**
  * Show chart error message
@@ -110,10 +179,6 @@ function showChartError(container: Element | null | undefined, message: string) 
     console.warn('Chart wrapper not found in container');
   }
 }
-
-/* ============================================
-   TEMPLATE-SPECIFIC FUNCTIONS (Dashboard)
-   ============================================ */
 
 /**
  * Color palettes for charts - Google Material Design colors
@@ -858,6 +923,21 @@ function renderPieChart(canvas: HTMLCanvasElement, values: number[], colors: str
   });
 }
 
+/* ============================================
+   TEMPLATE-SPECIFIC RENDER FUNCTION
+   ============================================
+   
+   This is the main function you need to implement.
+   It receives the data and renders it in the app.
+   
+   Guidelines:
+   1. Always validate data before rendering
+   2. Use unwrapData() to handle nested structures
+   3. Use escapeHtml() when inserting user content
+   4. Call notifySizeChanged() after rendering completes
+   5. Handle errors gracefully with try/catch
+   ============================================ */
+
 /**
  * Main render function - renders the dashboard
  */
@@ -1399,6 +1479,10 @@ function renderData(data: any) {
 
 /* ============================================
    MESSAGE HANDLER (Standardized MCP Protocol)
+   ============================================
+   
+   This handles all incoming messages from the MCP host.
+   You typically don't need to modify this section.
    ============================================ */
 
 window.addEventListener('message', function(event: MessageEvent) {
@@ -1406,6 +1490,44 @@ window.addEventListener('message', function(event: MessageEvent) {
   
   if (!msg || msg.jsonrpc !== '2.0') {
     return;
+  }
+  
+  // Handle requests that require responses (like ui/resource-teardown)
+  if (msg.id !== undefined && msg.method === 'ui/resource-teardown') {
+    const reason = msg.params?.reason || 'Resource teardown requested';
+    
+    // Clean up resources
+    // - Clear any timers
+    if (sizeChangeTimeout) {
+      clearTimeout(sizeChangeTimeout);
+      sizeChangeTimeout = null;
+    }
+    
+    // - Disconnect observers
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+      resizeObserver = null;
+    }
+    
+    // - Cancel any pending requests (if you track them)
+    // - Destroy chart instances, etc. (template-specific cleanup)
+    if (lineChartInstance) {
+      lineChartInstance.destroy();
+      lineChartInstance = null;
+    }
+    if (pieChartInstance) {
+      pieChartInstance.destroy();
+      pieChartInstance = null;
+    }
+    
+    // Send response to host
+    window.parent.postMessage({
+      jsonrpc: "2.0",
+      id: msg.id,
+      result: {}
+    }, '*');
+    
+    return; // Don't process further
   }
   
   if (msg.id !== undefined && !msg.method) {
@@ -1445,7 +1567,8 @@ window.addEventListener('message', function(event: MessageEvent) {
             visibleSeries.add(i);
           }
         });
-        renderLineChart(lineCanvas, { labels: chartData.labels, series: chartData.datasets.map((d: any) => ({ name: d.label, data: d.data })) }, visibleSeries);
+        const lineChartData = { labels: chartData.labels, series: chartData.datasets.map((d: any) => ({ name: d.label, data: d.data })) };
+        renderLineChart(lineCanvas, lineChartData, visibleSeries);
       }
       if (pieCanvas && pieChartInstance) {
         const chartData = (pieChartInstance as any).data;
@@ -1454,12 +1577,33 @@ window.addEventListener('message', function(event: MessageEvent) {
       break;
       
     case 'ui/notifications/tool-input':
+      // Tool input notification - Host MUST send this with complete tool arguments
+      const toolArguments = msg.params?.arguments;
+      if (toolArguments) {
+        // Store tool arguments for reference (may be needed for context)
+        // Template-specific: You can use this for initial rendering or context
+        console.log('Tool input received:', toolArguments);
+        // Example: Show loading state with input parameters
+        // Example: Store for later use in renderData()
+      }
+      break;
+      
+    case 'ui/notifications/tool-cancelled':
+      // Tool cancellation notification - Host MUST send this if tool is cancelled
+      const reason = msg.params?.reason || 'Tool execution was cancelled';
+      showError(`Operation cancelled: ${reason}`);
+      // Clean up any ongoing operations
+      // - Stop timers
+      // - Cancel pending requests
+      // - Reset UI state
       break;
       
     case 'ui/notifications/initialized':
+      // Initialization notification (optional - handle if needed)
       break;
       
     default:
+      // Unknown method - try to extract data as fallback
       if (msg.params) {
         const fallbackData = msg.params.structuredContent || msg.params;
         if (fallbackData && fallbackData !== msg) {
@@ -1472,6 +1616,10 @@ window.addEventListener('message', function(event: MessageEvent) {
 
 /* ============================================
    MCP COMMUNICATION
+   ============================================
+   
+   Functions for communicating with the MCP host.
+   You typically don't need to modify this section.
    ============================================ */
 
 let requestIdCounter = 1;
@@ -1500,8 +1648,17 @@ function sendRequest(method: string, params: any): Promise<any> {
   });
 }
 
+function sendNotification(method: string, params: any) {
+  window.parent.postMessage({ jsonrpc: "2.0", method, params }, '*');
+}
+
 /* ============================================
    DISPLAY MODE HANDLING
+   ============================================
+   
+   Handles switching between inline and fullscreen display modes.
+   You may want to customize handleDisplayModeChange() to adjust
+   your layout for fullscreen mode.
    ============================================ */
 
 let currentDisplayMode = 'inline';
@@ -1550,11 +1707,12 @@ function requestDisplayMode(mode: string): Promise<any> {
 
 /* ============================================
    SIZE CHANGE NOTIFICATIONS
+   ============================================
+   
+   Notifies the host when the content size changes.
+   This is critical for proper iframe sizing.
+   You typically don't need to modify this section.
    ============================================ */
-
-function sendNotification(method: string, params: any) {
-  window.parent.postMessage({ jsonrpc: "2.0", method, params }, '*');
-}
 
 function notifySizeChanged() {
   const width = document.body.scrollWidth || document.documentElement.scrollWidth;
@@ -1605,14 +1763,31 @@ function setupSizeObserver() {
 
 /* ============================================
    INITIALIZATION
+   ============================================
+   
+   Initializes the MCP app and sets up all required features.
+   You typically don't need to modify this section.
    ============================================ */
 
 // Initialize MCP App - REQUIRED for MCP Apps protocol
 sendRequest('ui/initialize', {
   appCapabilities: {
     availableDisplayModes: ["inline", "fullscreen"]
-  }
-}).then((ctx: any) => {
+  },
+  clientInfo: {
+    name: APP_NAME,
+    version: APP_VERSION
+  },
+  protocolVersion: PROTOCOL_VERSION
+}).then((result: any) => {
+  // Extract host context from initialization result
+  const ctx = result.hostContext || result;
+  
+  // Extract host capabilities for future use
+  const hostCapabilities = result.hostCapabilities;
+  
+  // Send initialized notification after successful initialization
+  sendNotification('ui/notifications/initialized', {});
   // Apply theme from host context
   if (ctx?.theme === 'dark') {
     document.body.classList.add('dark');
@@ -1762,3 +1937,7 @@ function sortTable(table: HTMLTableElement, columnIndex: number) {
   // Re-append sorted rows
   rows.forEach(row => tbody.appendChild(row));
 }
+
+// Export empty object to ensure this file is treated as an ES module
+// This prevents TypeScript from treating top-level declarations as global
+export {};

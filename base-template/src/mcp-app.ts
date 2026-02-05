@@ -17,6 +17,16 @@
    ============================================ */
 
 /* ============================================
+   APP CONFIGURATION
+   ============================================
+   TEMPLATE-SPECIFIC: Update these values for your app
+   ============================================ */
+
+const APP_NAME = "[Your App Name]";  // TODO: Replace with your app name
+const APP_VERSION = "1.0.0";         // TODO: Replace with your app version
+const PROTOCOL_VERSION = "2026-01-26"; // MCP Apps protocol version
+
+/* ============================================
    EXTERNAL DEPENDENCIES
    ============================================
    If you use external libraries (like Chart.js), declare them here.
@@ -215,6 +225,36 @@ window.addEventListener('message', function(event: MessageEvent) {
     return;
   }
   
+  // Handle requests that require responses (like ui/resource-teardown)
+  if (msg.id !== undefined && msg.method === 'ui/resource-teardown') {
+    const reason = msg.params?.reason || 'Resource teardown requested';
+    
+    // Clean up resources
+    // - Clear any timers
+    if (sizeChangeTimeout) {
+      clearTimeout(sizeChangeTimeout);
+      sizeChangeTimeout = null;
+    }
+    
+    // - Disconnect observers
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+      resizeObserver = null;
+    }
+    
+    // - Cancel any pending requests (if you track them)
+    // - Destroy chart instances, etc. (template-specific cleanup)
+    
+    // Send response to host
+    window.parent.postMessage({
+      jsonrpc: "2.0",
+      id: msg.id,
+      result: {}
+    }, '*');
+    
+    return; // Don't process further
+  }
+  
   if (msg.id !== undefined && !msg.method) {
     return;
   }
@@ -245,7 +285,25 @@ window.addEventListener('message', function(event: MessageEvent) {
       break;
       
     case 'ui/notifications/tool-input':
-      // Tool input notification (optional - handle if needed)
+      // Tool input notification - Host MUST send this with complete tool arguments
+      const toolArguments = msg.params?.arguments;
+      if (toolArguments) {
+        // Store tool arguments for reference (may be needed for context)
+        // Template-specific: You can use this for initial rendering or context
+        console.log('Tool input received:', toolArguments);
+        // Example: Show loading state with input parameters
+        // Example: Store for later use in renderData()
+      }
+      break;
+      
+    case 'ui/notifications/tool-cancelled':
+      // Tool cancellation notification - Host MUST send this if tool is cancelled
+      const reason = msg.params?.reason || 'Tool execution was cancelled';
+      showError(`Operation cancelled: ${reason}`);
+      // Clean up any ongoing operations
+      // - Stop timers
+      // - Cancel pending requests
+      // - Reset UI state
       break;
       
     case 'ui/notifications/initialized':
@@ -423,8 +481,21 @@ function setupSizeObserver() {
 sendRequest('ui/initialize', {
   appCapabilities: {
     availableDisplayModes: ["inline", "fullscreen"]
-  }
-}).then((ctx: any) => {
+  },
+  clientInfo: {
+    name: APP_NAME,
+    version: APP_VERSION
+  },
+  protocolVersion: PROTOCOL_VERSION
+}).then((result: any) => {
+  // Extract host context from initialization result
+  const ctx = result.hostContext || result;
+  
+  // Extract host capabilities for future use
+  const hostCapabilities = result.hostCapabilities;
+  
+  // Send initialized notification after successful initialization
+  sendNotification('ui/notifications/initialized', {});
   // Apply theme from host context
   if (ctx?.theme === 'dark') {
     document.body.classList.add('dark');
@@ -461,3 +532,7 @@ initializeDarkMode();
 // Setup size observer to notify host of content size changes
 // This is critical for the host to properly size the iframe
 setupSizeObserver();
+
+// Export empty object to ensure this file is treated as an ES module
+// This prevents TypeScript from treating top-level declarations as global
+export {};
