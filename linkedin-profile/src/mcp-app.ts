@@ -17,6 +17,22 @@
    ============================================ */
 
 /* ============================================
+   APP CONFIGURATION
+   ============================================
+   TEMPLATE-SPECIFIC: Update these values for your app
+   ============================================ */
+
+const APP_NAME = "LinkedIn Profile";
+const APP_VERSION = "1.0.0";
+const PROTOCOL_VERSION = "2026-01-26"; // MCP Apps protocol version
+
+/* ============================================
+   EXTERNAL DEPENDENCIES
+   ============================================
+   If you use external libraries (like Chart.js), declare them here.
+   ============================================ */
+
+/* ============================================
    COMMON UTILITY FUNCTIONS
    ============================================ */
 
@@ -126,7 +142,12 @@ function showEmpty(message: string = 'No data available.') {
    TEMPLATE-SPECIFIC FUNCTIONS
    ============================================
    
-   LinkedIn Profile specific utility functions
+   Add your template-specific utility functions here.
+   Examples:
+   - Data normalization functions
+   - Formatting functions (dates, numbers, etc.)
+   - Data transformation functions
+   - Chart rendering functions (if using Chart.js)
    ============================================ */
 
 /**
@@ -198,9 +219,20 @@ function renderRecommendationCard(recommendation: string, index: number): string
    TEMPLATE-SPECIFIC RENDER FUNCTION
    ============================================
    
-   LinkedIn Profile rendering logic
+   This is the main function you need to implement.
+   It receives the data and renders it in the app.
+   
+   Guidelines:
+   1. Always validate data before rendering
+   2. Use unwrapData() to handle nested structures
+   3. Use escapeHtml() when inserting user content
+   4. Call notifySizeChanged() after rendering completes
+   5. Handle errors gracefully with try/catch
    ============================================ */
 
+/**
+ * Main render function - renders the LinkedIn profile
+ */
 function renderData(data: any) {
   const app = document.getElementById('app');
   if (!app) return;
@@ -425,6 +457,36 @@ window.addEventListener('message', function(event: MessageEvent) {
     return;
   }
   
+  // Handle requests that require responses (like ui/resource-teardown)
+  if (msg.id !== undefined && msg.method === 'ui/resource-teardown') {
+    const reason = msg.params?.reason || 'Resource teardown requested';
+    
+    // Clean up resources
+    // - Clear any timers
+    if (sizeChangeTimeout) {
+      clearTimeout(sizeChangeTimeout);
+      sizeChangeTimeout = null;
+    }
+    
+    // - Disconnect observers
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+      resizeObserver = null;
+    }
+    
+    // - Cancel any pending requests (if you track them)
+    // - Destroy chart instances, etc. (template-specific cleanup)
+    
+    // Send response to host
+    window.parent.postMessage({
+      jsonrpc: "2.0",
+      id: msg.id,
+      result: {}
+    }, '*');
+    
+    return; // Don't process further
+  }
+  
   if (msg.id !== undefined && !msg.method) {
     return;
   }
@@ -450,10 +512,30 @@ window.addEventListener('message', function(event: MessageEvent) {
       if (msg.params?.displayMode) {
         handleDisplayModeChange(msg.params.displayMode);
       }
+      // Re-render if needed (e.g., for charts that need theme updates)
+      // You may want to add logic here to re-render your content with new theme
       break;
       
     case 'ui/notifications/tool-input':
-      // Tool input notification (optional - handle if needed)
+      // Tool input notification - Host MUST send this with complete tool arguments
+      const toolArguments = msg.params?.arguments;
+      if (toolArguments) {
+        // Store tool arguments for reference (may be needed for context)
+        // Template-specific: You can use this for initial rendering or context
+        console.log('Tool input received:', toolArguments);
+        // Example: Show loading state with input parameters
+        // Example: Store for later use in renderData()
+      }
+      break;
+      
+    case 'ui/notifications/tool-cancelled':
+      // Tool cancellation notification - Host MUST send this if tool is cancelled
+      const reason = msg.params?.reason || 'Tool execution was cancelled';
+      showError(`Operation cancelled: ${reason}`);
+      // Clean up any ongoing operations
+      // - Stop timers
+      // - Cancel pending requests
+      // - Reset UI state
       break;
       
     case 'ui/notifications/initialized':
@@ -515,6 +597,8 @@ function sendNotification(method: string, params: any) {
    ============================================
    
    Handles switching between inline and fullscreen display modes.
+   You may want to customize handleDisplayModeChange() to adjust
+   your layout for fullscreen mode.
    ============================================ */
 
 let currentDisplayMode = 'inline';
@@ -523,6 +607,7 @@ function handleDisplayModeChange(mode: string) {
   currentDisplayMode = mode;
   if (mode === 'fullscreen') {
     document.body.classList.add('fullscreen-mode');
+    // Adjust layout for fullscreen if needed
     const container = document.querySelector('.linkedin-container');
     if (container) {
       (container as HTMLElement).style.maxWidth = '100%';
@@ -530,12 +615,14 @@ function handleDisplayModeChange(mode: string) {
     }
   } else {
     document.body.classList.remove('fullscreen-mode');
+    // Restore normal layout
     const container = document.querySelector('.linkedin-container');
     if (container) {
       (container as HTMLElement).style.maxWidth = '';
       (container as HTMLElement).style.padding = '';
     }
   }
+  // Notify host of size change after mode change
   setTimeout(() => {
     notifySizeChanged();
   }, 100);
@@ -564,6 +651,7 @@ function requestDisplayMode(mode: string): Promise<any> {
    
    Notifies the host when the content size changes.
    This is critical for proper iframe sizing.
+   You typically don't need to modify this section.
    ============================================ */
 
 function notifySizeChanged() {
@@ -584,7 +672,7 @@ function debouncedNotifySizeChanged() {
   }
   sizeChangeTimeout = setTimeout(() => {
     notifySizeChanged();
-  }, 100);
+  }, 100); // Wait 100ms after last change
 }
 
 // Use ResizeObserver to detect size changes
@@ -618,14 +706,28 @@ function setupSizeObserver() {
    ============================================
    
    Initializes the MCP app and sets up all required features.
+   You typically don't need to modify this section.
    ============================================ */
 
 // Initialize MCP App - REQUIRED for MCP Apps protocol
 sendRequest('ui/initialize', {
   appCapabilities: {
     availableDisplayModes: ["inline", "fullscreen"]
-  }
-}).then((ctx: any) => {
+  },
+  clientInfo: {
+    name: APP_NAME,
+    version: APP_VERSION
+  },
+  protocolVersion: PROTOCOL_VERSION
+}).then((result: any) => {
+  // Extract host context from initialization result
+  const ctx = result.hostContext || result;
+  
+  // Extract host capabilities for future use
+  const hostCapabilities = result.hostCapabilities;
+  
+  // Send initialized notification after successful initialization
+  sendNotification('ui/notifications/initialized', {});
   // Apply theme from host context
   if (ctx?.theme === 'dark') {
     document.body.classList.add('dark');
@@ -654,9 +756,15 @@ sendRequest('ui/initialize', {
   }
 }).catch(err => {
   console.warn('Failed to initialize MCP App:', err);
+  // Fallback to system preference if initialization fails
 });
 
 initializeDarkMode();
 
 // Setup size observer to notify host of content size changes
+// This is critical for the host to properly size the iframe
 setupSizeObserver();
+
+// Export empty object to ensure this file is treated as an ES module
+// This prevents TypeScript from treating top-level declarations as global
+export {};
