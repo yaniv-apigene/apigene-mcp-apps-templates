@@ -1,38 +1,26 @@
 /* ============================================
-   BASE TEMPLATE FOR MCP APPS
+   FAKE STORE PRODUCT MCP APP
    ============================================
    
-   This file contains all common logic shared across MCP apps.
-   Customize the sections marked with "TEMPLATE-SPECIFIC" below.
-   
-   Common Features:
-   - MCP Protocol message handling (JSON-RPC 2.0)
-   - Dark mode support
-   - Display mode handling (inline/fullscreen)
-   - Size change notifications
-   - Data extraction utilities
-   - Error handling
-   
-   See README.md for customization guidelines.
+   Displays Fake Store API product information in a beautiful card layout.
+   Handles product details, images, pricing, category, and ratings.
    ============================================ */
 
 /* ============================================
    APP CONFIGURATION
-   ============================================
-   TEMPLATE-SPECIFIC: Update these values for your app
    ============================================ */
 
-const APP_NAME = "[Your App Name]";  // TODO: Replace with your app name
-const APP_VERSION = "1.0.0";         // TODO: Replace with your app version
+const APP_NAME = "Fake Store Product";
+const APP_VERSION = "1.0.0";
 const PROTOCOL_VERSION = "2026-01-26"; // MCP Apps protocol version
 
 /* ============================================
    EXTERNAL DEPENDENCIES
    ============================================
-   If you use external libraries (like Chart.js), declare them here.
-   Example:
-   declare const Chart: any;
+   Declare external libraries loaded from CDN
    ============================================ */
+
+declare const Handlebars: any;
 
 /* ============================================
    COMMON UTILITY FUNCTIONS
@@ -131,9 +119,8 @@ function showError(message: string) {
 
 /**
  * Show empty state message
- * Override the default message by passing a custom message
  */
-function showEmpty(message: string = 'No data available.') {
+function showEmpty(message: string = 'No product data available.') {
   const app = document.getElementById('app');
   if (app) {
     app.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
@@ -142,34 +129,62 @@ function showEmpty(message: string = 'No data available.') {
 
 /* ============================================
    TEMPLATE-SPECIFIC FUNCTIONS
-   ============================================
-   
-   Add your template-specific utility functions here.
-   Examples:
-   - Data normalization functions
-   - Formatting functions (dates, numbers, etc.)
-   - Data transformation functions
-   - Chart rendering functions (if using Chart.js)
    ============================================ */
 
-// TODO: Add your template-specific utility functions here
-// Example:
-// function formatDate(date: string): string { ... }
-// function normalizeData(data: any): any { ... }
+/**
+ * Format price with currency symbol
+ */
+function formatPrice(price: number): string {
+  if (!price && price !== 0) return 'Price not available';
+  return `$${price.toFixed(2)}`;
+}
+
+/**
+ * Format rating stars
+ */
+function formatRating(rate: number): string {
+  const fullStars = Math.floor(rate);
+  const hasHalfStar = rate % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  
+  return '★'.repeat(fullStars) + 
+         (hasHalfStar ? '½' : '') + 
+         '☆'.repeat(emptyStars);
+}
+
+/**
+ * Extract product data from API response
+ */
+function extractProductData(data: any): any {
+  const unwrapped = unwrapData(data);
+  
+  // Handle Fake Store API response format: { status_code: 200, body: {...} }
+  if (unwrapped?.body && typeof unwrapped.body === 'object') {
+    return unwrapped.body;
+  }
+  
+  // Handle direct product object
+  if (unwrapped?.title || unwrapped?.id) {
+    return unwrapped;
+  }
+  
+  // Handle array of products
+  if (Array.isArray(unwrapped) && unwrapped.length > 0) {
+    return unwrapped[0];
+  }
+  
+  return unwrapped;
+}
+
+/**
+ * Capitalize first letter of each word
+ */
+function capitalizeWords(str: string): string {
+  return str.replace(/\b\w/g, (char) => char.toUpperCase());
+}
 
 /* ============================================
    TEMPLATE-SPECIFIC RENDER FUNCTION
-   ============================================
-   
-   This is the main function you need to implement.
-   It receives the data and renders it in the app.
-   
-   Guidelines:
-   1. Always validate data before rendering
-   2. Use unwrapData() to handle nested structures
-   3. Use escapeHtml() when inserting user content
-   4. Call notifySizeChanged() after rendering completes
-   5. Handle errors gracefully with try/catch
    ============================================ */
 
 function renderData(data: any) {
@@ -177,21 +192,64 @@ function renderData(data: any) {
   if (!app) return;
   
   if (!data) {
-    showEmpty('No data received');
+    showEmpty('No product data received');
     return;
   }
 
   try {
-    // TODO: Implement your rendering logic here
-    // Example:
-    // const unwrapped = unwrapData(data);
-    // app.innerHTML = `<div class="container">...</div>`;
+    const product = extractProductData(data);
     
-    // Placeholder: Remove this and implement your own rendering
+    if (!product || !product.title) {
+      showEmpty('Invalid product data format');
+      return;
+    }
+    
+    const {
+      id,
+      title,
+      price,
+      description,
+      category,
+      image,
+      rating
+    } = product;
+    
+    const ratingRate = rating?.rate || 0;
+    const ratingCount = rating?.count || 0;
+    
     app.innerHTML = `
       <div class="container">
-        <h1>Your App Name</h1>
-        <pre>${JSON.stringify(data, null, 2)}</pre>
+        <div class="product-card">
+          <div class="product-image">
+            <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" />
+          </div>
+          
+          <div class="product-info">
+            <div class="product-header">
+              <span class="product-category">${escapeHtml(capitalizeWords(category || ''))}</span>
+              <span class="product-id">#${id}</span>
+            </div>
+            
+            <h1 class="product-title">${escapeHtml(title)}</h1>
+            
+            <div class="product-rating">
+              <span class="rating-stars">${formatRating(ratingRate)}</span>
+              <span class="rating-value">${ratingRate.toFixed(1)}</span>
+              <span class="rating-count">(${ratingCount} reviews)</span>
+            </div>
+            
+            <div class="product-price">
+              ${formatPrice(price)}
+            </div>
+            
+            ${description ? `
+              <div class="product-description">
+                <h3>Description</h3>
+                <p>${escapeHtml(description)}</p>
+              </div>
+            ` : ''}
+          </div>
+        </div>
       </div>
     `;
     
@@ -202,7 +260,7 @@ function renderData(data: any) {
     
   } catch (error: any) {
     console.error('Render error:', error);
-    showError(`Error rendering data: ${error.message}`);
+    showError(`Error rendering product data: ${error.message}`);
     // Notify size even on error
     setTimeout(() => {
       notifySizeChanged();
@@ -212,10 +270,6 @@ function renderData(data: any) {
 
 /* ============================================
    MESSAGE HANDLER (Standardized MCP Protocol)
-   ============================================
-   
-   This handles all incoming messages from the MCP host.
-   You typically don't need to modify this section.
    ============================================ */
 
 window.addEventListener('message', function(event: MessageEvent) {
@@ -241,9 +295,6 @@ window.addEventListener('message', function(event: MessageEvent) {
       resizeObserver.disconnect();
       resizeObserver = null;
     }
-    
-    // - Cancel any pending requests (if you track them)
-    // - Destroy chart instances, etc. (template-specific cleanup)
     
     // Send response to host
     window.parent.postMessage({
@@ -281,7 +332,6 @@ window.addEventListener('message', function(event: MessageEvent) {
         handleDisplayModeChange(msg.params.displayMode);
       }
       // Re-render if needed (e.g., for charts that need theme updates)
-      // You may want to add logic here to re-render your content with new theme
       break;
       
     case 'ui/notifications/tool-input':
@@ -289,10 +339,8 @@ window.addEventListener('message', function(event: MessageEvent) {
       const toolArguments = msg.params?.arguments;
       if (toolArguments) {
         // Store tool arguments for reference (may be needed for context)
-        // Template-specific: You can use this for initial rendering or context
         console.log('Tool input received:', toolArguments);
-        // Example: Show loading state with input parameters
-        // Example: Store for later use in renderData()
+        // Example: Could show loading state with input parameters
       }
       break;
       
@@ -324,10 +372,6 @@ window.addEventListener('message', function(event: MessageEvent) {
 
 /* ============================================
    MCP COMMUNICATION
-   ============================================
-   
-   Functions for communicating with the MCP host.
-   You typically don't need to modify this section.
    ============================================ */
 
 let requestIdCounter = 1;
@@ -362,11 +406,6 @@ function sendNotification(method: string, params: any) {
 
 /* ============================================
    DISPLAY MODE HANDLING
-   ============================================
-   
-   Handles switching between inline and fullscreen display modes.
-   You may want to customize handleDisplayModeChange() to adjust
-   your layout for fullscreen mode.
    ============================================ */
 
 let currentDisplayMode = 'inline';
@@ -374,26 +413,18 @@ let currentDisplayMode = 'inline';
 function handleDisplayModeChange(mode: string) {
   currentDisplayMode = mode;
   if (mode === 'fullscreen') {
+    document.documentElement.classList.add('fullscreen-mode');
     document.body.classList.add('fullscreen-mode');
-    // Adjust layout for fullscreen if needed
-    const container = document.querySelector('.container');
-    if (container) {
-      (container as HTMLElement).style.maxWidth = '100%';
-      (container as HTMLElement).style.padding = '20px';
-    }
   } else {
+    document.documentElement.classList.remove('fullscreen-mode');
     document.body.classList.remove('fullscreen-mode');
-    // Restore normal layout
-    const container = document.querySelector('.container');
-    if (container) {
-      (container as HTMLElement).style.maxWidth = '';
-      (container as HTMLElement).style.padding = '';
-    }
   }
-  // Notify host of size change after mode change
+  // Force a reflow to ensure CSS is applied before measuring
+  void document.body.offsetHeight;
+  // Notify host of size change after mode change with longer delay to ensure layout
   setTimeout(() => {
     notifySizeChanged();
-  }, 100);
+  }, 200);
 }
 
 function requestDisplayMode(mode: string): Promise<any> {
@@ -415,16 +446,75 @@ function requestDisplayMode(mode: string): Promise<any> {
 
 /* ============================================
    SIZE CHANGE NOTIFICATIONS
-   ============================================
-   
-   Notifies the host when the content size changes.
-   This is critical for proper iframe sizing.
-   You typically don't need to modify this section.
    ============================================ */
 
 function notifySizeChanged() {
-  const width = document.body.scrollWidth || document.documentElement.scrollWidth;
-  const height = document.body.scrollHeight || document.documentElement.scrollHeight;
+  let width: number;
+  let height: number;
+  
+  // Double-check display mode from body class as well (more reliable)
+  const isFullscreen = currentDisplayMode === 'fullscreen' || document.body.classList.contains('fullscreen-mode');
+  
+  if (isFullscreen) {
+    // In fullscreen mode, report desired size based on content design
+    // Don't rely on constrained iframe measurements
+    const productCard = document.querySelector('.product-card');
+    
+    if (productCard) {
+      // Product card max-width in fullscreen is 1400px (or 1600px on large screens)
+      // Calculate desired width: card max-width + container padding
+      const cardStyle = window.getComputedStyle(productCard);
+      let cardMaxWidth = 1400; // Default max-width from CSS
+      
+      // Try to get actual max-width from computed style
+      const computedMaxWidth = cardStyle.maxWidth;
+      if (computedMaxWidth && computedMaxWidth !== 'none') {
+        const parsed = parseInt(computedMaxWidth);
+        if (!isNaN(parsed) && parsed > 0) {
+          cardMaxWidth = parsed;
+        }
+      }
+      
+      // Check if we're on a large screen (use media query logic)
+      if (window.matchMedia && window.matchMedia('(min-width: 1400px)').matches) {
+        cardMaxWidth = Math.max(cardMaxWidth, 1600);
+      }
+      
+      // Desired width = card max-width + container padding (24px * 2 = 48px)
+      width = cardMaxWidth + 48;
+      
+      // For height, measure actual content height (use the larger of scroll/offset)
+      const cardHeight = Math.max(
+        productCard.scrollHeight || 0,
+        productCard.offsetHeight || 0,
+        productCard.getBoundingClientRect().height || 0
+      );
+      const containerPadding = 48; // 24px top + 24px bottom
+      height = cardHeight + containerPadding;
+      
+      // Ensure reasonable minimums for fullscreen
+      width = Math.max(width, 1200);
+      height = Math.max(height, 600);
+    } else {
+      // No product card yet - use reasonable fullscreen defaults
+      width = 1200;
+      height = 800;
+    }
+  } else {
+    // In inline mode, use actual measured content size
+    const container = document.querySelector('.container');
+    if (container) {
+      width = Math.max(container.scrollWidth, container.offsetWidth);
+      height = Math.max(container.scrollHeight, container.offsetHeight);
+    } else {
+      width = document.body.scrollWidth || document.documentElement.scrollWidth;
+      height = document.body.scrollHeight || document.documentElement.scrollHeight;
+    }
+    
+    // Ensure minimum dimensions for inline mode
+    width = Math.max(width || 600, 600);
+    height = Math.max(height || 400, 400);
+  }
   
   sendNotification('ui/notifications/size-changed', {
     width: width,
@@ -471,10 +561,6 @@ function setupSizeObserver() {
 
 /* ============================================
    INITIALIZATION
-   ============================================
-   
-   Initializes the MCP app and sets up all required features.
-   You typically don't need to modify this section.
    ============================================ */
 
 // Initialize MCP App - REQUIRED for MCP Apps protocol
@@ -496,6 +582,7 @@ sendRequest('ui/initialize', {
   
   // Send initialized notification after successful initialization
   sendNotification('ui/notifications/initialized', {});
+  
   // Apply theme from host context
   if (ctx?.theme === 'dark') {
     document.body.classList.add('dark');

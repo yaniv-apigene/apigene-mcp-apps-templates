@@ -556,7 +556,7 @@ function renderData(data: any) {
 - `ui/notifications/initialized` - Initialization (optional)
 
 **Sent:**
-- `ui/initialize` - Initialize app (includes `clientInfo`, `protocolVersion`, `appCapabilities`)
+- `ui/initialize` - Initialize app (includes `appInfo`, `protocolVersion`, `appCapabilities`)
 - `ui/notifications/initialized` - Sent after successful initialization
 - `ui/request-display-mode` - Request display mode change
 - `ui/notifications/size-changed` - Notify size change
