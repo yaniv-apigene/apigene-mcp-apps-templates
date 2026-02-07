@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MCP App: Instagram Post</title>
+  <style>
+    /* Inlined global.css */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: auto; min-height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      padding: 0;
+      background: #fafafa;
+      color: #262626;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body.dark { background: #000000; color: #f5f5f5; }
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      padding: 60px 20px;
+      animation: fadeIn 0.3s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .loading-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+    .spinner-container {
+      position: relative;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid transparent;
+      border-top: 3px solid #1a73e8;
+      border-right: 3px solid #1a73e8;
+      border-radius: 50%;
+      animation: spin 0.9s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+      position: relative;
+      z-index: 2;
+    }
+    .spinner-ring {
+      position: absolute;
+      width: 56px;
+      height: 56px;
+      border: 3px solid transparent;
+      border-top: 3px solid rgba(26, 115, 232, 0.2);
+      border-right: 3px solid rgba(26, 115, 232, 0.2);
+      border-radius: 50%;
+      animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
+      z-index: 1;
+    }
+    body.dark .spinner {
+      border-top-color: #8ab4f8;
+      border-right-color: #8ab4f8;
+    }
+    body.dark .spinner-ring {
+      border-top-color: rgba(138, 180, 248, 0.2);
+      border-right-color: rgba(138, 180, 248, 0.2);
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .loading-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .loading-message {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #5f6368;
+      margin: 0;
+      letter-spacing: 0.01em;
+    }
+    body.dark .loading-message { color: #9aa0a6; }
+    .loading-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      height: 20px;
+    }
+    .loading-dots .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #1a73e8;
+      animation: pulse 1.4s ease-in-out infinite;
+      opacity: 0.4;
+    }
+    body.dark .loading-dots .dot { background-color: #8ab4f8; }
+    .loading-dots .dot:nth-child(1) { animation-delay: 0s; }
+    .loading-dots .dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #5f6368;
+    }
+    body.dark .empty { color: #9aa0a6; }
+    .error {
+      background: #fce8e6;
+      border: 1px solid #ea4335;
+      border-radius: 8px;
+      padding: 16px;
+      color: #c5221f;
+    }
+    body.dark .error {
+      background: #3c1f1d;
+      border-color: #ea4335;
+      color: #f28b82;
+    }
+    body.fullscreen-mode {
+      padding: 20px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    body.fullscreen-mode .container { max-width: 100%; }
+
+    /* Inlined mcp-app.css */
+    .container {
+      max-width: 614px;
+      margin: 0 auto;
+      padding: 0;
+    }
+    .instagram-post {
+      background: #ffffff;
+      border: 1px solid #dbdbdb;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    body.dark .instagram-post {
+      background: #000000;
+      border-color: #262626;
+    }
+    .post-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid #efefef;
+    }
+    body.dark .post-header { border-color: #262626; }
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+    .profile-avatar-wrapper {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+    .profile-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #efefef;
+      display: block;
+    }
+    body.dark .profile-avatar { border-color: #262626; }
+    .profile-avatar-fallback {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid #efefef;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    body.dark .profile-avatar-fallback {
+      border-color: #262626;
+      background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+    }
+    .profile-details { flex: 1; min-width: 0; }
+    .username-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .username {
+      font-weight: 600;
+      font-size: 14px;
+      color: #262626;
+      text-decoration: none;
+    }
+    body.dark .username { color: #f5f5f5; }
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .verified-badge.small {
+      width: 14px;
+      height: 14px;
+      font-size: 8px;
+    }
+    .coauthors {
+      font-size: 12px;
+      color: #8e8e8e;
+      font-weight: 400;
+    }
+    body.dark .coauthors { color: #a8a8a8; }
+    .profile-stats {
+      font-size: 12px;
+      color: #8e8e8e;
+      margin-top: 2px;
+    }
+    body.dark .profile-stats { color: #a8a8a8; }
+    .external-link {
+      display: flex;
+      align-items: center;
+      color: #262626;
+      text-decoration: none;
+      padding: 4px;
+    }
+    body.dark .external-link { color: #f5f5f5; }
+    .external-link:hover { opacity: 0.7; }
+    .media-container {
+      position: relative;
+      width: 100%;
+      background: #000000;
+      aspect-ratio: 1;
+      overflow: hidden;
+    }
+    .media-container.single { aspect-ratio: 1; }
+    .post-media {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .video-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #ffffff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .media-container.carousel { position: relative; }
+    .carousel-item {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .carousel-item.active { display: block; }
+    .carousel-dots {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 4px;
+      z-index: 10;
+    }
+    .carousel-dots .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .carousel-dots .dot.active {
+      background: #ffffff;
+      width: 20px;
+      border-radius: 3px;
+    }
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.8);
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      color: #262626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+    body.dark .carousel-nav {
+      background: rgba(0, 0, 0, 0.8);
+      color: #f5f5f5;
+    }
+    .carousel-nav:hover { background: rgba(255, 255, 255, 1); }
+    body.dark .carousel-nav:hover { background: rgba(0, 0, 0, 1); }
+    .carousel-nav.prev { left: 12px; }
+    .carousel-nav.next { right: 12px; }
+    .no-media {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #8e8e8e;
+      font-size: 14px;
+    }
+    body.dark .no-media { color: #a8a8a8; }
+    .engagement-bar {
+      padding: 12px 16px;
+      border-bottom: 1px solid #efefef;
+    }
+    body.dark .engagement-bar { border-color: #262626; }
+    .engagement-icons {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+    .icon {
+      font-size: 24px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s ease;
+    }
+    .icon:active { transform: scale(0.9); }
+    .like-icon { font-size: 24px; }
+    .comment-icon { font-size: 22px; }
+    .share-icon { font-size: 22px; }
+    .engagement-stats { margin-top: 8px; }
+    .likes-count {
+      font-weight: 600;
+      font-size: 14px;
+      color: #262626;
+    }
+    body.dark .likes-count { color: #f5f5f5; }
+    .post-caption {
+      padding: 0 16px 8px 16px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #262626;
+    }
+    body.dark .post-caption { color: #f5f5f5; }
+    .post-caption strong {
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    .view-comments {
+      padding: 0 16px 8px 16px;
+      font-size: 14px;
+      color: #8e8e8e;
+      cursor: pointer;
+    }
+    body.dark .view-comments { color: #a8a8a8; }
+    .view-comments:hover { color: #262626; }
+    body.dark .view-comments:hover { color: #f5f5f5; }
+    .comments-section {
+      padding: 0 16px 12px 16px;
+    }
+    .comment {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .comment:last-child { margin-bottom: 0; }
+    .comment-avatar-wrapper {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+    .comment-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #efefef;
+      display: block;
+    }
+    body.dark .comment-avatar { border-color: #262626; }
+    .comment-avatar-fallback {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid #efefef;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    body.dark .comment-avatar-fallback {
+      border-color: #262626;
+      background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+    }
+    .comment-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .comment-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #262626;
+      margin-bottom: 4px;
+    }
+    body.dark .comment-text { color: #f5f5f5; }
+    .comment-text strong {
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    .comment-likes {
+      font-size: 12px;
+      color: #8e8e8e;
+      margin-top: 4px;
+    }
+    body.dark .comment-likes { color: #a8a8a8; }
+    .view-more-comments {
+      font-size: 14px;
+      color: #8e8e8e;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+    body.dark .view-more-comments { color: #a8a8a8; }
+    .view-more-comments:hover { color: #262626; }
+    body.dark .view-more-comments:hover { color: #f5f5f5; }
+    .tagged-users {
+      padding: 8px 16px 12px 16px;
+      font-size: 13px;
+      color: #8e8e8e;
+      border-top: 1px solid #efefef;
+    }
+    body.dark .tagged-users {
+      color: #a8a8a8;
+      border-color: #262626;
+    }
+    .tagged-label {
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    .tagged-user {
+      color: #00376b;
+      text-decoration: none;
+      margin: 0 4px;
+    }
+    body.dark .tagged-user { color: #4db5f9; }
+    .tagged-user:hover { text-decoration: underline; }
+    .post-meta {
+      padding: 8px 16px 16px 16px;
+      font-size: 10px;
+      color: #8e8e8e;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      gap: 12px;
+      border-top: 1px solid #efefef;
+    }
+    body.dark .post-meta {
+      color: #a8a8a8;
+      border-color: #262626;
+    }
+    .post-time { font-weight: 400; }
+    .content-type { font-weight: 600; }
+    @media (max-width: 640px) {
+      .container { max-width: 100%; }
+      .instagram-post {
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+      }
+      .media-container { aspect-ratio: 1; }
+    }
+    @media (max-width: 480px) {
+      .post-header { padding: 12px; }
+      .engagement-bar { padding: 10px 12px; }
+      .post-caption,
+      .view-comments,
+      .comments-section,
+      .tagged-users,
+      .post-meta {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .carousel-nav {
+        width: 28px;
+        height: 28px;
+        font-size: 18px;
+      }
+      .carousel-nav.prev { left: 8px; }
+      .carousel-nav.next { right: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="loading">
+      <div class="loading-content">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <div class="loading-text">
+          <p class="loading-message">Loading post data</p>
+          <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Detect if scripts are blocked
+    try {
+      // Test script execution
+      if (typeof window === 'undefined') {
+        throw new Error('Script execution blocked');
+      }
+    } catch (e) {
+      document.getElementById('app').innerHTML = '<div class="error">JavaScript execution is blocked. The iframe sandbox must include "allow-scripts" permission.</div>';
+      throw e;
+    }
+
+    // Global error handler for CSP violations
+    window.addEventListener('error', function(e) {
+      if (e.message && e.message.indexOf('Content Security Policy') !== -1) {
+        console.error('[Instagram] CSP Violation:', e.message, e.filename, e.lineno);
+      }
+    }, true);
+
+    // Log CSP policy if available
+    if (document.querySelector('meta[http-equiv="Content-Security-Policy"]')) {
+      const cspMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+      console.log('[Instagram] CSP Policy:', cspMeta.getAttribute('content'));
+    }
+
+    // Inlined JavaScript (converted from TypeScript)
+    (function() {
+      'use strict';
+
+      function extractData(msg) {
+        if (msg?.params?.structuredContent !== undefined) {
+          return msg.params.structuredContent;
+        }
+        if (msg?.params !== undefined) {
+          return msg.params;
+        }
+        return msg;
+      }
+
+      function unwrapData(data) {
+        if (!data) return null;
+        
+        if (data.columns || (Array.isArray(data.rows) && data.rows.length > 0) || 
+            (typeof data === 'object' && !data.message)) {
+          return data;
+        }
+        
+        if (data.message?.template_data) {
+          return data.message.template_data;
+        }
+        
+        if (data.message?.response_content) {
+          return data.message.response_content;
+        }
+        
+        if (data.data?.results) return data.data.results;
+        if (data.data?.items) return data.data.items;
+        if (data.data?.records) return data.data.records;
+        if (data.results) return data.results;
+        if (data.items) return data.items;
+        if (data.records) return data.records;
+        
+        if (Array.isArray(data.rows)) {
+          return data;
+        }
+        
+        if (Array.isArray(data)) {
+          return { rows: data };
+        }
+        
+        return data;
+      }
+
+      function initializeDarkMode() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.body.classList.add('dark');
+        }
+        
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+          document.body.classList.toggle('dark', e.matches);
+        });
+      }
+
+      function escapeHtml(str) {
+        if (typeof str !== "string") return str;
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      // Proxy Instagram images through backend to avoid CORS issues
+      // Instagram's CDN blocks cross-origin requests from about:srcdoc iframes
+      function proxyImageUrl(url) {
+        if (!url || typeof url !== 'string') return url;
+        
+        // Check if URL is from Instagram CDN
+        if (url.indexOf('instagram') === -1 && url.indexOf('fbcdn.net') === -1 && url.indexOf('cdninstagram.com') === -1) {
+          return url; // Not an Instagram URL, return as-is
+        }
+        
+        // TODO: Replace with your actual backend proxy endpoint
+        // Example: return '/api/proxy-image?url=' + encodeURIComponent(url);
+        
+        // For now, return original URL (will show fallback initials)
+        // Backend proxy endpoint should:
+        // 1. Accept GET /api/proxy-image?url=<encoded_url>
+        // 2. Fetch image from Instagram CDN server-side
+        // 3. Return image with proper CORS headers (Access-Control-Allow-Origin: *)
+        // 4. Cache images to reduce load
+        
+        return url; // Will fail due to CORS, fallback will show
+      }
+
+      function showError(message) {
+        const app = document.getElementById('app');
+        if (app) {
+          app.innerHTML = '<div class="error">' + escapeHtml(message) + '</div>';
+        }
+      }
+
+      function showEmpty(message) {
+        if (message === void 0) { message = 'No post data available.'; }
+        const app = document.getElementById('app');
+        if (app) {
+          app.innerHTML = '<div class="empty">' + escapeHtml(message) + '</div>';
+        }
+      }
+
+      function formatNumber(num) {
+        if (num >= 1000000) {
+          return (num / 1000000).toFixed(1) + 'M';
+        }
+        if (num >= 1000) {
+          return (num / 1000).toFixed(1) + 'K';
+        }
+        return num.toString();
+      }
+
+      function formatRelativeTime(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now.getTime() - date.getTime();
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+        
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return diffMins + 'm';
+        if (diffHours < 24) return diffHours + 'h';
+        if (diffDays < 7) return diffDays + 'd';
+        
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return months[date.getMonth()] + ' ' + date.getDate();
+      }
+
+      function extractPostData(data) {
+        const unwrapped = unwrapData(data);
+        
+        if (unwrapped?.body && Array.isArray(unwrapped.body) && unwrapped.body.length > 0) {
+          return unwrapped.body[0];
+        }
+        
+        if (unwrapped?.user_posted || unwrapped?.post_id) {
+          return unwrapped;
+        }
+        
+        if (Array.isArray(unwrapped) && unwrapped.length > 0) {
+          return unwrapped[0];
+        }
+        
+        return unwrapped;
+      }
+
+      function renderMedia(post) {
+        const photos = post.photos || [];
+        const videos = post.videos || [];
+        const allMedia = photos.concat(videos);
+        
+        if (allMedia.length === 0) {
+          return '<div class="no-media">No media available</div>';
+        }
+        
+        if (allMedia.length === 1) {
+          const isVideo = videos.length > 0 && allMedia[0] === videos[0];
+          const mediaUrl = allMedia[0];
+          const imageUrl = isVideo ? mediaUrl : proxyImageUrl(mediaUrl);
+          console.log('[Instagram] Rendering single media:', { isVideo, url: mediaUrl, proxied: imageUrl !== mediaUrl });
+          return '<div class="media-container single">' +
+            (isVideo ? 
+              '<video class="post-media" controls crossorigin="anonymous"><source src="' + escapeHtml(mediaUrl) + '" type="video/mp4"></video><div class="video-badge">VIDEO</div>' :
+              '<img class="post-media" src="' + escapeHtml(imageUrl) + '" alt="Post image" loading="lazy" crossorigin="anonymous" referrerpolicy="no-referrer" ' +
+              'onerror="console.error(\'[Instagram] Image failed to load (CORS blocked):\', this.src); this.style.display=\'none\'; ' +
+              'var fallback = this.parentElement.querySelector(\'.image-fallback\'); ' +
+              'if (fallback) fallback.style.display=\'flex\';" />' +
+              '<div class="image-fallback" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; color: #fff; background: #000; flex-direction: column; gap: 8px;">' +
+              '<div style="font-size: 14px;">Image blocked by CORS</div>' +
+              '<div style="font-size: 11px; opacity: 0.7; word-break: break-all; padding: 0 20px; text-align: center;">' + escapeHtml(mediaUrl) + '</div>' +
+              '</div>') +
+            '</div>';
+        }
+        
+        let carouselHtml = '<div class="media-container carousel"><div class="media-carousel" id="mediaCarousel">';
+        for (let idx = 0; idx < allMedia.length; idx++) {
+          const media = allMedia[idx];
+          const isVideo = videos.indexOf(media) !== -1;
+          const imageUrl = isVideo ? media : proxyImageUrl(media);
+          console.log('[Instagram] Rendering carousel media:', { idx, isVideo, url: media, proxied: imageUrl !== media });
+          carouselHtml += '<div class="carousel-item' + (idx === 0 ? ' active' : '') + '" data-index="' + idx + '">' +
+            (isVideo ? 
+              '<video class="post-media" controls crossorigin="anonymous"><source src="' + escapeHtml(media) + '" type="video/mp4"></video><div class="video-badge">VIDEO</div>' :
+              '<img class="post-media" src="' + escapeHtml(imageUrl) + '" alt="Post image ' + (idx + 1) + '" loading="lazy" crossorigin="anonymous" referrerpolicy="no-referrer" ' +
+              'onerror="console.error(\'[Instagram] Image failed to load (CORS blocked):\', this.src); this.style.display=\'none\'; ' +
+              'var fallback = this.parentElement.querySelector(\'.image-fallback\'); ' +
+              'if (fallback) fallback.style.display=\'flex\';" />' +
+              '<div class="image-fallback" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; color: #fff; background: #000; flex-direction: column; gap: 8px;">' +
+              '<div style="font-size: 14px;">Image ' + (idx + 1) + ' blocked by CORS</div>' +
+              '<div style="font-size: 11px; opacity: 0.7; word-break: break-all; padding: 0 20px; text-align: center;">' + escapeHtml(media) + '</div>' +
+              '</div>') +
+            '</div>';
+        }
+        carouselHtml += '</div><div class="carousel-dots">';
+        for (let idx = 0; idx < allMedia.length; idx++) {
+          carouselHtml += '<span class="dot' + (idx === 0 ? ' active' : '') + '" data-index="' + idx + '"></span>';
+        }
+        carouselHtml += '</div>';
+        if (allMedia.length > 1) {
+          carouselHtml += '<button class="carousel-nav prev" id="carouselPrev">‹</button><button class="carousel-nav next" id="carouselNext">›</button>';
+        }
+        carouselHtml += '</div>';
+        return carouselHtml;
+      }
+
+      function renderComments(comments) {
+        if (!comments || comments.length === 0) {
+          return '';
+        }
+        
+        let html = '<div class="comments-section">';
+        const maxComments = Math.min(5, comments.length);
+        for (let i = 0; i < maxComments; i++) {
+          const comment = comments[i];
+          const commentImageSrc = proxyImageUrl(comment.profile_picture || '');
+          const commentInitials = comment.user_commenting ? comment.user_commenting.charAt(0).toUpperCase() : '?';
+          html += '<div class="comment">' +
+            '<div class="comment-avatar-wrapper">' +
+            '<img class="comment-avatar" src="' + escapeHtml(commentImageSrc) + '" alt="' + escapeHtml(comment.user_commenting) + '" loading="lazy" crossorigin="anonymous" referrerpolicy="no-referrer" ' +
+            'onerror="console.error(\'[Instagram] Comment avatar failed to load (CORS blocked):\', this.src); this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';" />' +
+            '<div class="comment-avatar-fallback" style="display: ' + (commentImageSrc ? 'none' : 'flex') + ';">' + escapeHtml(commentInitials) + '</div>' +
+            '</div>' +
+            '<div class="comment-content">' +
+            '<div class="comment-text"><strong>' + escapeHtml(comment.user_commenting) + '</strong><span>' + escapeHtml(comment.comments) + '</span></div>' +
+            (comment.likes > 0 ? '<div class="comment-likes">' + formatNumber(comment.likes) + ' likes</div>' : '') +
+            '</div></div>';
+        }
+        if (comments.length > 5) {
+          html += '<div class="view-more-comments">View all ' + comments.length + ' comments</div>';
+        }
+        html += '</div>';
+        return html;
+      }
+
+      function renderData(data) {
+        const app = document.getElementById('app');
+        if (!app) return;
+        
+        if (!data) {
+          showEmpty('No post data received');
+          return;
+        }
+
+        try {
+          const post = extractPostData(data);
+          
+          if (!post || !post.user_posted) {
+            showEmpty('Invalid post data format');
+            return;
+          }
+          
+          const user_posted = post.user_posted;
+          const description = post.description;
+          const likes = post.likes;
+          const num_comments = post.num_comments;
+          const date_posted = post.date_posted;
+          const photos = post.photos || [];
+          const videos = post.videos || [];
+          const latest_comments = post.latest_comments || [];
+          const profile_image_link = post.profile_image_link;
+          const is_verified = post.is_verified;
+          const followers = post.followers;
+          const posts_count = post.posts_count;
+          const tagged_users = post.tagged_users || [];
+          const coauthor_producers = post.coauthor_producers || [];
+          const content_type = post.content_type;
+          const url = post.url;
+          
+          let html = '<div class="container"><div class="instagram-post">';
+          
+          // Profile Header
+          const profileImageSrc = proxyImageUrl(profile_image_link || '');
+          const userInitials = user_posted ? user_posted.charAt(0).toUpperCase() : '?';
+          console.log('[Instagram] Profile image URL:', profile_image_link, '-> proxied:', profileImageSrc);
+          html += '<div class="post-header"><div class="profile-info">' +
+            '<div class="profile-avatar-wrapper">' +
+            '<img class="profile-avatar" src="' + escapeHtml(profileImageSrc) + '" alt="' + escapeHtml(user_posted) + '" loading="lazy" crossorigin="anonymous" referrerpolicy="no-referrer" ' +
+            'onerror="console.error(\'[Instagram] Profile image failed to load (CORS blocked):\', this.src); this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';" />' +
+            '<div class="profile-avatar-fallback" style="display: ' + (profileImageSrc ? 'none' : 'flex') + ';">' + escapeHtml(userInitials) + '</div>' +
+            '</div>' +
+            '<div class="profile-details">' +
+            '<div class="username-row">' +
+            '<span class="username">' + escapeHtml(user_posted) + '</span>' +
+            (is_verified ? '<span class="verified-badge">✓</span>' : '');
+          if (coauthor_producers && coauthor_producers.length > 0) {
+            html += '<span class="coauthors">';
+            for (let i = 0; i < coauthor_producers.length; i++) {
+              if (i > 0) html += ', ';
+              html += '@' + escapeHtml(coauthor_producers[i]);
+            }
+            html += '</span>';
+          }
+          html += '</div>';
+          if (followers) {
+            html += '<div class="profile-stats">' + formatNumber(followers) + ' followers</div>';
+          }
+          html += '</div></div>';
+          if (url) {
+            html += '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer" class="external-link">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+              '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>' +
+              '<polyline points="15 3 21 3 21 9"></polyline>' +
+              '<line x1="10" y1="14" x2="21" y2="3"></line>' +
+              '</svg></a>';
+          }
+          html += '</div>';
+          
+          // Media
+          html += renderMedia(post);
+          
+          // Engagement Bar
+          html += '<div class="engagement-bar">' +
+            '<div class="engagement-icons">' +
+            '<span class="icon like-icon">♡</span>' +
+            '<span class="icon comment-icon">💬</span>' +
+            '<span class="icon share-icon">📤</span>' +
+            '</div>' +
+            '<div class="engagement-stats">' +
+            (likes ? '<span class="likes-count">' + formatNumber(likes) + ' likes</span>' : '') +
+            '</div></div>';
+          
+          // Caption
+          if (description) {
+            html += '<div class="post-caption">' +
+              '<strong>' + escapeHtml(user_posted) + '</strong>' +
+              '<span>' + escapeHtml(description) + '</span>' +
+              '</div>';
+          }
+          
+          // View Comments Link
+          if (num_comments > 0) {
+            html += '<div class="view-comments">View all ' + formatNumber(num_comments) + ' comments</div>';
+          }
+          
+          // Comments
+          html += renderComments(latest_comments);
+          
+          // Tagged Users
+          if (tagged_users && tagged_users.length > 0) {
+            html += '<div class="tagged-users"><span class="tagged-label">Tagged:</span>';
+            for (let i = 0; i < tagged_users.length; i++) {
+              if (i > 0) html += ', ';
+              const user = tagged_users[i];
+              html += '<a href="https://www.instagram.com/' + escapeHtml(user.username) + '" target="_blank" rel="noopener noreferrer" class="tagged-user">' +
+                (user.is_verified ? '<span class="verified-badge small">✓</span>' : '') +
+                escapeHtml(user.username) +
+                '</a>';
+            }
+            html += '</div>';
+          }
+          
+          // Post Meta
+          html += '<div class="post-meta">';
+          if (date_posted) {
+            html += '<span class="post-time">' + formatRelativeTime(date_posted) + '</span>';
+          }
+          if (content_type) {
+            html += '<span class="content-type">' + escapeHtml(content_type) + '</span>';
+          }
+          html += '</div></div></div>';
+          
+          app.innerHTML = html;
+          
+          // Setup carousel navigation
+          const carouselItems = app.querySelectorAll('.carousel-item');
+          const carouselDots = app.querySelectorAll('.carousel-dots .dot');
+          const prevBtn = app.querySelector('#carouselPrev');
+          const nextBtn = app.querySelector('#carouselNext');
+          
+          if (carouselItems.length > 1) {
+            let currentIndex = 0;
+            
+            function showSlide(index) {
+              for (let i = 0; i < carouselItems.length; i++) {
+                carouselItems[i].classList.toggle('active', i === index);
+              }
+              for (let i = 0; i < carouselDots.length; i++) {
+                carouselDots[i].classList.toggle('active', i === index);
+              }
+              currentIndex = index;
+            }
+            
+            if (prevBtn) {
+              prevBtn.addEventListener('click', function() {
+                showSlide((currentIndex - 1 + carouselItems.length) % carouselItems.length);
+              });
+            }
+            
+            if (nextBtn) {
+              nextBtn.addEventListener('click', function() {
+                showSlide((currentIndex + 1) % carouselItems.length);
+              });
+            }
+            
+            for (let i = 0; i < carouselDots.length; i++) {
+              carouselDots[i].addEventListener('click', function() {
+                showSlide(i);
+              });
+            }
+          }
+          
+          setTimeout(function() {
+            notifySizeChanged();
+          }, 50);
+          
+        } catch (error) {
+          console.error('Render error:', error);
+          showError('Error rendering post data: ' + (error.message || 'Unknown error'));
+          setTimeout(function() {
+            notifySizeChanged();
+          }, 50);
+        }
+      }
+
+      window.addEventListener('message', function(event) {
+        const msg = event.data;
+        
+        if (!msg || msg.jsonrpc !== '2.0') {
+          return;
+        }
+        
+        if (msg.id !== undefined && !msg.method) {
+          return;
+        }
+        
+        switch (msg.method) {
+          case 'ui/notifications/tool-result':
+            const data = msg.params?.structuredContent || msg.params;
+            if (data !== undefined) {
+              renderData(data);
+            } else {
+              console.warn('ui/notifications/tool-result received but no data found:', msg);
+              showEmpty('No data received');
+            }
+            break;
+            
+          case 'ui/notifications/host-context-changed':
+            if (msg.params?.theme === 'dark') {
+              document.body.classList.add('dark');
+            } else if (msg.params?.theme === 'light') {
+              document.body.classList.remove('dark');
+            }
+            if (msg.params?.displayMode) {
+              handleDisplayModeChange(msg.params.displayMode);
+            }
+            break;
+            
+          case 'ui/notifications/tool-input':
+            break;
+            
+          case 'ui/notifications/initialized':
+            break;
+            
+          default:
+            if (msg.params) {
+              const fallbackData = msg.params.structuredContent || msg.params;
+              if (fallbackData && fallbackData !== msg) {
+                console.warn('Unknown method:', msg.method, '- attempting to render data');
+                renderData(fallbackData);
+              }
+            }
+        }
+      });
+
+      let requestIdCounter = 1;
+      function sendRequest(method, params) {
+        return new Promise(function(resolve, reject) {
+          const id = requestIdCounter++;
+          window.parent.postMessage({ jsonrpc: "2.0", id: id, method: method, params: params }, '*');
+          
+          const listener = function(event) {
+            if (event.data?.id === id) {
+              window.removeEventListener('message', listener);
+              if (event.data?.result) {
+                resolve(event.data.result);
+              } else if (event.data?.error) {
+                reject(new Error(event.data.error.message || 'Unknown error'));
+              }
+            }
+          };
+          window.addEventListener('message', listener);
+          
+          setTimeout(function() {
+            window.removeEventListener('message', listener);
+            reject(new Error('Request timeout'));
+          }, 5000);
+        });
+      }
+
+      function sendNotification(method, params) {
+        window.parent.postMessage({ jsonrpc: "2.0", method: method, params: params }, '*');
+      }
+
+      let currentDisplayMode = 'inline';
+
+      function handleDisplayModeChange(mode) {
+        currentDisplayMode = mode;
+        if (mode === 'fullscreen') {
+          document.body.classList.add('fullscreen-mode');
+          const container = document.querySelector('.container');
+          if (container) {
+            container.style.maxWidth = '100%';
+            container.style.padding = '20px';
+          }
+        } else {
+          document.body.classList.remove('fullscreen-mode');
+          const container = document.querySelector('.container');
+          if (container) {
+            container.style.maxWidth = '';
+            container.style.padding = '';
+          }
+        }
+        setTimeout(function() {
+          notifySizeChanged();
+        }, 100);
+      }
+
+      function requestDisplayMode(mode) {
+        return sendRequest('ui/request-display-mode', { mode: mode })
+          .then(function(result) {
+            if (result?.mode) {
+              handleDisplayModeChange(result.mode);
+            }
+            return result;
+          })
+          .catch(function(err) {
+            console.warn('Failed to request display mode:', err);
+            throw err;
+          });
+      }
+
+      window.requestDisplayMode = requestDisplayMode;
+
+      function notifySizeChanged() {
+        const width = document.body.scrollWidth || document.documentElement.scrollWidth;
+        const height = document.body.scrollHeight || document.documentElement.scrollHeight;
+        
+        sendNotification('ui/notifications/size-changed', {
+          width: width,
+          height: height
+        });
+      }
+
+      let sizeChangeTimeout = null;
+      function debouncedNotifySizeChanged() {
+        if (sizeChangeTimeout) {
+          clearTimeout(sizeChangeTimeout);
+        }
+        sizeChangeTimeout = setTimeout(function() {
+          notifySizeChanged();
+        }, 100);
+      }
+
+      let resizeObserver = null;
+      function setupSizeObserver() {
+        if (typeof ResizeObserver !== 'undefined') {
+          resizeObserver = new ResizeObserver(function() {
+            debouncedNotifySizeChanged();
+          });
+          resizeObserver.observe(document.body);
+        } else {
+          window.addEventListener('resize', debouncedNotifySizeChanged);
+          const mutationObserver = new MutationObserver(debouncedNotifySizeChanged);
+          mutationObserver.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+          });
+        }
+        
+        setTimeout(function() {
+          notifySizeChanged();
+        }, 100);
+      }
+
+      // Initialize - handle both old and new protocol versions
+      sendRequest('ui/initialize', {
+        appCapabilities: {
+          availableDisplayModes: ["inline", "fullscreen"]
+        }
+      }).then(function(ctx) {
+        if (ctx?.theme === 'dark') {
+          document.body.classList.add('dark');
+        } else if (ctx?.theme === 'light') {
+          document.body.classList.remove('dark');
+        }
+        if (ctx?.displayMode) {
+          handleDisplayModeChange(ctx.displayMode);
+        }
+        if (ctx?.containerDimensions) {
+          const dims = ctx.containerDimensions;
+          if (dims.width) {
+            document.body.style.width = dims.width + 'px';
+          }
+          if (dims.height) {
+            document.body.style.height = dims.height + 'px';
+          }
+          if (dims.maxWidth) {
+            document.body.style.maxWidth = dims.maxWidth + 'px';
+          }
+          if (dims.maxHeight) {
+            document.body.style.maxHeight = dims.maxHeight + 'px';
+          }
+        }
+      }).catch(function(err) {
+        // Ignore initialization errors - ChatGPT may send invalid params
+        // The app will still work without initialization
+        console.warn('[Instagram] Failed to initialize MCP App (non-critical):', err.message || err);
+      });
+
+      initializeDarkMode();
+      setupSizeObserver();
+    })();
+  </script>
+</body>
+</html>

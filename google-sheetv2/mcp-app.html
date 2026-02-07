@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MCP App: Google Sheet</title>
+  <!--
+    Google Sheet MCP App
+    
+    Displays Google Sheets embedded in an iframe.
+    Extracts spreadsheet ID from tool-input request URL and embeds the sheet.
+    
+    Message Format (tool-input):
+    {
+      jsonrpc: '2.0',
+      method: 'ui/notifications/tool-input',
+      params: { 
+        structuredContent: {
+          method: "GET",
+          url: "https://sheets.googleapis.com/v4/spreadsheets/{SPREADSHEET_ID}/values/...",
+          headers: {...},
+          body: null
+        }
+      }
+    }
+    
+    Message Format (tool-result - fallback):
+    {
+      jsonrpc: '2.0',
+      method: 'ui/notifications/tool-result',
+      params: { structuredContent: <google sheets api response> }
+    }
+    
+    The app primarily uses tool-input to extract the spreadsheet ID from the request URL
+    and renders the sheet immediately in an iframe. If tool-result is received, it will
+    also try to extract the spreadsheet ID from the response data.
+  -->
+  <link rel="stylesheet" href="src/global.css">
+  <link rel="stylesheet" href="src/mcp-app.css">
+  <!-- 
+    CSP Configuration Note:
+    This app embeds Google Sheets via iframe.
+    The MCP server must configure CSP with:
+    frameDomains: ["https://docs.google.com"]
+  -->
+</head>
+<body>
+  <div id="app">
+    <div class="loading">
+      <div class="loading-content">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <div class="loading-text">
+          <p class="loading-message">Loading sheet</p>
+          <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/mcp-app.ts"></script>
+</body>
+</html>

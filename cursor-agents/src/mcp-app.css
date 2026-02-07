@@ -1,0 +1,339 @@
+/* ============================================
+   CURSOR AGENTS DISPLAY - CURSOR STYLE UI
+   ============================================ */
+
+:root {
+  --cursor-primary: #0066cc;
+  --cursor-primary-hover: #0052a3;
+  --cursor-secondary: #6b7280;
+  --cursor-bg: #ffffff;
+  --cursor-surface: #f9fafb;
+  --cursor-border: #e5e7eb;
+  --cursor-text: #111827;
+  --cursor-text-secondary: #6b7280;
+  --cursor-success: #10b981;
+  --cursor-warning: #f59e0b;
+  --cursor-error: #ef4444;
+  --cursor-info: #3b82f6;
+}
+
+body.dark {
+  --cursor-primary: #3b82f6;
+  --cursor-primary-hover: #2563eb;
+  --cursor-secondary: #9ca3af;
+  --cursor-bg: #1a1a1a;
+  --cursor-surface: #252525;
+  --cursor-border: #3a3a3a;
+  --cursor-text: #e5e7eb;
+  --cursor-text-secondary: #9ca3af;
+  --cursor-success: #10b981;
+  --cursor-warning: #f59e0b;
+  --cursor-error: #ef4444;
+  --cursor-info: #3b82f6;
+}
+
+.cursor-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.cursor-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--cursor-border);
+}
+
+.cursor-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--cursor-text);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cursor-subtitle {
+  font-size: 14px;
+  color: var(--cursor-text-secondary);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Buttons */
+.cursor-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: var(--cursor-text-secondary);
+}
+
+.cursor-button-primary {
+  background: var(--cursor-primary);
+  color: white;
+}
+
+.cursor-button-primary:hover {
+  background: var(--cursor-primary-hover);
+}
+
+.cursor-button-secondary {
+  color: var(--cursor-text-secondary);
+  border: 1px solid var(--cursor-border);
+}
+
+.cursor-button-secondary:hover {
+  background: var(--cursor-surface);
+  color: var(--cursor-text);
+}
+
+.cursor-button-icon {
+  padding: 8px;
+}
+
+/* Agents List */
+.agents-list {
+  display: grid;
+  gap: 16px;
+}
+
+.agent-card {
+  background: var(--cursor-surface);
+  border: 1px solid var(--cursor-border);
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.agent-card:hover {
+  border-color: var(--cursor-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+body.dark .agent-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.agent-card-header {
+  margin-bottom: 12px;
+}
+
+.agent-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.agent-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--cursor-text);
+  margin: 0;
+  flex: 1;
+}
+
+.agent-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--cursor-text-secondary);
+}
+
+.agent-time {
+  color: var(--cursor-text-secondary);
+}
+
+.agent-summary-preview {
+  font-size: 14px;
+  color: var(--cursor-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.agent-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-finished {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--cursor-success);
+}
+
+body.dark .status-finished {
+  background: rgba(16, 185, 129, 0.2);
+}
+
+.status-running {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--cursor-info);
+}
+
+body.dark .status-running {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.status-failed {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--cursor-error);
+}
+
+body.dark .status-failed {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--cursor-warning);
+}
+
+body.dark .status-pending {
+  background: rgba(245, 158, 11, 0.2);
+}
+
+.status-unknown {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--cursor-secondary);
+}
+
+body.dark .status-unknown {
+  background: rgba(107, 114, 128, 0.2);
+}
+
+/* Agent Detail View */
+.agent-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.detail-section {
+  background: var(--cursor-surface);
+  border: 1px solid var(--cursor-border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.detail-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cursor-text);
+  margin: 0 0 16px 0;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: var(--cursor-text-secondary);
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  color: var(--cursor-text);
+  flex: 1;
+}
+
+.detail-value-monospace {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
+  font-size: 13px;
+  background: var(--cursor-bg);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--cursor-border);
+}
+
+.detail-link {
+  color: var(--cursor-primary);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.detail-link:hover {
+  text-decoration: underline;
+}
+
+.agent-summary {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--cursor-text);
+  white-space: pre-wrap;
+}
+
+.detail-empty {
+  color: var(--cursor-text-secondary);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cursor-container {
+    padding: 16px;
+  }
+  
+  .cursor-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .cursor-title {
+    font-size: 24px;
+  }
+  
+  .agent-card-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .detail-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .detail-label {
+    min-width: auto;
+  }
+}
