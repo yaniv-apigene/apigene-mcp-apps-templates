@@ -803,18 +803,10 @@ function handleDisplayModeChange(mode: string) {
   currentDisplayMode = mode;
   if (mode === 'fullscreen') {
     document.body.classList.add('fullscreen-mode');
-    const container = document.querySelector('.container');
-    if (container) {
-      (container as HTMLElement).style.maxWidth = '100%';
-      (container as HTMLElement).style.padding = '20px';
-    }
+    document.documentElement.classList.add('fullscreen-mode');
   } else {
     document.body.classList.remove('fullscreen-mode');
-    const container = document.querySelector('.container');
-    if (container) {
-      (container as HTMLElement).style.maxWidth = '';
-      (container as HTMLElement).style.padding = '';
-    }
+    document.documentElement.classList.remove('fullscreen-mode');
   }
   setTimeout(() => {
     notifySizeChanged();

@@ -2,9 +2,36 @@
    SHOPIFY CATALOG ADVANCED STYLES
    ============================================ */
 
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html.fullscreen-mode {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden;
+}
+
+body.fullscreen-mode {
+  width: 100vw !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px !important;
+}
+
 .container {
   max-width: 1600px;
   margin: 0 auto;
+}
+
+body.fullscreen-mode .container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Header Styles */

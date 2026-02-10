@@ -1,15 +1,16 @@
 /* ============================================
-   SHOPIFY CATALOG BASIC MCP APP
+   SHOPIFY PRODUCT DETAILS MCP APP
    ============================================
    
-   Simple horizontal scrollable catalog layout
+   Displays detailed product information including variants, 
+   features, specs, and attributes
    ============================================ */
 
 /* ============================================
    APP CONFIGURATION
    ============================================ */
 
-const APP_NAME = "Shopify Catalog Basic";
+const APP_NAME = "Shopify Product Details";
 const APP_VERSION = "1.0.0";
 const PROTOCOL_VERSION = "2026-01-26";
 
@@ -30,11 +31,12 @@ function extractData(msg: any) {
 function unwrapData(data: any): any {
   if (!data) return null;
   
-  if (data.body?.offers) {
-    return data.body.offers;
+  // Handle body.product structure
+  if (data.body?.product) {
+    return data.body;
   }
-  if (data.offers) {
-    return data.offers;
+  if (data.product) {
+    return data;
   }
   
   if (data.columns || (Array.isArray(data.rows) && data.rows.length > 0) || 
@@ -92,12 +94,12 @@ function showError(message: string) {
   }
 }
 
-function showEmpty(message: string = 'No products available.') {
+function showEmpty(message: string = 'No product data available.') {
   const app = document.getElementById('app');
   if (app) {
     app.innerHTML = `
       <div class="empty-state">
-        <h2>No Products</h2>
+        <h2>No Product</h2>
         <p>${escapeHtml(message)}</p>
       </div>
     `;
@@ -116,22 +118,8 @@ function formatPrice(amount: number, currency: string = 'USD'): string {
   }).format(parseFloat(dollars));
 }
 
-function formatPriceRange(priceRange: any): string {
-  if (!priceRange) return '';
-  
-  const min = priceRange.min?.amount || 0;
-  const max = priceRange.max?.amount || 0;
-  const currency = priceRange.min?.currency || priceRange.max?.currency || 'USD';
-  
-  if (min === max) {
-    return formatPrice(min, currency);
-  }
-  
-  return `${formatPrice(min, currency)} - ${formatPrice(max, currency)}`;
-}
-
 function renderRating(rating: any): string {
-  if (!rating || !rating.rating) return '';
+  if (!rating || rating.rating === undefined) return '';
   
   const stars = Math.round(rating.rating * 2) / 2; // Round to nearest 0.5
   const fullStars = Math.floor(stars);
@@ -157,69 +145,192 @@ function renderRating(rating: any): string {
   `;
 }
 
-function getShopLogo(shopName: string): { initials: string; color: string } {
-  if (!shopName || typeof shopName !== 'string') return { initials: '?', color: 'blue' };
+function renderOptions(options: any[]): string {
+  if (!options || options.length === 0) return '';
   
-  const words = shopName.trim().split(' ').filter(w => w.length > 0);
-  let initials: string;
-  
-  if (words.length >= 2) {
-    const first = words[0][0] || '';
-    const second = words[1][0] || '';
-    initials = (first + second).toUpperCase() || '??';
-  } else if (shopName.length >= 2) {
-    initials = shopName.substring(0, 2).toUpperCase();
-  } else {
-    initials = (shopName[0] || '?').toUpperCase() + '?';
-  }
-  
-  // Simple color assignment based on shop name
-  const colors = ['yellow', 'green', 'red', 'blue'];
-  const hash = shopName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const color = colors[hash % colors.length] || 'blue';
-  
-  return { initials, color };
+  return options.map(option => {
+    const values = option.values?.map((v: any) => v.value).join(', ') || '';
+    return `
+      <div class="option-item">
+        <span class="option-name">${escapeHtml(option.name)}:</span>
+        <span class="option-values">${escapeHtml(values)}</span>
+      </div>
+    `;
+  }).join('');
 }
 
-function renderProductCard(product: any, index: number): string {
-  const imageUrl = product.media && product.media.length > 0 
-    ? product.media[0].url 
-    : 'https://via.placeholder.com/300x300?text=No+Image';
-  
-  const imageAlt = product.media && product.media.length > 0 
-    ? (product.media[0].altText || product.title || 'Product image')
-    : (product.title || 'Product image');
-  
-  const productUrl = product.lookupUrl || '#';
-  const priceDisplay = formatPriceRange(product.priceRange) || '';
-  const ratingHtml = renderRating(product.rating) || '';
-  
-  const shopName = product.variants && product.variants.length > 0 
-    ? (product.variants[0].shop?.name || '')
+function renderVariant(variant: any): string {
+  const imageUrl = variant.media && variant.media.length > 0 
+    ? variant.media[0].url 
     : '';
+  const imageAlt = variant.media && variant.media.length > 0 
+    ? (variant.media[0].altText || variant.displayName || 'Variant image')
+    : (variant.displayName || 'Variant image');
   
-  const shopLogo = getShopLogo(shopName);
+  const price = variant.price ? formatPrice(variant.price.amount, variant.price.currency) : '';
+  const ratingHtml = variant.rating ? renderRating(variant.rating) : '';
+  const available = variant.availableForSale !== false;
+  
+  const shop = variant.shop;
+  const shopName = shop?.name || '';
+  const shopUrl = shop?.onlineStoreUrl || '';
   
   return `
-    <div class="product-card" data-product-index="${index}">
-      <div class="product-image-container">
-        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" class="product-image" />
-      </div>
-      <div class="product-info">
-        <h3 class="product-title">${escapeHtml(product.title || 'Untitled Product')}</h3>
-        <div class="product-price">${priceDisplay}</div>
+    <div class="variant-card ${!available ? 'unavailable' : ''}">
+      ${imageUrl ? `
+        <div class="variant-image-container">
+          <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" class="variant-image" />
+        </div>
+      ` : ''}
+      <div class="variant-info">
+        <h3 class="variant-title">${escapeHtml(variant.displayName || 'Variant')}</h3>
+        ${variant.productDescription ? `
+          <p class="variant-description">${escapeHtml(variant.productDescription)}</p>
+        ` : ''}
+        ${price ? `
+          <div class="variant-price">${price}</div>
+        ` : ''}
         ${ratingHtml}
         ${shopName ? `
-          <div class="product-shop">
-            <div class="shop-logo ${shopLogo.color}">${escapeHtml(shopLogo.initials)}</div>
-            <span class="shop-name">${escapeHtml(shopName)}</span>
+          <div class="variant-shop">
+            ${shopUrl ? `<a href="${escapeHtml(shopUrl)}" target="_blank" rel="noopener noreferrer" class="shop-link">` : ''}
+              <span class="shop-name">${escapeHtml(shopName)}</span>
+            ${shopUrl ? `</a>` : ''}
           </div>
         ` : ''}
-        <a href="${escapeHtml(productUrl)}" target="_blank" rel="noopener noreferrer" 
-           class="place-order-btn" onclick="event.stopPropagation()">
-          Place Order
-        </a>
+        <div class="variant-actions">
+          ${variant.variantUrl ? `
+            <a href="${escapeHtml(variant.variantUrl)}" target="_blank" rel="noopener noreferrer" 
+               class="btn btn-secondary">View Product</a>
+          ` : ''}
+          ${variant.checkoutUrl && available ? `
+            <a href="${escapeHtml(variant.checkoutUrl)}" target="_blank" rel="noopener noreferrer" 
+               class="btn btn-primary">Add to Cart</a>
+          ` : ''}
+          ${!available ? `
+            <span class="unavailable-badge">Out of Stock</span>
+          ` : ''}
+        </div>
       </div>
+    </div>
+  `;
+}
+
+function renderProductDetails(product: any): string {
+  const featuredMedia = product.featuredVariantMedia && product.featuredVariantMedia.length > 0
+    ? product.featuredVariantMedia[0]
+    : (product.variants && product.variants.length > 0 && product.variants[0].media && product.variants[0].media.length > 0
+      ? product.variants[0].media[0]
+      : null);
+  
+  const imageUrl = featuredMedia?.url || '';
+  const imageAlt = featuredMedia?.altText || 'Product image';
+  
+  // Get product title from first variant or use a default
+  const productTitle = product.variants && product.variants.length > 0
+    ? product.variants[0].displayName
+    : 'Product';
+  
+  // Get product URL from first variant
+  const productUrl = product.variants && product.variants.length > 0 && product.variants[0].variantUrl
+    ? product.variants[0].variantUrl
+    : '';
+  
+  const description = product.description || '';
+  const ratingHtml = product.rating ? renderRating(product.rating) : '';
+  const optionsHtml = renderOptions(product.options || []);
+  
+  // Get shop info from first variant
+  const shop = product.variants && product.variants.length > 0 ? product.variants[0].shop : null;
+  const shopName = shop?.name || '';
+  const shopUrl = shop?.onlineStoreUrl || '';
+  
+  return `
+    <div class="product-details">
+      <div class="product-header">
+        ${imageUrl ? `
+          <div class="product-image-container">
+            <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" class="product-image" />
+          </div>
+        ` : ''}
+        <div class="product-header-info">
+          ${productUrl ? `
+            <h1 class="product-title">
+              <a href="${escapeHtml(productUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(productTitle)}</a>
+            </h1>
+          ` : `
+            <h1 class="product-title">${escapeHtml(productTitle)}</h1>
+          `}
+          ${ratingHtml}
+          ${description ? `
+            <div class="product-description">${escapeHtml(description)}</div>
+          ` : ''}
+          ${shopName ? `
+            <div class="product-shop">
+              ${shopUrl ? `<a href="${escapeHtml(shopUrl)}" target="_blank" rel="noopener noreferrer" class="shop-link">` : ''}
+                <span class="shop-name">${escapeHtml(shopName)}</span>
+              ${shopUrl ? `</a>` : ''}
+            </div>
+          ` : ''}
+          ${optionsHtml ? `
+            <div class="product-options">
+              ${optionsHtml}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+      
+      ${product.uniqueSellingPoint ? `
+        <div class="product-section">
+          <h2 class="section-title">Unique Selling Point</h2>
+          <p class="usp-text">${escapeHtml(product.uniqueSellingPoint)}</p>
+        </div>
+      ` : ''}
+      
+      ${product.topFeatures && product.topFeatures.length > 0 ? `
+        <div class="product-section">
+          <h2 class="section-title">Top Features</h2>
+          <ul class="features-list">
+            ${product.topFeatures.map((feature: string) => `
+              <li>${escapeHtml(feature)}</li>
+            `).join('')}
+          </ul>
+        </div>
+      ` : ''}
+      
+      ${product.techSpecs && product.techSpecs.length > 0 ? `
+        <div class="product-section">
+          <h2 class="section-title">Technical Specifications</h2>
+          <ul class="specs-list">
+            ${product.techSpecs.map((spec: string) => `
+              <li>${escapeHtml(spec)}</li>
+            `).join('')}
+          </ul>
+        </div>
+      ` : ''}
+      
+      ${product.attributes && product.attributes.length > 0 ? `
+        <div class="product-section">
+          <h2 class="section-title">Attributes</h2>
+          <div class="attributes-grid">
+            ${product.attributes.map((attr: any) => `
+              <div class="attribute-item">
+                <span class="attribute-name">${escapeHtml(attr.name)}:</span>
+                <span class="attribute-values">${attr.values.map((v: string) => escapeHtml(v)).join(', ')}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+      
+      ${product.variants && product.variants.length > 0 ? `
+        <div class="product-section">
+          <h2 class="section-title">Available Variants</h2>
+          <div class="variants-grid">
+            ${product.variants.map((variant: any) => renderVariant(variant)).join('')}
+          </div>
+        </div>
+      ` : ''}
     </div>
   `;
 }
@@ -227,40 +338,6 @@ function renderProductCard(product: any, index: number): string {
 /* ============================================
    TEMPLATE-SPECIFIC RENDER FUNCTION
    ============================================ */
-
-let allProducts: any[] = [];
-let carouselWrapper: HTMLElement | null = null;
-
-function scrollCarousel(direction: 'left' | 'right') {
-  if (!carouselWrapper) return;
-  
-  const scrollAmount = 320; // Card width + gap
-  const currentScroll = carouselWrapper.scrollLeft;
-  const newScroll = direction === 'left' 
-    ? currentScroll - scrollAmount 
-    : currentScroll + scrollAmount;
-  
-  carouselWrapper.scrollTo({
-    left: newScroll,
-    behavior: 'smooth'
-  });
-}
-
-function updateNavButtons() {
-  if (!carouselWrapper) return;
-  
-  const leftBtn = document.querySelector('.nav-button.left') as HTMLButtonElement;
-  const rightBtn = document.querySelector('.nav-button.right') as HTMLButtonElement;
-  
-  if (leftBtn) {
-    leftBtn.disabled = carouselWrapper.scrollLeft <= 0;
-  }
-  
-  if (rightBtn) {
-    const maxScroll = carouselWrapper.scrollWidth - carouselWrapper.clientWidth;
-    rightBtn.disabled = carouselWrapper.scrollLeft >= maxScroll - 10;
-  }
-}
 
 function renderData(data: any) {
   const app = document.getElementById('app');
@@ -274,30 +351,30 @@ function renderData(data: any) {
   try {
     const unwrapped = unwrapData(data);
     
-    let products: any[] = [];
-    if (Array.isArray(unwrapped)) {
-      products = unwrapped;
-    } else if (unwrapped && Array.isArray(unwrapped.offers)) {
-      products = unwrapped.offers;
-    } else if (unwrapped && unwrapped.body && Array.isArray(unwrapped.body.offers)) {
-      products = unwrapped.body.offers;
+    let product: any = null;
+    
+    // Extract product from various possible structures
+    if (unwrapped?.body?.product) {
+      product = unwrapped.body.product;
+    } else if (unwrapped?.product) {
+      product = unwrapped.product;
+    } else if (unwrapped && typeof unwrapped === 'object' && unwrapped.id) {
+      product = unwrapped;
     } else {
-      showEmpty('No products found in the catalog');
+      showEmpty('No product data found');
       setTimeout(() => {
         notifySizeChanged();
       }, 50);
       return;
     }
     
-    if (products.length === 0) {
-      showEmpty('No products available');
+    if (!product) {
+      showEmpty('No product data available');
       setTimeout(() => {
         notifySizeChanged();
       }, 50);
       return;
     }
-    
-    allProducts = products;
     
     app.innerHTML = `
       <div class="container">
@@ -305,51 +382,16 @@ function renderData(data: any) {
           <div class="header-left">
             <div class="logo" aria-label="Shopify">
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M15.337 4.5h-6.5l-.5 2h5.5zm-6.5 0h-2.5l-1 2.5h2.5zm-2.5 0h-2l-.5 2h2zm-2 0h-2l-1 2.5h2zm-1 2.5h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2z"/>
+                <path d="M15.337 4.5h-6.5l-.5 2h5.5zm-6.5 0h-2.5l-1 2.5h2.5zm-2.5 0h-2l-.5 2h2zm-2 0h-2l-1 2.5h2zm-1 2.5h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2zm2.5 0h2l.5 2h-2z"/>
               </svg>
             </div>
             <h1 class="header-title">Shopify</h1>
           </div>
-          <div class="header-actions">
-            <button class="action-btn" title="Like">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
-              </svg>
-            </button>
-            <button class="action-btn" title="Dislike">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/>
-              </svg>
-            </button>
-          </div>
         </div>
         
-        <div class="carousel-container">
-          <button class="nav-button left" onclick="scrollCarousel('left')" aria-label="Scroll left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
-          <div class="carousel-wrapper" id="carousel-wrapper">
-            ${products.map((product, index) => renderProductCard(product, index)).join('')}
-          </div>
-          <button class="nav-button right" onclick="scrollCarousel('right')" aria-label="Scroll right">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
-        </div>
+        ${renderProductDetails(product)}
       </div>
     `;
-    
-    carouselWrapper = document.getElementById('carousel-wrapper');
-    
-    if (carouselWrapper) {
-      carouselWrapper.addEventListener('scroll', updateNavButtons);
-      updateNavButtons();
-    }
-    
-    (window as any).scrollCarousel = scrollCarousel;
     
     setTimeout(() => {
       notifySizeChanged();
@@ -357,7 +399,7 @@ function renderData(data: any) {
     
   } catch (error: any) {
     console.error('Render error:', error);
-    showError(`Error rendering catalog: ${error.message}`);
+    showError(`Error rendering product details: ${error.message}`);
     setTimeout(() => {
       notifySizeChanged();
     }, 50);
@@ -384,10 +426,6 @@ window.addEventListener('message', function(event: MessageEvent) {
     if (resizeObserver) {
       resizeObserver.disconnect();
       resizeObserver = null;
-    }
-    
-    if (carouselWrapper) {
-      carouselWrapper.removeEventListener('scroll', updateNavButtons);
     }
     
     window.parent.postMessage({

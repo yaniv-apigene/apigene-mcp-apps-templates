@@ -40,13 +40,17 @@ body.dark {
 .logo {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #4caf50, #45a049);
+  border-radius: 8px;
+  background: #96bf48;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.logo svg {
+  width: 22px;
+  height: 22px;
   color: #ffffff;
 }
 

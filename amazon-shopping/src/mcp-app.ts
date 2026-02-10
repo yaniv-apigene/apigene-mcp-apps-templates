@@ -1,26 +1,19 @@
 /* ============================================
-   FAKE STORE PRODUCT MCP APP
+   AMAZON SHOPPING MCP APP
    ============================================
    
-   Displays Fake Store API product information in a beautiful card layout.
-   Handles product details, images, pricing, category, and ratings.
+   Displays Amazon product search results in an Amazon-style shopping layout.
+   Handles product images, prices, ratings, Prime badges, and variations.
+   Based on BrightData scraping API response format.
    ============================================ */
 
 /* ============================================
    APP CONFIGURATION
    ============================================ */
 
-const APP_NAME = "Fake Store Product";
+const APP_NAME = "Amazon Shopping";
 const APP_VERSION = "1.0.0";
 const PROTOCOL_VERSION = "2026-01-26"; // MCP Apps protocol version
-
-/* ============================================
-   EXTERNAL DEPENDENCIES
-   ============================================
-   Declare external libraries loaded from CDN
-   ============================================ */
-
-declare const Handlebars: any;
 
 /* ============================================
    COMMON UTILITY FUNCTIONS
@@ -46,6 +39,34 @@ function extractData(msg: any) {
  */
 function unwrapData(data: any): any {
   if (!data) return null;
+  
+  // Handle Claude format: {message: {status_code: 200, response_content: {...}}}
+  if (data.message && typeof data.message === 'object') {
+    const msg = data.message;
+    if (msg.status_code !== undefined) {
+      // Support both response_content and body fields
+      const content = msg.response_content || msg.body;
+      if (content !== undefined) {
+        return {
+          status_code: msg.status_code,
+          body: content,
+          response_content: content
+        };
+      }
+    }
+  }
+  
+  // Handle direct BrightData response format: {status_code: 200, body: {...}} or {status_code: 200, response_content: {...}}
+  if (data.status_code !== undefined) {
+    const content = data.body || data.response_content;
+    if (content !== undefined) {
+      return {
+        status_code: data.status_code,
+        body: content,
+        response_content: content
+      };
+    }
+  }
   
   // Format 1: Standard table format { columns: [], rows: [] }
   if (data.columns || (Array.isArray(data.rows) && data.rows.length > 0) || 
@@ -101,7 +122,7 @@ function initializeDarkMode() {
  * Escape HTML to prevent XSS attacks
  */
 function escapeHtml(str: any): string {
-  if (typeof str !== "string") return str;
+  if (typeof str !== "string") return String(str || '');
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
@@ -120,7 +141,7 @@ function showError(message: string) {
 /**
  * Show empty state message
  */
-function showEmpty(message: string = 'No product data available.') {
+function showEmpty(message: string = 'No products found.') {
   const app = document.getElementById('app');
   if (app) {
     app.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
@@ -128,132 +149,219 @@ function showEmpty(message: string = 'No product data available.') {
 }
 
 /* ============================================
-   TEMPLATE-SPECIFIC FUNCTIONS
+   TEMPLATE-SPECIFIC FUNCTIONS (Amazon Shopping)
    ============================================ */
 
 /**
- * Format price with currency symbol
+ * Extract products from BrightData API response
  */
-function formatPrice(price: number): string {
-  if (!price && price !== 0) return 'Price not available';
-  return `$${price.toFixed(2)}`;
-}
-
-/**
- * Format rating stars
- */
-function formatRating(rate: number): string {
-  const fullStars = Math.floor(rate);
-  const hasHalfStar = rate % 1 >= 0.5;
-  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-  
-  return '★'.repeat(fullStars) + 
-         (hasHalfStar ? '½' : '') + 
-         '☆'.repeat(emptyStars);
-}
-
-/**
- * Extract product data from API response
- */
-function extractProductData(data: any): any {
+function extractProducts(data: any): any[] {
   const unwrapped = unwrapData(data);
+  if (!unwrapped) return [];
+
+  // Handle BrightData format: {status_code: 200, body: [...]}
+  const content = unwrapped.body || unwrapped.response_content;
   
-  // Handle Fake Store API response format: { status_code: 200, body: {...} }
-  if (unwrapped?.body && typeof unwrapped.body === 'object') {
-    return unwrapped.body;
+  if (content && Array.isArray(content)) {
+    return content;
   }
   
-  // Handle direct product object
-  if (unwrapped?.title || unwrapped?.id) {
+  if (Array.isArray(unwrapped)) {
     return unwrapped;
   }
-  
-  // Handle array of products
-  if (Array.isArray(unwrapped) && unwrapped.length > 0) {
-    return unwrapped[0];
-  }
-  
-  return unwrapped;
+
+  return [];
 }
 
 /**
- * Capitalize first letter of each word
+ * Format price with currency
  */
-function capitalizeWords(str: string): string {
-  return str.replace(/\b\w/g, (char) => char.toUpperCase());
+function formatPrice(price: number | null | undefined, currency: string | null | undefined): string {
+  if (price === null || price === undefined || price === 0) return 'Price not available';
+  const currencySymbol = currency === 'AUD' ? 'A$' : currency === 'USD' ? '$' : currency || '$';
+  return `${currencySymbol}${price.toFixed(2)}`;
 }
 
-/* ============================================
-   TEMPLATE-SPECIFIC RENDER FUNCTION
-   ============================================ */
+/**
+ * Render star rating
+ */
+function renderStars(rating: number | null | undefined, numRatings: number | null | undefined): string {
+  if (!rating || rating === 0) return '<span class="no-rating">No ratings</span>';
+  
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  
+  let starsHtml = '';
+  for (let i = 0; i < fullStars; i++) {
+    starsHtml += '<span class="star star-full">★</span>';
+  }
+  if (hasHalfStar) {
+    starsHtml += '<span class="star star-half">★</span>';
+  }
+  for (let i = 0; i < emptyStars; i++) {
+    starsHtml += '<span class="star star-empty">★</span>';
+  }
+  
+  const ratingsText = numRatings ? `(${numRatings.toLocaleString()})` : '';
+  return `<div class="rating">${starsHtml} <span class="rating-text">${rating.toFixed(1)} ${ratingsText}</span></div>`;
+}
 
+/**
+ * Render product card
+ */
+function renderProductCard(product: any, index: number): string {
+  const asin = product.asin || '';
+  const url = product.url || '';
+  const name = product.name || 'Untitled Product';
+  const image = product.image || '';
+  const finalPrice = product.final_price;
+  const initialPrice = product.initial_price;
+  const currency = product.currency || 'AUD';
+  const rating = product.rating;
+  const numRatings = product.num_ratings;
+  const brand = product.brand || '';
+  const isPrime = product.is_prime || false;
+  const badge = product.badge || '';
+  const variations = product.variations || [];
+  const sponsored = product.sponsored === 'true' || product.sponsored === true;
+  
+  const hasDiscount = initialPrice && initialPrice > 0 && finalPrice && finalPrice < initialPrice;
+  const discountPercent = hasDiscount ? Math.round(((initialPrice - finalPrice) / initialPrice) * 100) : 0;
+  
+  return `
+    <div class="product-card" data-asin="${escapeHtml(asin)}">
+      <div class="product-image-container">
+        ${image ? `
+          <img 
+            src="${escapeHtml(image)}" 
+            alt="${escapeHtml(name)}" 
+            class="product-image"
+            loading="lazy"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="product-image-placeholder" style="display: none;">
+            <span>📦</span>
+          </div>
+        ` : `
+          <div class="product-image-placeholder">
+            <span>📦</span>
+          </div>
+        `}
+        ${sponsored ? '<div class="sponsored-badge">Sponsored</div>' : ''}
+        ${badge ? `<div class="product-badge">${escapeHtml(badge)}</div>` : ''}
+        ${hasDiscount ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
+      </div>
+      
+      <div class="product-info">
+        ${brand ? `<div class="product-brand">${escapeHtml(brand)}</div>` : ''}
+        
+        <h3 class="product-title">
+          <a href="${escapeHtml(url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            ${escapeHtml(name)}
+          </a>
+        </h3>
+        
+        ${renderStars(rating, numRatings)}
+        
+        <div class="product-price-section">
+          ${hasDiscount ? `
+            <div class="price-row">
+              <span class="price-final">${formatPrice(finalPrice, currency)}</span>
+              <span class="price-initial">${formatPrice(initialPrice, currency)}</span>
+            </div>
+          ` : `
+            <div class="price-row">
+              <span class="price-final">${formatPrice(finalPrice, currency)}</span>
+            </div>
+          `}
+        </div>
+        
+        ${isPrime ? '<div class="prime-badge">Prime</div>' : ''}
+        
+        ${variations.length > 0 ? `
+          <div class="product-variations">
+            <div class="variations-label">Available in:</div>
+            <div class="variations-list">
+              ${variations.slice(0, 5).map((v: any) => 
+                `<span class="variation-chip">${escapeHtml(v.name || v)}</span>`
+              ).join('')}
+              ${variations.length > 5 ? `<span class="variation-chip-more">+${variations.length - 5} more</span>` : ''}
+            </div>
+          </div>
+        ` : ''}
+        
+        <a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="product-link" onclick="event.stopPropagation()">
+          View on Amazon →
+        </a>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Main render function
+ */
 function renderData(data: any) {
   const app = document.getElementById('app');
   if (!app) return;
   
   if (!data) {
-    showEmpty('No product data received');
+    showEmpty('No data received');
     return;
   }
 
   try {
-    const product = extractProductData(data);
+    // Extract products
+    const products = extractProducts(data);
     
-    if (!product || !product.title) {
-      showEmpty('Invalid product data format');
+    if (!products || products.length === 0) {
+      showEmpty('No products found');
       return;
     }
+
+    // Filter out banner/sponsored products from main grid (optional)
+    const regularProducts = products.filter((p: any) => !p.is_banner_product || p.is_banner_product === false);
+    const bannerProducts = products.filter((p: any) => p.is_banner_product === true);
+
+    // Create container
+    const container = document.createElement('div');
+    container.className = 'amazon-container';
     
-    const {
-      id,
-      title,
-      price,
-      description,
-      category,
-      image,
-      rating
-    } = product;
-    
-    const ratingRate = rating?.rate || 0;
-    const ratingCount = rating?.count || 0;
-    
-    app.innerHTML = `
-      <div class="container">
-        <div class="product-card">
-          <div class="product-image">
-            <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy"
-                 onerror="this.classList.add('img-failed'); this.nextElementSibling?.classList.remove('img-placeholder-hidden');" />
-            <div class="img-placeholder img-placeholder-hidden" aria-hidden="true">Image unavailable</div>
+    // Header
+    const header = document.createElement('div');
+    header.className = 'header';
+    header.innerHTML = `
+      <div class="header-content">
+        <div class="header-title-row">
+          <div class="amazon-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.922 11.816c-.327-.327-.327-.857 0-1.184l5.816-5.816c.327-.327.857-.327 1.184 0s.327.857 0 1.184L12.106 12l5.816 5.816c.327.327.327.857 0 1.184s-.857.327-1.184 0L10.922 12.816c-.327-.327-.327-.857 0-1.184z"/>
+              <path d="M6.922 11.816c-.327-.327-.327-.857 0-1.184l5.816-5.816c.327-.327.857-.327 1.184 0s.327.857 0 1.184L8.106 12l5.816 5.816c.327.327.327.857 0 1.184s-.857.327-1.184 0L6.922 12.816c-.327-.327-.327-.857 0-1.184z"/>
+            </svg>
           </div>
-          
-          <div class="product-info">
-            <div class="product-header">
-              <span class="product-category">${escapeHtml(capitalizeWords(category || ''))}</span>
-              <span class="product-id">#${id}</span>
-            </div>
-            
-            <h1 class="product-title">${escapeHtml(title)}</h1>
-            
-            <div class="product-rating">
-              <span class="rating-stars">${formatRating(ratingRate)}</span>
-              <span class="rating-value">${ratingRate.toFixed(1)}</span>
-              <span class="rating-count">(${ratingCount} reviews)</span>
-            </div>
-            
-            <div class="product-price">
-              ${formatPrice(price)}
-            </div>
-            
-            ${description ? `
-              <div class="product-description">
-                <h3>Description</h3>
-                <p>${escapeHtml(description)}</p>
-              </div>
-            ` : ''}
-          </div>
+          <h1>Amazon Products</h1>
+        </div>
+        <div class="meta-info">
+          <span id="total-products">${products.length} product${products.length !== 1 ? 's' : ''} found</span>
         </div>
       </div>
     `;
+    container.appendChild(header);
+
+    // Products grid
+    const productsGrid = document.createElement('div');
+    productsGrid.className = 'products-grid';
+    productsGrid.id = 'products-grid';
+    
+    regularProducts.forEach((product: any, index: number) => {
+      productsGrid.innerHTML += renderProductCard(product, index);
+    });
+    
+    container.appendChild(productsGrid);
+
+    app.innerHTML = '';
+    app.appendChild(container);
     
     // Notify host of size change after rendering completes
     setTimeout(() => {
@@ -262,8 +370,7 @@ function renderData(data: any) {
     
   } catch (error: any) {
     console.error('Render error:', error);
-    showError(`Error rendering product data: ${error.message}`);
-    // Notify size even on error
+    showError(`Error rendering products: ${error.message}`);
     setTimeout(() => {
       notifySizeChanged();
     }, 50);
@@ -278,6 +385,17 @@ window.addEventListener('message', function(event: MessageEvent) {
   const msg = event.data;
   
   if (!msg || msg.jsonrpc !== '2.0') {
+    // Handle direct data (not wrapped in JSON-RPC)
+    if (msg && typeof msg === 'object') {
+      if (msg.message && msg.message.status_code !== undefined) {
+        renderData(msg);
+        return;
+      }
+      if (msg.status_code !== undefined || msg.body !== undefined || msg.response_content !== undefined) {
+        renderData(msg);
+        return;
+      }
+    }
     return;
   }
   
@@ -285,27 +403,23 @@ window.addEventListener('message', function(event: MessageEvent) {
   if (msg.id !== undefined && msg.method === 'ui/resource-teardown') {
     const reason = msg.params?.reason || 'Resource teardown requested';
     
-    // Clean up resources
-    // - Clear any timers
     if (sizeChangeTimeout) {
       clearTimeout(sizeChangeTimeout);
       sizeChangeTimeout = null;
     }
     
-    // - Disconnect observers
     if (resizeObserver) {
       resizeObserver.disconnect();
       resizeObserver = null;
     }
     
-    // Send response to host
     window.parent.postMessage({
       jsonrpc: "2.0",
       id: msg.id,
       result: {}
     }, '*');
     
-    return; // Don't process further
+    return;
   }
   
   if (msg.id !== undefined && !msg.method) {
@@ -329,45 +443,35 @@ window.addEventListener('message', function(event: MessageEvent) {
       } else if (msg.params?.theme === 'light') {
         document.body.classList.remove('dark');
       }
-      // Handle display mode changes
       if (msg.params?.displayMode) {
         handleDisplayModeChange(msg.params.displayMode);
       }
-      // Re-render if needed (e.g., for charts that need theme updates)
       break;
       
     case 'ui/notifications/tool-input':
-      // Tool input notification - Host MUST send this with complete tool arguments
       const toolArguments = msg.params?.arguments;
       if (toolArguments) {
-        // Store tool arguments for reference (may be needed for context)
         console.log('Tool input received:', toolArguments);
-        // Example: Could show loading state with input parameters
       }
       break;
       
     case 'ui/notifications/tool-cancelled':
-      // Tool cancellation notification - Host MUST send this if tool is cancelled
       const reason = msg.params?.reason || 'Tool execution was cancelled';
       showError(`Operation cancelled: ${reason}`);
-      // Clean up any ongoing operations
-      // - Stop timers
-      // - Cancel pending requests
-      // - Reset UI state
       break;
       
     case 'ui/notifications/initialized':
-      // Initialization notification (optional - handle if needed)
       break;
       
     default:
-      // Unknown method - try to extract data as fallback
       if (msg.params) {
         const fallbackData = msg.params.structuredContent || msg.params;
         if (fallbackData && fallbackData !== msg) {
           console.warn('Unknown method:', msg.method, '- attempting to render data');
           renderData(fallbackData);
         }
+      } else if (msg.message || msg.status_code || msg.body || msg.response_content) {
+        renderData(msg);
       }
   }
 });
@@ -394,7 +498,6 @@ function sendRequest(method: string, params: any): Promise<any> {
     };
     window.addEventListener('message', listener);
     
-    // Timeout after 5 seconds
     setTimeout(() => {
       window.removeEventListener('message', listener);
       reject(new Error('Request timeout'));
@@ -415,18 +518,23 @@ let currentDisplayMode = 'inline';
 function handleDisplayModeChange(mode: string) {
   currentDisplayMode = mode;
   if (mode === 'fullscreen') {
-    document.documentElement.classList.add('fullscreen-mode');
     document.body.classList.add('fullscreen-mode');
+    const container = document.querySelector('.amazon-container');
+    if (container) {
+      (container as HTMLElement).style.maxWidth = '100%';
+      (container as HTMLElement).style.padding = '20px';
+    }
   } else {
-    document.documentElement.classList.remove('fullscreen-mode');
     document.body.classList.remove('fullscreen-mode');
+    const container = document.querySelector('.amazon-container');
+    if (container) {
+      (container as HTMLElement).style.maxWidth = '';
+      (container as HTMLElement).style.padding = '';
+    }
   }
-  // Force a reflow to ensure CSS is applied before measuring
-  void document.body.offsetHeight;
-  // Notify host of size change after mode change with longer delay to ensure layout
   setTimeout(() => {
     notifySizeChanged();
-  }, 200);
+  }, 100);
 }
 
 function requestDisplayMode(mode: string): Promise<any> {
@@ -443,7 +551,6 @@ function requestDisplayMode(mode: string): Promise<any> {
     });
 }
 
-// Make function globally accessible for testing/debugging
 (window as any).requestDisplayMode = requestDisplayMode;
 
 /* ============================================
@@ -451,72 +558,8 @@ function requestDisplayMode(mode: string): Promise<any> {
    ============================================ */
 
 function notifySizeChanged() {
-  let width: number;
-  let height: number;
-  
-  // Double-check display mode from body class as well (more reliable)
-  const isFullscreen = currentDisplayMode === 'fullscreen' || document.body.classList.contains('fullscreen-mode');
-  
-  if (isFullscreen) {
-    // In fullscreen mode, report desired size based on content design
-    // Don't rely on constrained iframe measurements
-    const productCard = document.querySelector('.product-card');
-    
-    if (productCard) {
-      // Product card max-width in fullscreen is 1400px (or 1600px on large screens)
-      // Calculate desired width: card max-width + container padding
-      const cardStyle = window.getComputedStyle(productCard);
-      let cardMaxWidth = 1400; // Default max-width from CSS
-      
-      // Try to get actual max-width from computed style
-      const computedMaxWidth = cardStyle.maxWidth;
-      if (computedMaxWidth && computedMaxWidth !== 'none') {
-        const parsed = parseInt(computedMaxWidth);
-        if (!isNaN(parsed) && parsed > 0) {
-          cardMaxWidth = parsed;
-        }
-      }
-      
-      // Check if we're on a large screen (use media query logic)
-      if (window.matchMedia && window.matchMedia('(min-width: 1400px)').matches) {
-        cardMaxWidth = Math.max(cardMaxWidth, 1600);
-      }
-      
-      // Desired width = card max-width + container padding (24px * 2 = 48px)
-      width = cardMaxWidth + 48;
-      
-      // For height, measure actual content height (use the larger of scroll/offset)
-      const cardHeight = Math.max(
-        productCard.scrollHeight || 0,
-        productCard.offsetHeight || 0,
-        productCard.getBoundingClientRect().height || 0
-      );
-      const containerPadding = 48; // 24px top + 24px bottom
-      height = cardHeight + containerPadding;
-      
-      // Ensure reasonable minimums for fullscreen
-      width = Math.max(width, 1200);
-      height = Math.max(height, 600);
-    } else {
-      // No product card yet - use reasonable fullscreen defaults
-      width = 1200;
-      height = 800;
-    }
-  } else {
-    // In inline mode, use actual measured content size
-    const container = document.querySelector('.container');
-    if (container) {
-      width = Math.max(container.scrollWidth, container.offsetWidth);
-      height = Math.max(container.scrollHeight, container.offsetHeight);
-    } else {
-      width = document.body.scrollWidth || document.documentElement.scrollWidth;
-      height = document.body.scrollHeight || document.documentElement.scrollHeight;
-    }
-    
-    // Ensure minimum dimensions for inline mode
-    width = Math.max(width || 600, 600);
-    height = Math.max(height || 400, 400);
-  }
+  const width = document.body.scrollWidth || document.documentElement.scrollWidth;
+  const height = document.body.scrollHeight || document.documentElement.scrollHeight;
   
   sendNotification('ui/notifications/size-changed', {
     width: width,
@@ -524,7 +567,6 @@ function notifySizeChanged() {
   });
 }
 
-// Debounce function to avoid too many notifications
 let sizeChangeTimeout: NodeJS.Timeout | null = null;
 function debouncedNotifySizeChanged() {
   if (sizeChangeTimeout) {
@@ -532,10 +574,9 @@ function debouncedNotifySizeChanged() {
   }
   sizeChangeTimeout = setTimeout(() => {
     notifySizeChanged();
-  }, 100); // Wait 100ms after last change
+  }, 100);
 }
 
-// Use ResizeObserver to detect size changes
 let resizeObserver: ResizeObserver | null = null;
 function setupSizeObserver() {
   if (typeof ResizeObserver !== 'undefined') {
@@ -544,7 +585,6 @@ function setupSizeObserver() {
     });
     resizeObserver.observe(document.body);
   } else {
-    // Fallback: use window resize and mutation observer
     window.addEventListener('resize', debouncedNotifySizeChanged);
     const mutationObserver = new MutationObserver(debouncedNotifySizeChanged);
     mutationObserver.observe(document.body, {
@@ -555,7 +595,6 @@ function setupSizeObserver() {
     });
   }
   
-  // Send initial size after a short delay to ensure content is rendered
   setTimeout(() => {
     notifySizeChanged();
   }, 100);
@@ -565,7 +604,6 @@ function setupSizeObserver() {
    INITIALIZATION
    ============================================ */
 
-// Initialize MCP App - REQUIRED for MCP Apps protocol
 sendRequest('ui/initialize', {
   appCapabilities: {
     availableDisplayModes: ["inline", "fullscreen"]
@@ -576,26 +614,18 @@ sendRequest('ui/initialize', {
   },
   protocolVersion: PROTOCOL_VERSION
 }).then((result: any) => {
-  // Extract host context from initialization result
   const ctx = result.hostContext || result;
-  
-  // Extract host capabilities for future use
   const hostCapabilities = result.hostCapabilities;
   
-  // Send initialized notification after successful initialization
   sendNotification('ui/notifications/initialized', {});
-  
-  // Apply theme from host context
   if (ctx?.theme === 'dark') {
     document.body.classList.add('dark');
   } else if (ctx?.theme === 'light') {
     document.body.classList.remove('dark');
   }
-  // Handle display mode from host context
   if (ctx?.displayMode) {
     handleDisplayModeChange(ctx.displayMode);
   }
-  // Handle container dimensions if provided
   if (ctx?.containerDimensions) {
     const dims = ctx.containerDimensions;
     if (dims.width) {
@@ -613,15 +643,9 @@ sendRequest('ui/initialize', {
   }
 }).catch(err => {
   console.warn('Failed to initialize MCP App:', err);
-  // Fallback to system preference if initialization fails
 });
 
 initializeDarkMode();
-
-// Setup size observer to notify host of content size changes
-// This is critical for the host to properly size the iframe
 setupSizeObserver();
 
-// Export empty object to ensure this file is treated as an ES module
-// This prevents TypeScript from treating top-level declarations as global
 export {};

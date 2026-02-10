@@ -61,6 +61,7 @@ body.fullscreen-mode .product-card {
 
 /* Product Image */
 .product-image {
+  position: relative;
   width: 100%;
   aspect-ratio: 1;
   background: #f5f7fa;
@@ -72,6 +73,30 @@ body.fullscreen-mode .product-card {
 
 body.dark .product-image {
   background: #0f1419;
+}
+
+.product-image img.img-failed {
+  display: none;
+}
+
+.product-image .img-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+.product-image .img-placeholder-hidden {
+  display: none;
+}
+
+body.dark .product-image .img-placeholder {
+  color: #9ca3af;
 }
 
 .product-image img {

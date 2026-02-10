@@ -20,7 +20,7 @@ A simple, clean horizontal scrollable catalog layout for Shopify products, inspi
 
 ### Header
 - **Logo**: Simple logo with "Z" icon
-- **App Title**: "Zen Shopping" branding
+- **App Title**: "Shopify Shopping" branding
 - **Action Buttons**: Like/Dislike buttons (UI only, can be extended)
 
 ## 📊 Data Format
