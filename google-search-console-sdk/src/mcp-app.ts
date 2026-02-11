@@ -1,6 +1,12 @@
 /* ============================================
-   Google Search Console MCP App (SDK Version)
-   Uses @modelcontextprotocol/ext-apps SDK
+   Google Search Console MCP App (SDK Utilities Version)
+   ============================================
+
+   Uses @modelcontextprotocol/ext-apps SDK for utilities only
+   (theme helpers, types, auto-resize).
+
+   Manual message handling for proxy compatibility.
+   Works seamlessly with run-action.html proxy layer.
    ============================================ */
 
 import {
@@ -20,15 +26,34 @@ const APP_NAME = "Google Search Console";
 const APP_VERSION = "1.0.0";
 
 const CHART_COLORS = [
-  "#4285f4", "#34a853", "#fbbc04", "#ea4335",
-  "#8ab4f8", "#81c995", "#fdd663", "#f28b82",
-  "#669df6", "#66bb6a", "#ffc107", "#ef5350",
+  "#4285f4",
+  "#34a853",
+  "#fbbc04",
+  "#ea4335",
+  "#8ab4f8",
+  "#81c995",
+  "#fdd663",
+  "#f28b82",
+  "#669df6",
+  "#66bb6a",
+  "#ffc107",
+  "#ef5350",
 ];
 
 function unwrapData(data: any): any {
   if (!data) return null;
-  if (data.columns || (Array.isArray(data.rows) && data.rows.length > 0) ||
-      (typeof data === "object" && !data.message)) {
+
+  // Handle nested rows object: { rows: { columns: [...], rows: [...] } }
+  if (data.rows && typeof data.rows === 'object' && !Array.isArray(data.rows) &&
+      data.rows.columns && data.rows.rows) {
+    return data.rows;
+  }
+
+  if (
+    data.columns ||
+    (Array.isArray(data.rows) && data.rows.length > 0) ||
+    (typeof data === "object" && !data.message)
+  ) {
     return data;
   }
   if (data.message?.template_data) return data.message.template_data;
@@ -61,7 +86,10 @@ function showEmpty(message: string = "No data available.") {
   if (app) app.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
 }
 
-function showChartError(container: Element | null | undefined, message: string) {
+function showChartError(
+  container: Element | null | undefined,
+  message: string,
+) {
   if (!container) return;
   const wrapper = container.querySelector(".chart-wrapper");
   if (wrapper) {
@@ -87,8 +115,12 @@ function formatPercentage(num: number | null | undefined): string {
   return (num * 100).toFixed(2) + "%";
 }
 
-function calculateTrend(current: number, previous: number): { value: number; percentage: number; direction: "up" | "down" | "neutral" } {
-  if (!previous || previous === 0) return { value: 0, percentage: 0, direction: "neutral" };
+function calculateTrend(
+  current: number,
+  previous: number,
+): { value: number; percentage: number; direction: "up" | "down" | "neutral" } {
+  if (!previous || previous === 0)
+    return { value: 0, percentage: 0, direction: "neutral" };
   const change = current - previous;
   const percentage = (change / previous) * 100;
   return {
@@ -98,7 +130,12 @@ function calculateTrend(current: number, previous: number): { value: number; per
   };
 }
 
-function animateCounter(element: HTMLElement, start: number, end: number, duration: number = 1000) {
+function animateCounter(
+  element: HTMLElement,
+  start: number,
+  end: number,
+  duration: number = 1000,
+) {
   const startTime = performance.now();
   const isPercentage = element.textContent?.includes("%");
   function update(currentTime: number) {
@@ -106,14 +143,23 @@ function animateCounter(element: HTMLElement, start: number, end: number, durati
     const progress = Math.min(elapsed / duration, 1);
     const easeOutQuart = 1 - Math.pow(1 - progress, 4);
     const current = start + (end - start) * easeOutQuart;
-    element.textContent = isPercentage ? current.toFixed(2) + "%" : formatNumber(Math.floor(current));
+    element.textContent = isPercentage
+      ? current.toFixed(2) + "%"
+      : formatNumber(Math.floor(current));
     if (progress < 1) requestAnimationFrame(update);
-    else element.textContent = isPercentage ? formatPercentage(end) : formatNumber(end);
+    else
+      element.textContent = isPercentage
+        ? formatPercentage(end)
+        : formatNumber(end);
   }
   requestAnimationFrame(update);
 }
 
-function createSparkline(container: HTMLElement, data: number[], color: string) {
+function createSparkline(
+  container: HTMLElement,
+  data: number[],
+  color: string,
+) {
   if (!data || data.length === 0) return;
   container.innerHTML = "";
   const width = container.offsetWidth || 100;
@@ -126,12 +172,19 @@ function createSparkline(container: HTMLElement, data: number[], color: string) 
   svg.setAttribute("width", "100%");
   svg.setAttribute("height", String(height));
   svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-  const points = data.map((value, index) => {
-    const x = padding + (index / (data.length - 1 || 1)) * (width - padding * 2);
-    const y = height - padding - ((value - min) / range) * (height - padding * 2);
-    return `${x},${y}`;
-  }).join(" ");
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+  const points = data
+    .map((value, index) => {
+      const x =
+        padding + (index / (data.length - 1 || 1)) * (width - padding * 2);
+      const y =
+        height - padding - ((value - min) / range) * (height - padding * 2);
+      return `${x},${y}`;
+    })
+    .join(" ");
+  const path = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "polyline",
+  );
   path.setAttribute("points", points);
   path.setAttribute("fill", "none");
   path.setAttribute("stroke", color);
@@ -142,24 +195,40 @@ function createSparkline(container: HTMLElement, data: number[], color: string) 
   container.appendChild(svg);
 }
 
-function exportToCSV(tableData: any, filename: string = "search-console-data.csv") {
+function exportToCSV(
+  tableData: any,
+  filename: string = "search-console-data.csv",
+) {
   if (!tableData?.columns || !tableData?.rows) return;
   const headers = tableData.columns.join(",");
-  const rows = tableData.rows.map((row: any[]) =>
-    row.map((cell: any) => {
-      const str = String(cell ?? "");
-      return str.includes(",") || str.includes('"') || str.includes("\n") ? `"${str.replace(/"/g, '""')}"` : str;
-    }).join(",")
-  ).join("\n");
-  const blob = new Blob([headers + "\n" + rows], { type: "text/csv;charset=utf-8;" });
+  const rows = tableData.rows
+    .map((row: any[]) =>
+      row
+        .map((cell: any) => {
+          const str = String(cell ?? "");
+          return str.includes(",") || str.includes('"') || str.includes("\n")
+            ? `"${str.replace(/"/g, '""')}"`
+            : str;
+        })
+        .join(","),
+    )
+    .join("\n");
+  const blob = new Blob([headers + "\n" + rows], {
+    type: "text/csv;charset=utf-8;",
+  });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = filename;
   link.click();
 }
 
-function exportToJSON(data: any, filename: string = "search-console-data.json") {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json;charset=utf-8;" });
+function exportToJSON(
+  data: any,
+  filename: string = "search-console-data.json",
+) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: "application/json;charset=utf-8;",
+  });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = filename;
@@ -180,7 +249,8 @@ function normalizeTableData(data: any) {
       if (firstRow.keys && Array.isArray(firstRow.keys)) {
         columns.push("Date");
         Object.keys(firstRow).forEach((key) => {
-          if (key !== "keys") columns.push(key.charAt(0).toUpperCase() + key.slice(1));
+          if (key !== "keys")
+            columns.push(key.charAt(0).toUpperCase() + key.slice(1));
         });
         unwrapped.rows.forEach((row: any) => {
           const rowArray = [row.keys?.[0] ?? ""];
@@ -191,10 +261,12 @@ function normalizeTableData(data: any) {
         });
       } else {
         Object.keys(firstRow).forEach((key) =>
-          columns.push(key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " "))
+          columns.push(
+            key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " "),
+          ),
         );
         unwrapped.rows.forEach((row: any) =>
-          rows.push(Object.keys(firstRow).map((key) => row[key]))
+          rows.push(Object.keys(firstRow).map((key) => row[key])),
         );
       }
       return { columns, rows };
@@ -204,16 +276,22 @@ function normalizeTableData(data: any) {
 }
 
 function calculateSummary(tableData: any) {
-  if (!tableData?.columns || !tableData?.rows || tableData.rows.length === 0) return null;
+  if (!tableData?.columns || !tableData?.rows || tableData.rows.length === 0)
+    return null;
   const columns = tableData.columns;
   const rows = tableData.rows;
-  const summary: Record<string, { total: number; average: number; max: number; min: number; count: number }> = {};
+  const summary: Record<
+    string,
+    { total: number; average: number; max: number; min: number; count: number }
+  > = {};
   for (let i = 1; i < columns.length; i++) {
     const colName = columns[i];
-    const values = rows.map((row: any[]) => {
-      const val = row[i];
-      return typeof val === "number" ? val : parseFloat(val) || 0;
-    }).filter((v: number) => !isNaN(v));
+    const values = rows
+      .map((row: any[]) => {
+        const val = row[i];
+        return typeof val === "number" ? val : parseFloat(val) || 0;
+      })
+      .filter((v: number) => !isNaN(v));
     if (values.length > 0) {
       const sum = values.reduce((a: number, b: number) => a + b, 0);
       summary[colName] = {
@@ -229,7 +307,8 @@ function calculateSummary(tableData: any) {
 }
 
 function normalizeLineChartData(tableData: any) {
-  if (!tableData?.columns || !tableData?.rows || tableData.rows.length === 0) return null;
+  if (!tableData?.columns || !tableData?.rows || tableData.rows.length === 0)
+    return null;
   const columns = tableData.columns;
   const rows = tableData.rows;
   const labels = rows.map((row: any[]) => String(row[0] ?? ""));
@@ -247,7 +326,8 @@ function normalizeLineChartData(tableData: any) {
 }
 
 function normalizePieChartData(tableData: any) {
-  if (!tableData?.columns || !tableData?.rows || tableData.rows.length === 0) return null;
+  if (!tableData?.columns || !tableData?.rows || tableData.rows.length === 0)
+    return null;
   const columns = tableData.columns;
   const rows = tableData.rows;
   const labels = rows.map((row: any[]) => String(row[0] ?? ""));
@@ -266,16 +346,26 @@ function normalizePieChartData(tableData: any) {
   return { labels, values };
 }
 
-const iconGoogleSearchConsole = () => `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
-const iconClick = () => `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 9V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-4 4v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2M9 9h6m-6 6h6"/></svg>`;
-const iconImpression = () => `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s5-8 11-8 11 8 11 8-5 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
-const iconPosition = () => `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>`;
-const iconCTR = () => `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 7l5 5-5 5"/><path d="M6 7l5 5-5 5"/></svg>`;
-const iconDownload = () => `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
-const iconTable = () => `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>`;
-const iconChart = () => `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`;
-const iconTrendUp = () => `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`;
-const iconTrendDown = () => `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>`;
+const iconGoogleSearchConsole = () =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+const iconClick = () =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 9V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-4 4v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2M9 9h6m-6 6h6"/></svg>`;
+const iconImpression = () =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s5-8 11-8 11 8 11 8-5 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+const iconPosition = () =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>`;
+const iconCTR = () =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 7l5 5-5 5"/><path d="M6 7l5 5-5 5"/></svg>`;
+const iconDownload = () =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+const iconTable = () =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>`;
+const iconChart = () =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`;
+const iconTrendUp = () =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`;
+const iconTrendDown = () =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>`;
 
 let lineChartInstance: Chart | null = null;
 let pieChartInstance: Chart | null = null;
@@ -287,11 +377,17 @@ function getChartColors() {
     textColor: isDark ? "#9aa0a6" : "#5f6368",
     backgroundColor: isDark ? "#202124" : "#ffffff",
     tooltipBg: isDark ? "rgba(32, 33, 36, 0.95)" : "rgba(255, 255, 255, 0.98)",
-    tooltipBorder: isDark ? "rgba(66, 133, 244, 0.3)" : "rgba(66, 133, 244, 0.2)",
+    tooltipBorder: isDark
+      ? "rgba(66, 133, 244, 0.3)"
+      : "rgba(66, 133, 244, 0.2)",
   };
 }
 
-function createGradient(ctx: CanvasRenderingContext2D, color: string, height: number): CanvasGradient {
+function createGradient(
+  ctx: CanvasRenderingContext2D,
+  color: string,
+  height: number,
+): CanvasGradient {
   const gradient = ctx.createLinearGradient(0, 0, 0, height);
   const isDark = document.body.classList.contains("dark");
   const r = parseInt(color.slice(1, 3), 16);
@@ -303,14 +399,20 @@ function createGradient(ctx: CanvasRenderingContext2D, color: string, height: nu
   return gradient;
 }
 
-function renderLineChart(canvas: HTMLCanvasElement, chartData: { labels: string[]; series: { name: string; data: number[] }[] }, visibleSeries: Set<number> | null = null) {
+function renderLineChart(
+  canvas: HTMLCanvasElement,
+  chartData: { labels: string[]; series: { name: string; data: number[] }[] },
+  visibleSeries: Set<number> | null = null,
+) {
   if (lineChartInstance) {
     lineChartInstance.destroy();
     lineChartInstance = null;
   }
   const { labels, series } = chartData;
   if (!labels?.length || !series?.length || !canvas?.getContext) return;
-  const activeSeries = visibleSeries ? series.filter((_, i) => visibleSeries.has(i)) : series;
+  const activeSeries = visibleSeries
+    ? series.filter((_, i) => visibleSeries.has(i))
+    : series;
   const colors = getChartColors();
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -349,7 +451,8 @@ function renderLineChart(canvas: HTMLCanvasElement, chartData: { labels: string[
           borderColor: colors.tooltipBorder,
           borderWidth: 2,
           callbacks: {
-            label: (ctx: any) => `${ctx.dataset.label}: ${formatNumber(ctx.parsed.y)}`,
+            label: (ctx: any) =>
+              `${ctx.dataset.label}: ${formatNumber(ctx.parsed.y)}`,
           },
         },
       },
@@ -379,7 +482,11 @@ function renderLineChart(canvas: HTMLCanvasElement, chartData: { labels: string[
   });
 }
 
-function renderPieChart(canvas: HTMLCanvasElement, values: number[], labels: string[] | null = null) {
+function renderPieChart(
+  canvas: HTMLCanvasElement,
+  values: number[],
+  labels: string[] | null = null,
+) {
   if (pieChartInstance) {
     pieChartInstance.destroy();
     pieChartInstance = null;
@@ -392,13 +499,15 @@ function renderPieChart(canvas: HTMLCanvasElement, values: number[], labels: str
     type: "pie",
     data: {
       labels: labels ?? values.map((_, i) => `Item ${i + 1}`),
-      datasets: [{
-        data: values,
-        backgroundColor: pieColors,
-        borderColor: isDark ? "rgba(26, 29, 36, 0.8)" : "#ffffff",
-        borderWidth: 3,
-        hoverOffset: 12,
-      }],
+      datasets: [
+        {
+          data: values,
+          backgroundColor: pieColors,
+          borderColor: isDark ? "rgba(26, 29, 36, 0.8)" : "#ffffff",
+          borderWidth: 3,
+          hoverOffset: 12,
+        },
+      ],
     },
     options: {
       responsive: true,
@@ -413,8 +522,12 @@ function renderPieChart(canvas: HTMLCanvasElement, values: number[], labels: str
           borderWidth: 2,
           callbacks: {
             label: (ctx: any) => {
-              const total = (ctx.dataset.data as number[]).reduce((a: number, b: number) => a + b, 0);
-              const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : "0";
+              const total = (ctx.dataset.data as number[]).reduce(
+                (a: number, b: number) => a + b,
+                0,
+              );
+              const pct =
+                total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : "0";
               return `${ctx.label}: ${formatNumber(ctx.parsed)} (${pct}%)`;
             },
           },
@@ -431,15 +544,20 @@ function sortTable(table: HTMLTableElement, columnIndex: number) {
   const header = table.querySelector(`th[data-column="${columnIndex}"]`);
   if (!header) return;
   const isAscending = header.classList.contains("sort-asc");
-  table.querySelectorAll("th").forEach((th) => th.classList.remove("sort-asc", "sort-desc"));
+  table
+    .querySelectorAll("th")
+    .forEach((th) => th.classList.remove("sort-asc", "sort-desc"));
   header.classList.add(isAscending ? "sort-desc" : "sort-asc");
   rows.sort((a, b) => {
     const aCell = a.cells[columnIndex]?.textContent ?? "";
     const bCell = b.cells[columnIndex]?.textContent ?? "";
     const aNum = parseFloat(String(aCell).replace(/[^0-9.-]/g, ""));
     const bNum = parseFloat(String(bCell).replace(/[^0-9.-]/g, ""));
-    if (!isNaN(aNum) && !isNaN(bNum)) return isAscending ? bNum - aNum : aNum - bNum;
-    return isAscending ? (bCell as string).localeCompare(aCell as string) : (aCell as string).localeCompare(bCell as string);
+    if (!isNaN(aNum) && !isNaN(bNum))
+      return isAscending ? bNum - aNum : aNum - bNum;
+    return isAscending
+      ? (bCell as string).localeCompare(aCell as string)
+      : (aCell as string).localeCompare(bCell as string);
   });
   rows.forEach((row) => tbody.appendChild(row));
 }
@@ -447,22 +565,28 @@ function sortTable(table: HTMLTableElement, columnIndex: number) {
 function setupToolbarInteractions(tableData: any) {
   document.querySelectorAll(".date-preset-btn").forEach((btn) => {
     btn.addEventListener("click", function (this: HTMLElement) {
-      document.querySelectorAll(".date-preset-btn").forEach((b) => b.classList.remove("active"));
+      document
+        .querySelectorAll(".date-preset-btn")
+        .forEach((b) => b.classList.remove("active"));
       this.classList.add("active");
     });
   });
   document.querySelectorAll(".view-toggle-btn").forEach((btn) => {
     btn.addEventListener("click", function (this: HTMLElement) {
       const view = this.dataset.view;
-      document.querySelectorAll(".view-toggle-btn").forEach((b) => b.classList.remove("active"));
+      document
+        .querySelectorAll(".view-toggle-btn")
+        .forEach((b) => b.classList.remove("active"));
       this.classList.add("active");
       const chartsContainer = document.querySelector(".charts-grid");
       const tableContainer = document.getElementById("data-table-container");
       if (view === "table") {
-        if (chartsContainer) (chartsContainer as HTMLElement).style.display = "none";
+        if (chartsContainer)
+          (chartsContainer as HTMLElement).style.display = "none";
         if (tableContainer) tableContainer.style.display = "block";
       } else {
-        if (chartsContainer) (chartsContainer as HTMLElement).style.display = "grid";
+        if (chartsContainer)
+          (chartsContainer as HTMLElement).style.display = "grid";
         if (tableContainer) tableContainer.style.display = "none";
       }
     });
@@ -470,10 +594,14 @@ function setupToolbarInteractions(tableData: any) {
   document.querySelectorAll(".filter-chip").forEach((chip) => {
     chip.addEventListener("click", function (this: HTMLElement) {
       if (this.dataset.filter === "all") {
-        document.querySelectorAll(".filter-chip").forEach((c) => c.classList.remove("active"));
+        document
+          .querySelectorAll(".filter-chip")
+          .forEach((c) => c.classList.remove("active"));
         this.classList.add("active");
       } else {
-        document.querySelectorAll(".filter-chip").forEach((c) => { if (c.dataset.filter === "all") c.classList.remove("active"); });
+        document.querySelectorAll(".filter-chip").forEach((c) => {
+          if (c.dataset.filter === "all") c.classList.remove("active");
+        });
         this.classList.toggle("active");
       }
     });
@@ -497,6 +625,7 @@ function renderData(data: any) {
     return;
   }
   try {
+    console.log(data);
     const tableData = normalizeTableData(data);
     if (!tableData?.rows?.length) {
       showEmpty("No valid data available");
@@ -554,11 +683,23 @@ function renderData(data: any) {
       const cardsContainer = document.createElement("div");
       cardsContainer.className = "summary-cards";
       const summaryKeys = Object.keys(summary);
-      const clickKey = summaryKeys.find((k) => k.toLowerCase().includes("click") && !k.toLowerCase().includes("ctr"));
-      const impressionKey = summaryKeys.find((k) => k.toLowerCase().includes("impression"));
-      const positionKey = summaryKeys.find((k) => k.toLowerCase().includes("position"));
-      const ctrKey = summaryKeys.find((k) => k.toLowerCase().includes("ctr") || k.toLowerCase() === "click-through rate");
-      const hasSpecialMetrics = clickKey && impressionKey && positionKey && ctrKey;
+      const clickKey = summaryKeys.find(
+        (k) =>
+          k.toLowerCase().includes("click") && !k.toLowerCase().includes("ctr"),
+      );
+      const impressionKey = summaryKeys.find((k) =>
+        k.toLowerCase().includes("impression"),
+      );
+      const positionKey = summaryKeys.find((k) =>
+        k.toLowerCase().includes("position"),
+      );
+      const ctrKey = summaryKeys.find(
+        (k) =>
+          k.toLowerCase().includes("ctr") ||
+          k.toLowerCase() === "click-through rate",
+      );
+      const hasSpecialMetrics =
+        clickKey && impressionKey && positionKey && ctrKey;
 
       const getIcon = (type: string) => {
         if (type === "click") return iconClick();
@@ -567,7 +708,11 @@ function renderData(data: any) {
         if (type === "ctr") return iconCTR();
         return "";
       };
-      const createMetricItem = (key: string, stat: { total: number; average: number }, type: string) => {
+      const createMetricItem = (
+        key: string,
+        stat: { total: number; average: number },
+        type: string,
+      ) => {
         const div = document.createElement("div");
         div.className = `metric-item ${type}`;
         let displayValue = formatNumber(stat.total);
@@ -582,13 +727,37 @@ function renderData(data: any) {
         let sparklineData: number[] = [];
         if (colIdx >= 0 && rows.length >= 2) {
           const mid = Math.floor(rows.length / 2) || 1;
-          const firstHalf = rows.slice(0, mid).reduce((s: number, row: any[]) => s + (parseFloat(row[colIdx]) || 0), 0) / mid;
-          const secondHalf = rows.slice(mid).reduce((s: number, row: any[]) => s + (parseFloat(row[colIdx]) || 0), 0) / Math.max(rows.length - mid, 1);
+          const firstHalf =
+            rows
+              .slice(0, mid)
+              .reduce(
+                (s: number, row: any[]) => s + (parseFloat(row[colIdx]) || 0),
+                0,
+              ) / mid;
+          const secondHalf =
+            rows
+              .slice(mid)
+              .reduce(
+                (s: number, row: any[]) => s + (parseFloat(row[colIdx]) || 0),
+                0,
+              ) / Math.max(rows.length - mid, 1);
           trend = calculateTrend(secondHalf, firstHalf);
-          sparklineData = rows.map((row: any[]) => parseFloat(row[colIdx]) || 0);
+          sparklineData = rows.map(
+            (row: any[]) => parseFloat(row[colIdx]) || 0,
+          );
         }
-        const trendIcon = trend.direction === "up" ? iconTrendUp() : trend.direction === "down" ? iconTrendDown() : "";
-        const trendClass = trend.direction === "up" ? "trend-up" : trend.direction === "down" ? "trend-down" : "trend-neutral";
+        const trendIcon =
+          trend.direction === "up"
+            ? iconTrendUp()
+            : trend.direction === "down"
+              ? iconTrendDown()
+              : "";
+        const trendClass =
+          trend.direction === "up"
+            ? "trend-up"
+            : trend.direction === "down"
+              ? "trend-down"
+              : "trend-neutral";
         div.innerHTML = `
           <div class="metric-icon"><span class="icon-inline">${getIcon(type)}</span></div>
           <div class="metric-content">
@@ -599,35 +768,71 @@ function renderData(data: any) {
           </div>
         `;
         const valueEl = div.querySelector(".metric-value") as HTMLElement;
-        const sparkEl = div.querySelector(".sparkline-container") as HTMLElement;
-        if (valueEl) setTimeout(() => animateCounter(valueEl, 0, type === "ctr" ? stat.average * 100 : stat.total, 1000), 100);
-        if (sparkEl && sparklineData.length) setTimeout(() => createSparkline(sparkEl, sparklineData, sparkEl.dataset.color || "#4285f4"), 100);
+        const sparkEl = div.querySelector(
+          ".sparkline-container",
+        ) as HTMLElement;
+        if (valueEl)
+          setTimeout(
+            () =>
+              animateCounter(
+                valueEl,
+                0,
+                type === "ctr" ? stat.average * 100 : stat.total,
+                1000,
+              ),
+            100,
+          );
+        if (sparkEl && sparklineData.length)
+          setTimeout(
+            () =>
+              createSparkline(
+                sparkEl,
+                sparklineData,
+                sparkEl.dataset.color || "#4285f4",
+              ),
+            100,
+          );
         return div;
       };
 
       if (hasSpecialMetrics) {
         const horizontalCard = document.createElement("div");
         horizontalCard.className = "summary-card horizontal-card";
-        horizontalCard.appendChild(createMetricItem(clickKey, summary[clickKey], "click"));
-        horizontalCard.appendChild(createMetricItem(impressionKey, summary[impressionKey], "impression"));
-        horizontalCard.appendChild(createMetricItem(positionKey, summary[positionKey], "position"));
-        horizontalCard.appendChild(createMetricItem(ctrKey, summary[ctrKey], "ctr"));
+        horizontalCard.appendChild(
+          createMetricItem(clickKey, summary[clickKey], "click"),
+        );
+        horizontalCard.appendChild(
+          createMetricItem(impressionKey, summary[impressionKey], "impression"),
+        );
+        horizontalCard.appendChild(
+          createMetricItem(positionKey, summary[positionKey], "position"),
+        );
+        horizontalCard.appendChild(
+          createMetricItem(ctrKey, summary[ctrKey], "ctr"),
+        );
         cardsContainer.appendChild(horizontalCard);
         cardsContainer.classList.add("horizontal-layout");
       }
-      summaryKeys.filter((k) => !hasSpecialMetrics || ![clickKey, impressionKey, positionKey, ctrKey].includes(k)).slice(0, 4).forEach((key) => {
-        const stat = summary[key];
-        const card = document.createElement("div");
-        card.className = "summary-card";
-        card.innerHTML = `
+      summaryKeys
+        .filter(
+          (k) =>
+            !hasSpecialMetrics ||
+            ![clickKey, impressionKey, positionKey, ctrKey].includes(k),
+        )
+        .slice(0, 4)
+        .forEach((key) => {
+          const stat = summary[key];
+          const card = document.createElement("div");
+          card.className = "summary-card";
+          card.innerHTML = `
           <div class="card-label">${escapeHtml(key)}</div>
           <div class="card-value">${formatNumber(stat.total)}</div>
           <div class="card-change">Avg: ${formatNumber(Number(stat.average.toFixed(2)))}</div>
           <div class="card-details"><div>Max: ${formatNumber(stat.max)}</div><div>Min: ${formatNumber(stat.min)}</div><div>Count: ${stat.count}</div></div>
         `;
-        card.addEventListener("click", () => card.classList.toggle("active"));
-        cardsContainer.appendChild(card);
-      });
+          card.addEventListener("click", () => card.classList.toggle("active"));
+          cardsContainer.appendChild(card);
+        });
       container.appendChild(cardsContainer);
     }
 
@@ -723,7 +928,8 @@ function renderData(data: any) {
       const tr = document.createElement("tr");
       row.forEach((cell: any) => {
         const td = document.createElement("td");
-        td.textContent = typeof cell === "number" ? formatNumber(cell) : String(cell ?? "");
+        td.textContent =
+          typeof cell === "number" ? formatNumber(cell) : String(cell ?? "");
         tr.appendChild(td);
       });
       tbody.appendChild(tr);
@@ -750,22 +956,36 @@ function renderData(data: any) {
 
     setTimeout(() => {
       if (lineChartData?.series?.length) {
-        const lineCanvas = document.getElementById("linechart") as HTMLCanvasElement;
+        const lineCanvas = document.getElementById(
+          "linechart",
+        ) as HTMLCanvasElement;
         if (lineCanvas) {
           try {
-            renderLineChart(lineCanvas, lineChartData, new Set(lineChartData.series.map((_, i) => i)));
+            renderLineChart(
+              lineCanvas,
+              lineChartData,
+              new Set(lineChartData.series.map((_, i) => i)),
+            );
           } catch (e) {
-            showChartError(lineCanvas.closest(".chart-card"), (e as Error).message);
+            showChartError(
+              lineCanvas.closest(".chart-card"),
+              (e as Error).message,
+            );
           }
         }
       }
       if (pieChartData?.values?.length) {
-        const pieCanvas = document.getElementById("piechart") as HTMLCanvasElement;
+        const pieCanvas = document.getElementById(
+          "piechart",
+        ) as HTMLCanvasElement;
         if (pieCanvas) {
           try {
             renderPieChart(pieCanvas, pieChartData.values, pieChartData.labels);
           } catch (e) {
-            showChartError(pieCanvas.closest(".chart-card"), (e as Error).message);
+            showChartError(
+              pieCanvas.closest(".chart-card"),
+              (e as Error).message,
+            );
           }
         }
       }
@@ -776,75 +996,170 @@ function renderData(data: any) {
   }
 }
 
+/* ============================================
+   SDK UTILITIES ONLY (NO CONNECTION)
+   ============================================
+
+   We use the SDK only for utilities (theme helpers, types).
+   Message handling is done manually to work with the proxy.
+   ============================================ */
+
+// Create app instance for utilities only (we won't call connect())
 const app = new App({ name: APP_NAME, version: APP_VERSION });
 
-app.ontoolresult = (result: CallToolResult) => {
-  const data = result.structuredContent ?? result;
-  renderData(data);
-};
+/* ============================================
+   DIRECT MESSAGE HANDLING
+   ============================================
 
-app.ontoolinput = () => {};
+   Handle messages manually to work with the proxy layer.
+   The proxy already handles ui/initialize, so we just listen for notifications.
+   ============================================ */
 
-app.onhostcontextchanged = (ctx: McpUiHostContext) => {
-  if (ctx.theme) applyDocumentTheme(ctx.theme);
-  if (ctx.styles?.css?.fonts) applyHostFonts(ctx.styles.css.fonts);
-  if (ctx.styles?.variables) applyHostStyleVariables(ctx.styles.variables);
-  if (ctx.displayMode === "fullscreen") document.body.classList.add("fullscreen-mode");
-  else document.body.classList.remove("fullscreen-mode");
-  const lineCanvas = document.getElementById("linechart") as HTMLCanvasElement;
-  const pieCanvas = document.getElementById("piechart") as HTMLCanvasElement;
-  if (lineCanvas && lineChartInstance) {
-    const chartData = (lineChartInstance as any).data;
-    const visibleSeries = new Set<number>();
-    document.querySelectorAll(".legend-item:not(.disabled)").forEach((el) => {
-      const i = (el as HTMLElement).dataset.seriesIndex;
-      if (i != null) visibleSeries.add(parseInt(i, 10));
-    });
-    const series = chartData.datasets?.map((d: any) => ({ name: d.label, data: d.data })) ?? [];
-    if (series.length) renderLineChart(lineCanvas, { labels: chartData.labels ?? [], series }, visibleSeries);
-  }
-  if (pieCanvas && pieChartInstance) {
-    const chartData = (pieChartInstance as any).data;
-    renderPieChart(pieCanvas, chartData.datasets?.[0]?.data ?? [], chartData.labels ?? []);
-  }
-};
+window.addEventListener("message", (event: MessageEvent) => {
+  const msg = event.data;
 
-app.ontoolcancelled = (params) => {
-  showError(`Operation cancelled: ${params.reason ?? "Unknown reason"}`);
-};
+  if (!msg) return;
 
-app.onteardown = async () => {
-  if (lineChartInstance) {
-    lineChartInstance.destroy();
-    lineChartInstance = null;
-  }
-  if (pieChartInstance) {
-    pieChartInstance.destroy();
-    pieChartInstance = null;
-  }
-  return {};
-};
-
-app.onerror = (error) => {
-  showError(error.message ?? "An error occurred");
-};
-
-app
-  .connect()
-  .then(() => {
-    const ctx = app.getHostContext();
-    if (ctx) {
-      if (ctx.theme) applyDocumentTheme(ctx.theme);
-      if (ctx.styles?.css?.fonts) applyHostFonts(ctx.styles.css.fonts);
-      if (ctx.styles?.variables) applyHostStyleVariables(ctx.styles.variables);
+  // Handle JSON-RPC 2.0 protocol messages
+  if (msg.jsonrpc === "2.0") {
+    // Handle tool result notifications
+    if (msg.method === "ui/notifications/tool-result" && msg.params) {
+      console.info("Received tool result from proxy");
+      const data = msg.params.structuredContent || msg.params;
+      renderData(data);
+      return;
     }
-  })
-  .catch((err) => {
-    console.error("Failed to connect to host:", err);
-    showError("Failed to connect to MCP host");
-  });
 
+    // Handle host context changes
+    if (msg.method === "ui/notifications/host-context-changed" && msg.params) {
+      console.info("Host context changed:", msg.params);
+
+      // Apply theme using SDK helper
+      if (msg.params.theme) {
+        applyDocumentTheme(msg.params.theme);
+      }
+
+      // Apply host fonts using SDK helper
+      if (msg.params.styles?.css?.fonts) {
+        applyHostFonts(msg.params.styles.css.fonts);
+      }
+
+      // Apply host style variables using SDK helper
+      if (msg.params.styles?.variables) {
+        applyHostStyleVariables(msg.params.styles.variables);
+      }
+
+      // Handle display mode changes
+      if (msg.params.displayMode === "fullscreen") {
+        document.body.classList.add("fullscreen-mode");
+      } else {
+        document.body.classList.remove("fullscreen-mode");
+      }
+
+      // Re-render charts with new theme
+      const lineCanvas = document.getElementById(
+        "linechart",
+      ) as HTMLCanvasElement;
+      const pieCanvas = document.getElementById(
+        "piechart",
+      ) as HTMLCanvasElement;
+      if (lineCanvas && lineChartInstance) {
+        const chartData = (lineChartInstance as any).data;
+        const visibleSeries = new Set<number>();
+        document
+          .querySelectorAll(".legend-item:not(.disabled)")
+          .forEach((el) => {
+            const i = (el as HTMLElement).dataset.seriesIndex;
+            if (i != null) visibleSeries.add(parseInt(i, 10));
+          });
+        const series =
+          chartData.datasets?.map((d: any) => ({
+            name: d.label,
+            data: d.data,
+          })) ?? [];
+        if (series.length)
+          renderLineChart(
+            lineCanvas,
+            { labels: chartData.labels ?? [], series },
+            visibleSeries,
+          );
+      }
+      if (pieCanvas && pieChartInstance) {
+        const chartData = (pieChartInstance as any).data;
+        renderPieChart(
+          pieCanvas,
+          chartData.datasets?.[0]?.data ?? [],
+          chartData.labels ?? [],
+        );
+      }
+
+      return;
+    }
+
+    // Handle tool cancellation
+    if (msg.method === "ui/notifications/tool-cancelled") {
+      const reason = msg.params?.reason || "Unknown reason";
+      console.info("Tool cancelled:", reason);
+      showError(`Operation cancelled: ${reason}`);
+      return;
+    }
+
+    // Handle resource teardown
+    if (msg.id !== undefined && msg.method === "ui/resource-teardown") {
+      console.info("Resource teardown requested");
+
+      // Clean up chart instances
+      if (lineChartInstance) {
+        lineChartInstance.destroy();
+        lineChartInstance = null;
+      }
+      if (pieChartInstance) {
+        pieChartInstance.destroy();
+        pieChartInstance = null;
+      }
+
+      // Send response to proxy
+      window.parent.postMessage(
+        {
+          jsonrpc: "2.0",
+          id: msg.id,
+          result: {},
+        },
+        "*",
+      );
+      return;
+    }
+
+    return;
+  }
+
+  // Handle non-protocol messages (preview tools, simple testing)
+  if (msg.structuredContent || msg.data || msg.rows) {
+    console.info("Received data from preview tool:", msg);
+    const data = msg.structuredContent || msg.data || msg;
+    renderData(data);
+    return;
+  }
+});
+
+/* ============================================
+   APP INITIALIZATION
+   ============================================
+
+   No SDK connection needed - the proxy handles ui/initialize.
+   We just set up auto-resize.
+   ============================================ */
+
+// Setup automatic size change notifications
 const cleanupResize = app.setupSizeChangedNotifications();
-window.addEventListener("beforeunload", () => cleanupResize());
+
+// Optional: Clean up on page unload
+window.addEventListener("beforeunload", () => {
+  cleanupResize();
+});
+
+console.info(
+  "✓ Google Search Console MCP App initialized (SDK utilities mode)",
+);
 
 export { app };

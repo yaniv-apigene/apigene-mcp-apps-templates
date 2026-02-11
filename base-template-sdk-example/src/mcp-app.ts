@@ -1,19 +1,20 @@
 /* ============================================
-   BASE TEMPLATE (SDK VERSION) FOR MCP APPS
+   BASE TEMPLATE (SDK UTILITIES VERSION) FOR MCP APPS
    ============================================
-   
+
    This file uses the official @modelcontextprotocol/ext-apps SDK
-   to handle MCP protocol communication.
-   
-   Benefits of SDK:
-   - Official protocol implementation
-   - Automatic updates for protocol changes
+   for utilities only (theme helpers, types, auto-resize).
+
+   Benefits of this approach:
+   - SDK utilities for theme, fonts, and styling
    - Full TypeScript type safety
-   - Less boilerplate code (~50 lines vs ~540 lines)
-   - Built-in utilities (theme, fonts, size notifications)
-   
+   - Manual message handling for proxy compatibility
+   - Works seamlessly with run-action.html proxy layer
+   - Less code than full manual implementation
+   - No SDK connection conflicts with proxy initialization
+
    Customize the sections marked with "TEMPLATE-SPECIFIC" below.
-   
+
    See README.md for customization guidelines.
    ============================================ */
 
@@ -72,6 +73,12 @@ const APP_VERSION = "1.0.0"; // TODO: Replace with your app version
  */
 function unwrapData(data: any): any {
   if (!data) return null;
+
+  // Handle nested rows object: { rows: { columns: [...], rows: [...] } }
+  if (data.rows && typeof data.rows === 'object' && !Array.isArray(data.rows) &&
+      data.rows.columns && data.rows.rows) {
+    return data.rows;
+  }
 
   // Format 1: Standard table format { columns: [], rows: [] }
   if (
@@ -251,120 +258,25 @@ function renderData(data: any) {
 }
 
 /* ============================================
-   SDK APP INSTANCE AND CALLBACKS
+   SDK UTILITIES ONLY (NO CONNECTION)
    ============================================
-   
-   The SDK handles all MCP protocol communication.
-   Register your callbacks here before connecting.
+
+   We use the SDK only for utilities (theme helpers, types).
+   Message handling is done manually to work with the proxy.
    ============================================ */
 
-// Create app instance
+// Create app instance for utilities only (we won't call connect())
 const app = new App({
   name: APP_NAME,
   version: APP_VERSION,
 });
 
-// Register callbacks BEFORE connecting
-
-/**
- * Called when tool result data is received
- * This is where you render your data
- */
-app.ontoolresult = (result: CallToolResult) => {
-  console.info("Tool result received:", result);
-  const data = result.structuredContent || result;
-  renderData(data);
-};
-
-/**
- * Called when tool input is received (optional)
- * Use this to show loading state or prepare for data
- */
-app.ontoolinput = (params) => {
-  console.info("Tool input received:", params);
-  // Optional: Show loading state with input parameters
-  // Optional: Store for later use in renderData()
-};
-
-/**
- * Called when host context changes (theme, display mode, etc.)
- */
-app.onhostcontextchanged = (ctx: McpUiHostContext) => {
-  console.info("Host context changed:", ctx);
-
-  // Apply theme (dark/light mode)
-  if (ctx.theme) {
-    applyDocumentTheme(ctx.theme);
-  }
-
-  // Apply host fonts (optional)
-  if (ctx.styles?.css?.fonts) {
-    applyHostFonts(ctx.styles.css.fonts);
-  }
-
-  // Apply host style variables (optional)
-  if (ctx.styles?.variables) {
-    applyHostStyleVariables(ctx.styles.variables);
-  }
-
-  // Handle display mode changes (inline/fullscreen)
-  if (ctx.displayMode === "fullscreen") {
-    document.body.classList.add("fullscreen-mode");
-  } else {
-    document.body.classList.remove("fullscreen-mode");
-  }
-
-  // Optional: Re-render if your content needs theme updates
-  // Example: Re-render charts with new colors
-};
-
-/**
- * Called when tool execution is cancelled
- */
-app.ontoolcancelled = (params) => {
-  console.info("Tool cancelled:", params.reason);
-  showError(`Operation cancelled: ${params.reason || "Unknown reason"}`);
-};
-
-/**
- * Called when app is being torn down
- * Clean up resources here (timers, subscriptions, etc.)
- */
-app.onteardown = async (params) => {
-  console.info("App teardown:", params);
-
-  // TODO: Clean up your resources here
-  // - Clear any timers
-  // - Cancel pending requests
-  // - Destroy chart instances
-  // - Remove event listeners
-
-  return {}; // Must return empty object
-};
-
-/**
- * Error handler
- * Note: Don't show connection errors to users, as the app may still work via direct messages
- */
-app.onerror = (error) => {
-  console.error("App error:", error);
-  // Don't show error UI for connection issues - the app may still function
-  // Only show errors for actual runtime problems
-  if (
-    error.message &&
-    !error.message.includes("connect") &&
-    !error.message.includes("connection")
-  ) {
-    showError(error.message);
-  }
-};
-
 /* ============================================
    DIRECT MESSAGE HANDLING
    ============================================
-   
-   Handle messages directly for maximum compatibility.
-   This works with preview tools, MCP hosts, and the SDK.
+
+   Handle messages manually to work with the proxy layer.
+   The proxy already handles ui/initialize, so we just listen for notifications.
    ============================================ */
 
 window.addEventListener("message", (event: MessageEvent) => {
@@ -376,11 +288,8 @@ window.addEventListener("message", (event: MessageEvent) => {
   if (msg.jsonrpc === "2.0") {
     // Handle tool result notifications
     if (msg.method === "ui/notifications/tool-result" && msg.params) {
-      console.info("Received tool result from MCP host");
-      console.log("Full message:", JSON.stringify(msg, null, 2));
-      console.log("Params:", msg.params);
+      console.info("Received tool result from proxy");
       const data = msg.params.structuredContent || msg.params;
-      console.log("Extracted data:", data);
       renderData(data);
       return;
     }
@@ -388,19 +297,62 @@ window.addEventListener("message", (event: MessageEvent) => {
     // Handle host context changes
     if (msg.method === "ui/notifications/host-context-changed" && msg.params) {
       console.info("Host context changed:", msg.params);
+
+      // Apply theme using SDK helper
       if (msg.params.theme) {
         applyDocumentTheme(msg.params.theme);
       }
+
+      // Apply host fonts using SDK helper
       if (msg.params.styles?.css?.fonts) {
         applyHostFonts(msg.params.styles.css.fonts);
       }
+
+      // Apply host style variables using SDK helper
       if (msg.params.styles?.variables) {
         applyHostStyleVariables(msg.params.styles.variables);
       }
+
+      // Handle display mode changes
+      if (msg.params.displayMode === "fullscreen") {
+        document.body.classList.add("fullscreen-mode");
+      } else {
+        document.body.classList.remove("fullscreen-mode");
+      }
+
       return;
     }
 
-    // Let SDK handle other protocol messages
+    // Handle tool cancellation
+    if (msg.method === "ui/notifications/tool-cancelled") {
+      const reason = msg.params?.reason || "Unknown reason";
+      console.info("Tool cancelled:", reason);
+      showError(`Operation cancelled: ${reason}`);
+      return;
+    }
+
+    // Handle resource teardown
+    if (msg.id !== undefined && msg.method === "ui/resource-teardown") {
+      console.info("Resource teardown requested");
+
+      // TODO: Clean up your resources here
+      // - Clear any timers
+      // - Cancel pending requests
+      // - Destroy chart instances
+      // - Remove event listeners
+
+      // Send response to proxy
+      window.parent.postMessage(
+        {
+          jsonrpc: "2.0",
+          id: msg.id,
+          result: {},
+        },
+        "*",
+      );
+      return;
+    }
+
     return;
   }
 
@@ -416,38 +368,21 @@ window.addEventListener("message", (event: MessageEvent) => {
 /* ============================================
    APP INITIALIZATION
    ============================================
-   
-   Connect to the host and setup auto-resize.
+
+   No SDK connection needed - the proxy handles ui/initialize.
+   We just set up auto-resize and demo data for testing.
    ============================================ */
 
-// Connect to host (non-blocking)
-app
-  .connect()
-  .then(() => {
-    console.info("✓ Connected to MCP host via SDK");
+// Setup automatic size change notifications
+// The SDK will monitor DOM changes and notify the host automatically
+const cleanupResize = app.setupSizeChangedNotifications();
 
-    // Apply initial host context if available
-    const ctx = app.getHostContext();
-    if (ctx) {
-      console.info("Applying initial host context:", ctx);
-      if (ctx.theme) {
-        applyDocumentTheme(ctx.theme);
-      }
-      if (ctx.styles?.css?.fonts) {
-        applyHostFonts(ctx.styles.css.fonts);
-      }
-      if (ctx.styles?.variables) {
-        applyHostStyleVariables(ctx.styles.variables);
-      }
-    }
-  })
-  .catch((err) => {
-    console.warn(
-      "SDK connection failed, falling back to direct message handling:",
-      err,
-    );
-    console.info("App will still work via direct postMessage communication");
-  });
+// Optional: Clean up on page unload
+window.addEventListener("beforeunload", () => {
+  cleanupResize();
+});
+
+console.info("✓ MCP App initialized (SDK utilities mode)");
 
 // Testing/Demo: Show demo data if no real data received within 3 seconds
 setTimeout(() => {
@@ -477,25 +412,21 @@ setTimeout(() => {
   }
 }, 3000);
 
-// Setup automatic size change notifications
-// The SDK will monitor DOM changes and notify the host automatically
-const cleanupResize = app.setupSizeChangedNotifications();
-
-// Optional: Clean up on page unload
-window.addEventListener("beforeunload", () => {
-  cleanupResize();
-});
-
 /* ============================================
    OPTIONAL: HELPER FUNCTIONS FOR CALLING SERVER
    ============================================
-   
-   If you need to call server tools from your UI,
-   use these patterns:
+
+   NOTE: These functions may not work in proxy mode since we don't
+   call app.connect(). If you need to call server tools, send messages,
+   or open links, you'll need to implement manual postMessage handling
+   similar to the working base-template (without SDK).
+
+   For reference on manual implementation, see:
+   /base-template/src/mcp-app.ts
    ============================================ */
 
 /**
- * Example: Call a server tool
+ * Example: Call a server tool (MAY NOT WORK in proxy mode)
  */
 export async function callServerTool(
   toolName: string,
@@ -509,12 +440,13 @@ export async function callServerTool(
     return result;
   } catch (error) {
     console.error("Error calling server tool:", error);
+    console.warn("If this fails, implement manual postMessage handling");
     throw error;
   }
 }
 
 /**
- * Example: Send a message to the host
+ * Example: Send a message to the host (MAY NOT WORK in proxy mode)
  */
 export async function sendMessageToHost(text: string) {
   try {
@@ -525,12 +457,13 @@ export async function sendMessageToHost(text: string) {
     return result;
   } catch (error) {
     console.error("Error sending message:", error);
+    console.warn("If this fails, implement manual postMessage handling");
     throw error;
   }
 }
 
 /**
- * Example: Open a link in the host
+ * Example: Open a link in the host (MAY NOT WORK in proxy mode)
  */
 export async function openLink(url: string) {
   try {
@@ -541,6 +474,7 @@ export async function openLink(url: string) {
     return result;
   } catch (error) {
     console.error("Error opening link:", error);
+    console.warn("If this fails, implement manual postMessage handling");
     throw error;
   }
 }

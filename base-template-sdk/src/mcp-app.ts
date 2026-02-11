@@ -57,6 +57,17 @@ const APP_VERSION = "1.0.0"; // TODO: Replace with your app version
 function unwrapData(data: any): any {
   if (!data) return null;
 
+  // Handle nested rows object: { rows: { columns: [...], rows: [...] } }
+  if (
+    data.rows &&
+    typeof data.rows === "object" &&
+    !Array.isArray(data.rows) &&
+    data.rows.columns &&
+    data.rows.rows
+  ) {
+    return data.rows;
+  }
+
   // Format 1: Standard table format { columns: [], rows: [] }
   if (
     data.columns ||

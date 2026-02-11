@@ -1,27 +1,38 @@
-# Base Template (SDK Version) for MCP Apps
+# Base Template (SDK Utilities Version) for MCP Apps
 
-This is a base template for creating MCP (Model Context Protocol) apps using the **official `@modelcontextprotocol/ext-apps` SDK**. It includes all common infrastructure needed for MCP apps, with Vite bundling to create a single-file HTML output.
+This is a base template for creating MCP (Model Context Protocol) apps using the **official `@modelcontextprotocol/ext-apps` SDK for utilities only**. It combines the best of both worlds: SDK utilities with manual message handling for maximum compatibility.
 
-## 🆚 SDK vs Manual Implementation
+## 🆚 Approaches Comparison
 
-This template uses the **official SDK** approach (vs the manual protocol implementation in `base-template`):
+This template uses the **SDK Utilities** approach:
 
-### **Advantages of SDK Approach:**
+### **Three Approaches:**
 
-- ✅ **Official Protocol**: SDK maintained by MCP team
-- ✅ **Less Code**: ~50 lines vs ~540 lines of protocol handling
+| Feature             | Manual (`base-template`) | SDK Full (`deprecated`) | **SDK Utilities** (this)           |
+| ------------------- | ------------------------ | ----------------------- | ---------------------------------- |
+| Protocol handling   | Manual (~540 lines)      | SDK callbacks           | Manual (~100 lines)                |
+| SDK utilities       | ❌ None                  | ✅ Full SDK             | ✅ Full SDK                        |
+| Proxy compatibility | ✅ Perfect               | ❌ Conflicts            | ✅ Perfect                         |
+| Type safety         | Limited                  | Full                    | Full                               |
+| Bundle size         | ~20KB                    | ~60-70KB                | ~60-70KB                           |
+| Maintenance         | You handle protocol      | SDK handles all         | You handle messages, SDK utilities |
+| Best for            | Learning                 | Direct host connection  | **Production with proxy**          |
+
+### **Advantages of SDK Utilities Approach:**
+
+- ✅ **Proxy Compatible**: Works seamlessly with `run-action.html` proxy layer
+- ✅ **No Connection Conflicts**: Proxy handles `ui/initialize`, app listens for messages
+- ✅ **SDK Utilities**: Theme helpers, fonts, auto-resize from SDK
 - ✅ **Type Safety**: Full TypeScript types for all MCP constructs
-- ✅ **Future Proof**: Automatic updates when protocol evolves
-- ✅ **Helper Utilities**: Built-in theme, font, and style helpers
-- ✅ **Auto Resize**: One-line size notification setup
-- ✅ **Better DX**: Clearer callback patterns
+- ✅ **Less Code**: ~100 lines vs ~540 lines of manual protocol handling
+- ✅ **Best of Both**: Manual control + SDK convenience
 
 ### **Bundle Output:**
 
-Both approaches create a single HTML file, but SDK bundles include:
+Single HTML file including:
 
 - Your app code (~10-20KB)
-- SDK library (~40-50KB minified)
+- SDK utilities library (~40-50KB minified)
 - All CSS inlined
 - **Total**: ~60-70KB single file
 
@@ -133,41 +144,39 @@ base-template-sdk/
 
 ## What's Included
 
-### Common Features (Handled by SDK)
+### Common Features
 
-✅ **MCP Protocol Communication**
+✅ **SDK Utilities** (No Connection)
 
-- JSON-RPC 2.0 automatic handling
-- Request/response tracking
-- Connection lifecycle management
+- Theme helpers (`applyDocumentTheme`, `applyHostFonts`, `applyHostStyleVariables`)
+- Auto-resize notifications (`setupSizeChangedNotifications`)
+- Full TypeScript type definitions
+- No `app.connect()` - works with proxy layer
 
-✅ **Callback System**
+✅ **Manual Message Handling** (Proxy Compatible)
 
-- `ontoolresult` - Receive tool data
-- `ontoolinput` - Receive tool input (optional)
-- `onhostcontextchanged` - Theme/display mode changes
-- `ontoolcancelled` - Handle cancellations
-- `onteardown` - Cleanup resources
-- `onerror` - Error handling
+- `ui/notifications/tool-result` - Receive tool data
+- `ui/notifications/host-context-changed` - Theme/display mode changes
+- `ui/notifications/tool-cancelled` - Handle cancellations
+- `ui/resource-teardown` - Cleanup resources (with response)
 
-✅ **Built-in Utilities**
+✅ **Common Utilities**
 
-- `applyDocumentTheme()` - Apply host theme
-- `applyHostFonts()` - Apply host fonts
-- `applyHostStyleVariables()` - Apply host CSS vars
-- `setupSizeChangedNotifications()` - Auto-resize
+- `unwrapData()` - Handle nested data structures
+- `escapeHtml()` - Prevent XSS attacks
+- `showError()` - Display error messages
+- `showEmpty()` - Display empty state
 
-✅ **Host Communication**
+✅ **Dark Mode Support**
 
-- `callServerTool()` - Call server tools
-- `sendMessage()` - Send messages to host
-- `sendLog()` - Send logs to host
-- `openLink()` - Open links in host
+- Automatic theme application via SDK helpers
+- CSS variables for theming
+- `body.dark` class for dark mode styles
 
 ✅ **Type Safety**
 
 - Full TypeScript definitions
-- Strongly typed callbacks
+- Strongly typed message handlers
 - Intellisense support
 
 ## Customization Guide
@@ -286,43 +295,173 @@ declare const Chart: any;
 
 **Note:** CDN approach requires CSP configuration in your MCP server!
 
-## SDK Callback Examples
+## Message Handling Examples
+
+### How It Works
+
+This template uses **manual message handling** instead of SDK callbacks to work with the proxy layer:
+
+```typescript
+// NO app.connect() - proxy handles initialization
+// NO callbacks - we listen for messages directly
+
+window.addEventListener("message", (event: MessageEvent) => {
+  const msg = event.data;
+
+  if (msg.jsonrpc === "2.0") {
+    // Handle protocol messages
+    if (msg.method === "ui/notifications/tool-result") {
+      renderData(msg.params.structuredContent || msg.params);
+    }
+  }
+});
+```
 
 ### Receive Tool Result
 
 ```typescript
-app.ontoolresult = (result: CallToolResult) => {
-  const data = result.structuredContent || result;
-  renderData(data);
-};
+// Message: ui/notifications/tool-result
+window.addEventListener("message", (event: MessageEvent) => {
+  const msg = event.data;
+
+  if (msg.method === "ui/notifications/tool-result" && msg.params) {
+    const data = msg.params.structuredContent || msg.params;
+    renderData(data);
+  }
+});
 ```
 
 ### Handle Theme Changes
 
 ```typescript
-app.onhostcontextchanged = (ctx: McpUiHostContext) => {
-  applyDocumentTheme(ctx);
-  applyHostFonts(ctx);
+// Message: ui/notifications/host-context-changed
+window.addEventListener("message", (event: MessageEvent) => {
+  const msg = event.data;
 
-  // Re-render if needed (e.g., charts with theme colors)
-  if (currentData) {
-    renderData(currentData);
+  if (msg.method === "ui/notifications/host-context-changed" && msg.params) {
+    // Apply theme using SDK helper
+    if (msg.params.theme) {
+      applyDocumentTheme(msg.params.theme);
+    }
+
+    // Apply fonts using SDK helper
+    if (msg.params.styles?.css?.fonts) {
+      applyHostFonts(msg.params.styles.css.fonts);
+    }
+
+    // Handle display mode
+    if (msg.params.displayMode === "fullscreen") {
+      document.body.classList.add("fullscreen-mode");
+    }
+
+    // Re-render if needed (e.g., charts with theme colors)
+    if (currentData) {
+      renderData(currentData);
+    }
   }
-};
+});
 ```
 
 ### Clean Up Resources
 
 ```typescript
-app.onteardown = async () => {
-  // Clean up timers
-  if (myTimer) clearInterval(myTimer);
+// Message: ui/resource-teardown (request with id)
+window.addEventListener("message", (event: MessageEvent) => {
+  const msg = event.data;
 
-  // Destroy chart instances
-  if (myChart) myChart.destroy();
+  if (msg.id !== undefined && msg.method === "ui/resource-teardown") {
+    // Clean up timers
+    if (myTimer) clearInterval(myTimer);
 
-  return {};
-};
+    // Destroy chart instances
+    if (myChart) myChart.destroy();
+
+    // MUST respond to proxy
+    window.parent.postMessage(
+      {
+        jsonrpc: "2.0",
+        id: msg.id,
+        result: {},
+      },
+      "*",
+    );
+  }
+});
+```
+
+## Proxy Compatibility
+
+This template is designed to work with the `run-action.html` proxy layer:
+
+### How Proxy Works
+
+1. **Proxy initializes** with host (`ui/initialize`)
+2. **Proxy saves** host context (theme, display mode, etc.)
+3. **Proxy loads** your template via `ui://templates/your-template-id`
+4. **Template listens** for messages from proxy
+5. **Proxy forwards** tool results and host changes to template
+
+### Why No `app.connect()`?
+
+```typescript
+// ❌ OLD WAY (causes conflicts)
+app.connect().then(() => {
+  // This tries to call ui/initialize again!
+  // Proxy already called it, so this fails
+});
+
+// ✅ NEW WAY (proxy compatible)
+// Just listen for messages - proxy forwards them
+window.addEventListener("message", (event) => {
+  // Handle messages...
+});
+```
+
+## Advanced: Server Tool Calls
+
+**Note:** The included `callServerTool`, `sendMessageToHost`, and `openLink` functions **may not work** in proxy mode since we don't call `app.connect()`.
+
+If you need these features, implement manual postMessage handling:
+
+```typescript
+// Manual server tool call
+function sendRequest(method: string, params: any): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const id = ++requestIdCounter;
+
+    // Listen for response
+    const listener = (event: MessageEvent) => {
+      if (event.data?.id === id) {
+        window.removeEventListener("message", listener);
+        if (event.data?.result) resolve(event.data.result);
+        else reject(new Error(event.data?.error?.message));
+      }
+    };
+    window.addEventListener("message", listener);
+
+    // Send request to proxy
+    window.parent.postMessage(
+      {
+        jsonrpc: "2.0",
+        id,
+        method,
+        params,
+      },
+      "*",
+    );
+
+    setTimeout(() => {
+      window.removeEventListener("message", listener);
+      reject(new Error("Timeout"));
+    }, 5000);
+  });
+}
+
+// Use it
+const result = await sendRequest("tools/call", {
+  name: "my-tool",
+  arguments: { foo: "bar" },
+});
 ```
 
 ## Build Configuration
@@ -422,7 +561,8 @@ function renderData(data: any) {
     .getElementById("refresh-btn")
     ?.addEventListener("click", async () => {
       try {
-        const result = await app.callServerTool({
+        // Manual request to server tool via proxy
+        const result = await sendRequest("tools/call", {
           name: "get-data",
           arguments: {},
         });
@@ -431,6 +571,26 @@ function renderData(data: any) {
         console.error("Refresh failed:", error);
       }
     });
+}
+
+// Helper function for manual requests
+function sendRequest(method: string, params: any): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const id = ++requestIdCounter;
+    const listener = (event: MessageEvent) => {
+      if (event.data?.id === id) {
+        window.removeEventListener("message", listener);
+        if (event.data?.result) resolve(event.data.result);
+        else reject(new Error(event.data?.error?.message));
+      }
+    };
+    window.addEventListener("message", listener);
+    window.parent.postMessage({ jsonrpc: "2.0", id, method, params }, "*");
+    setTimeout(() => {
+      window.removeEventListener("message", listener);
+      reject(new Error("Timeout"));
+    }, 5000);
+  });
 }
 ```
 
@@ -496,21 +656,32 @@ function renderData(data: any) {
 
 ### Theme Not Working
 
-- Ensure `applyDocumentTheme()` is called in `onhostcontextchanged`
+- Ensure message handler applies theme via `applyDocumentTheme()`
+- Check handler for `ui/notifications/host-context-changed`
 - Check CSS uses `body.dark` selectors
 - Test with both light and dark modes
 
-## Comparison with Manual Template
+### Proxy Connection Issues
 
-| Feature           | base-template (Manual) | base-template-sdk (SDK) |
-| ----------------- | ---------------------- | ----------------------- |
-| Protocol handling | Manual (~540 lines)    | SDK (~20 lines)         |
-| Type safety       | Limited (`any` types)  | Full TypeScript types   |
-| Maintenance       | You maintain protocol  | SDK team maintains      |
-| Bundle size       | ~20KB                  | ~60-70KB                |
-| Future updates    | Manual changes needed  | Update SDK version      |
-| Learning curve    | Understand protocol    | Learn SDK API           |
-| Best for          | Learning internals     | Production apps         |
+- Verify proxy is properly intercepting `ui/initialize`
+- Check console for message flow
+- Ensure template doesn't call `app.connect()`
+- Verify messages are reaching template from proxy
+
+## Comparison with Other Approaches
+
+| Feature             | base-template (Manual)   | base-template-sdk (This)                 |
+| ------------------- | ------------------------ | ---------------------------------------- |
+| Protocol handling   | Manual (~540 lines)      | Manual (~100 lines)                      |
+| SDK utilities       | ❌ None                  | ✅ Theme, fonts, resize                  |
+| Type safety         | Limited (`any` types)    | Full TypeScript types                    |
+| Proxy compatibility | ✅ Perfect               | ✅ Perfect                               |
+| Bundle size         | ~20KB                    | ~60-70KB                                 |
+| Maintenance         | You maintain all         | You maintain messages, SDK for utilities |
+| Learning curve      | Understand full protocol | SDK utilities + message handling         |
+| Best for            | Minimal size apps        | **Production apps with proxy**           |
+
+**Recommendation:** Use `base-template-sdk` (this) for most production apps. The SDK utilities are worth the extra 40KB.
 
 ## Support
 

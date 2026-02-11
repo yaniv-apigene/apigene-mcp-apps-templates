@@ -1,10 +1,10 @@
-# Agent Guide: Creating MCP Apps from base-template-sdk
+# Agent Guide: Creating MCP Apps from base-template-sdk-example
 
 **Purpose**: This guide helps AI agents understand how to create new MCP apps using the SDK utilities template (proxy-compatible approach).
 
 ## Overview
 
-This base template uses **`@modelcontextprotocol/ext-apps` SDK for utilities only** (theme helpers, auto-resize) while handling messages manually for proxy compatibility. This is the **recommended approach** for production apps using the `run-action.html` proxy layer.
+This template uses **`@modelcontextprotocol/ext-apps` SDK for utilities only** (theme helpers, auto-resize) while handling messages manually for proxy compatibility. This is the **recommended approach** for production apps using the `run-action.html` proxy layer.
 
 **Key Benefits:**
 
@@ -15,24 +15,6 @@ This base template uses **`@modelcontextprotocol/ext-apps` SDK for utilities onl
 - ✅ **Single File Output**: Vite bundles to one HTML (~60-70KB)
 
 **CRITICAL**: This template does NOT use `app.connect()` or SDK callbacks. It listens for messages manually to avoid conflicts with the proxy layer.
-
-## File Structure
-
-```
-base-template-sdk/
-├── src/
-│   ├── mcp-app.ts          # Main logic (message handling + renderData)
-│   ├── mcp-app-impl.ts     # (Optional) Data parsing/formatting
-│   ├── mcp-app.css         # Template-specific styles
-│   └── global.css          # Global styles (don't modify)
-├── mcp-app.html            # HTML shell
-├── package.json            # Dependencies
-├── vite.config.ts          # Build configuration
-├── README.md               # User documentation
-├── agent.md                # This file (agent guide)
-└── dist/
-    └── mcp-app.html        # Built single-file output (~60-70KB)
-```
 
 ## Architecture
 
@@ -60,11 +42,29 @@ base-template-sdk/
 └──────────────┘
 ```
 
+## File Structure
+
+```
+base-template-sdk-example/
+├── src/
+│   ├── mcp-app.ts          # Main logic (message handling + renderData)
+│   ├── mcp-app-impl.ts     # (Optional) Data parsing/formatting
+│   ├── mcp-app.css         # Template-specific styles
+│   └── global.css          # Global styles (don't modify)
+├── mcp-app.html            # HTML shell
+├── package.json            # Dependencies
+├── vite.config.ts          # Build configuration
+├── README.md               # User documentation
+├── AGENT.md                # This file (agent guide)
+└── dist/
+    └── mcp-app.html        # Built single-file output (~60-70KB)
+```
+
 ## Creating a New App: Step-by-Step
 
 ### 1. **Understand the Data Structure**
 
-First, examine the API response format you'll be displaying. Example:
+Examine the API response format you'll be displaying:
 
 ```json
 {
@@ -73,7 +73,8 @@ First, examine the API response format you'll be displaying. Example:
       "response_content": {
         "id": 1,
         "title": "Product Name",
-        "price": 109.95
+        "price": 109.95,
+        "category": "electronics"
       }
     }
   ]
@@ -113,12 +114,12 @@ Files to NEVER modify:
 **File**: `mcp-app.html`
 
 ```html
-<title>Your App Title</title>
+<title>MCP App: Your App Name</title>
 ```
 
 ### 5. **Update App Configuration**
 
-**File**: `src/mcp-app.ts` (lines ~50)
+**File**: `src/mcp-app.ts` (line ~50)
 
 ```typescript
 const APP_NAME = "Your App Name";
@@ -141,13 +142,14 @@ export interface Product {
   id: number;
   title: string;
   price: number;
+  category: string;
 }
 
 // Parse the API response
 export function parseProductData(data: any): Product {
   // Handle errors
-  if (data.error) {
-    throw new Error(`Server error: ${data.error.message}`);
+  if (data.error || data.isError) {
+    throw new Error(`Server error: ${data.error?.message || "Unknown error"}`);
   }
 
   // Extract data from nested structure
@@ -155,12 +157,12 @@ export function parseProductData(data: any): Product {
     return data.actions_result[0].response_content;
   }
 
-  // Validate required fields
-  if (!data.id || !data.title) {
-    throw new Error("Missing required fields");
+  // Direct data
+  if (data.id && data.title) {
+    return data;
   }
 
-  return data;
+  throw new Error("Invalid data structure");
 }
 
 // Format data for display
@@ -180,9 +182,9 @@ import { parseProductData, formatPrice, type Product } from "./mcp-app-impl";
 
 ### 7. **Implement the Render Function**
 
-**File**: `src/mcp-app.ts` (the `renderData` function)
+**File**: `src/mcp-app.ts` (the `renderData` function ~line 177)
 
-This is the core of your app. Follow this pattern:
+This is the core of your app:
 
 ```typescript
 function renderData(data: any) {
@@ -206,6 +208,7 @@ function renderData(data: any) {
       <div class="container">
         <div class="product-card">
           <h1 class="product-title">${escapeHtml(product.title)}</h1>
+          <div class="product-category">${escapeHtml(product.category)}</div>
           <div class="product-price">${formatPrice(product.price)}</div>
         </div>
       </div>
@@ -220,14 +223,17 @@ function renderData(data: any) {
     // Show user-friendly error
     let errorMsg = error.message || "Unknown error";
     if (errorMsg.includes("403")) {
-      errorMsg = "Access denied - Check API credentials";
+      errorMsg = "403 Forbidden - Check API credentials";
+    } else if (errorMsg.includes("401")) {
+      errorMsg = "401 Unauthorized - Authentication required";
     }
-    showError(`Error: ${errorMsg}`);
+
+    showError(`Error rendering data: ${errorMsg}`);
   }
 }
 ```
 
-**Important Guidelines:**
+**CRITICAL Guidelines:**
 
 - ✅ Always use `escapeHtml()` for user-generated content (XSS prevention)
 - ✅ Always wrap in try/catch for error handling
@@ -310,15 +316,15 @@ body.dark .product-price {
 
 ### 9. **Update Demo Data (Optional)**
 
-**File**: `src/mcp-app.ts` (timeout section around line 480)
+**File**: `src/mcp-app.ts` (timeout section around line 378)
 
-Update the demo data to match your structure for testing:
+Update demo data for testing without a server:
 
 ```typescript
 setTimeout(() => {
   const appElement = document.getElementById("app");
   if (appElement?.querySelector(".loading")) {
-    console.info("⚠ No data received, showing demo data");
+    console.info("⚠ No data received, showing demo data for testing");
     renderData({
       actions_result: [
         {
@@ -326,6 +332,7 @@ setTimeout(() => {
             id: 1,
             title: "Demo Product",
             price: 99.99,
+            category: "electronics",
           },
         },
       ],
@@ -345,129 +352,6 @@ npm run dev
 ```
 
 **Output**: `dist/mcp-app.html` (~60-70KB single file)
-
-## Common Patterns
-
-### Pattern 1: Simple Table Display
-
-```typescript
-function renderData(data: any) {
-  const unwrapped = unwrapData(data);
-  const rows = unwrapped.rows || [];
-
-  app.innerHTML = `
-    <div class="container">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rows
-            .map(
-              (row) => `
-            <tr>
-              <td>${escapeHtml(row.name)}</td>
-              <td>${escapeHtml(row.value)}</td>
-            </tr>
-          `,
-            )
-            .join("")}
-        </tbody>
-      </table>
-    </div>
-  `;
-}
-```
-
-### Pattern 2: Card Grid
-
-```typescript
-function renderData(data: any) {
-  const unwrapped = unwrapData(data);
-  const items = unwrapped.items || [];
-
-  app.innerHTML = `
-    <div class="container">
-      <div class="card-grid">
-        ${items
-          .map(
-            (item) => `
-          <div class="card">
-            <h3>${escapeHtml(item.title)}</h3>
-            <p>${escapeHtml(item.description)}</p>
-          </div>
-        `,
-          )
-          .join("")}
-      </div>
-    </div>
-  `;
-}
-```
-
-### Pattern 3: Metrics Dashboard
-
-```typescript
-function renderData(data: any) {
-  const unwrapped = unwrapData(data);
-  const metrics = calculateMetrics(unwrapped);
-
-  app.innerHTML = `
-    <div class="container">
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">Total</div>
-          <div class="metric-value">${formatNumber(metrics.total)}</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Average</div>
-          <div class="metric-value">${formatNumber(metrics.avg)}</div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-```
-
-### Pattern 4: Product/Detail View
-
-```typescript
-function renderData(data: any) {
-  const unwrapped = unwrapData(data);
-  const product = parseProductData(unwrapped);
-
-  app.innerHTML = `
-    <div class="container">
-      <div class="product-card">
-        <img src="${escapeHtml(product.image)}" class="product-image" />
-        <h1>${escapeHtml(product.title)}</h1>
-        <div class="price">${formatPrice(product.price)}</div>
-        <p>${escapeHtml(product.description)}</p>
-      </div>
-    </div>
-  `;
-}
-```
-
-## Testing Checklist
-
-Before finalizing your app, verify:
-
-- [ ] Build succeeds (`npm run build`)
-- [ ] No TypeScript errors
-- [ ] Demo data displays correctly (wait 3 seconds after loading)
-- [ ] Dark mode works (check `body.dark` styles)
-- [ ] Responsive on mobile (check 768px, 480px breakpoints)
-- [ ] Error handling works (test with invalid data)
-- [ ] Console logs help with debugging
-- [ ] All user content uses `escapeHtml()`
-- [ ] Package.json name/description updated
-- [ ] HTML title updated
-- [ ] No `app.connect()` added (would break proxy compatibility)
-- [ ] Message handling infrastructure not modified
 
 ## Message Handling (DO NOT MODIFY)
 
@@ -511,38 +395,122 @@ window.addEventListener("message", (event: MessageEvent) => {
 // ❌ DO NOT ADD app.connect() - causes proxy conflicts!
 ```
 
-## SDK Utilities Reference
+## Common Rendering Patterns
 
-The template uses SDK utilities (without connection):
-
-### 1. **Theme Support**
+### Pattern 1: Simple List
 
 ```typescript
-// In message handler (already configured)
-if (msg.params.theme) {
-  applyDocumentTheme(msg.params.theme); // SDK helper - sets body.dark
+function renderData(data: any) {
+  const unwrapped = unwrapData(data);
+  const items = unwrapped.items || [];
+
+  app.innerHTML = `
+    <div class="container">
+      <ul class="item-list">
+        ${items
+          .map(
+            (item) => `
+          <li class="item">
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.description)}</p>
+          </li>
+        `,
+          )
+          .join("")}
+      </ul>
+    </div>
+  `;
 }
 ```
 
-### 2. **Font Support**
+### Pattern 2: Card Grid
 
 ```typescript
-// In message handler (already configured)
-if (msg.params.styles?.css?.fonts) {
-  applyHostFonts(msg.params.styles.css.fonts); // SDK helper
+function renderData(data: any) {
+  const unwrapped = unwrapData(data);
+  const items = unwrapped.items || [];
+
+  app.innerHTML = `
+    <div class="container">
+      <div class="card-grid">
+        ${items
+          .map(
+            (item) => `
+          <div class="card">
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.description)}</p>
+            <div class="price">${formatPrice(item.price)}</div>
+          </div>
+        `,
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
 }
 ```
 
-### 3. **Auto Resize**
+### Pattern 3: Metrics Dashboard
 
 ```typescript
-// Already configured (DO NOT MODIFY)
-const cleanupResize = app.setupSizeChangedNotifications();
+function renderData(data: any) {
+  const unwrapped = unwrapData(data);
+  const metrics = calculateMetrics(unwrapped);
+
+  app.innerHTML = `
+    <div class="container">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total</div>
+          <div class="metric-value">${formatNumber(metrics.total)}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Average</div>
+          <div class="metric-value">${formatNumber(metrics.avg)}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
 ```
+
+## Testing Checklist
+
+Before finalizing your app, verify:
+
+- [ ] Build succeeds (`npm run build`)
+- [ ] No TypeScript errors
+- [ ] Demo data displays correctly (wait 3 seconds after loading)
+- [ ] Dark mode works (check `body.dark` styles)
+- [ ] Responsive on mobile (check 768px, 480px breakpoints)
+- [ ] Error handling works (test with invalid data)
+- [ ] Console logs help with debugging
+- [ ] All user content uses `escapeHtml()`
+- [ ] Package.json name/description updated
+- [ ] HTML title updated
+- [ ] No `app.connect()` added (would break proxy compatibility)
+- [ ] Message handling infrastructure not modified
+
+## Debugging Tips
+
+1. **Check Console Logs**:
+   Look for `"Received tool result from proxy"` message
+
+2. **Use Demo Data**:
+   Wait 3 seconds to see demo data if no real data arrives
+
+3. **Validate Data Structure**:
+   Add `console.log("Unwrapped:", unwrapped);` in renderData
+
+4. **Test Error Handling**:
+   Modify demo data to trigger errors
+
+5. **Check Message Flow**:
+   Ensure proxy is forwarding messages to template
 
 ## Common Data Structures
 
-### Format 1: Simple Object/Array
+### Format 1: Direct Object
 
 ```json
 {
@@ -552,11 +520,7 @@ const cleanupResize = app.setupSizeChangedNotifications();
 }
 ```
 
-**Parsing**: Direct access
-
-```typescript
-const item = unwrapData(data);
-```
+**Parsing**: Direct access after `unwrapData()`
 
 ### Format 2: Wrapped in actions_result
 
@@ -585,38 +549,28 @@ if (data.actions_result?.[0]?.response_content) {
 
 ```json
 {
-  "rows": {
-    "columns": ["id", "name", "value"],
-    "rows": [
-      [1, "Item 1", 100],
-      [2, "Item 2", 200]
-    ]
-  }
+  "columns": ["id", "name", "value"],
+  "rows": [
+    [1, "Item 1", 100],
+    [2, "Item 2", 200]
+  ]
 }
 ```
 
 **Parsing**: Map columns to objects
 
 ```typescript
-const { columns, rows } = data.rows;
-const items = rows.map((row) => ({
-  id: row[0],
-  name: row[1],
-  value: row[2],
-}));
+const { columns, rows } = data;
+const items = rows.map((row) => {
+  const obj: any = {};
+  columns.forEach((col, i) => (obj[col] = row[i]));
+  return obj;
+});
 ```
-
-## Debugging Tips
-
-1. **Check Console Logs**: Look for `"Received tool result from proxy"` message
-2. **Use Demo Data**: Wait 3 seconds to see demo data if no real data arrives
-3. **Validate Data Structure**: Add `console.log("Unwrapped:", unwrapped);` in renderData
-4. **Test Error Handling**: Modify demo data to trigger errors
-5. **Check Message Flow**: Ensure proxy is forwarding messages to template
 
 ## Example: Real-World Implementation
 
-See `base-template-sdk-example/` for a complete FakeStore API product display:
+See the FakeStore Product Display example in this template:
 
 - **mcp-app-impl.ts**: Product parsing, price/rating formatting
 - **mcp-app.ts**: Product card rendering with image, rating, price
