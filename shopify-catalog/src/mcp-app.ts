@@ -793,6 +793,23 @@ function sendNotification(method: string, params: any) {
   window.parent.postMessage({ jsonrpc: "2.0", method, params }, '*');
 }
 
+/**
+ * Request the host to open a URL in the default browser (MCP ui/open-link).
+ * Use for product lookup URLs and variant URLs so the host can apply policy.
+ */
+function openLink(url: string): void {
+  if (!url || url === '#' || !url.startsWith('http')) return;
+  sendRequest('ui/open-link', { url })
+    .then((result: any) => {
+      if (result?.isError) {
+        console.warn('Host denied open link request');
+      }
+    })
+    .catch((err) => {
+      console.warn('Open link failed:', err);
+    });
+}
+
 /* ============================================
    DISPLAY MODE HANDLING
    ============================================ */
@@ -1220,6 +1237,16 @@ sendRequest('ui/initialize', {
   currentSort = 'relevance';
   renderCatalog();
 };
+
+(window as any).openLink = openLink;
+
+/* Delegated click: open external links via host ui/open-link */
+document.addEventListener('click', (e: MouseEvent) => {
+  const a = (e.target as Element).closest('a[href^="http"]');
+  if (!a || !(a as HTMLAnchorElement).href) return;
+  e.preventDefault();
+  openLink((a as HTMLAnchorElement).href);
+});
 
 initializeDarkMode();
 setupSizeObserver();
