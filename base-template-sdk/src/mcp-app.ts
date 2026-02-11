@@ -5,15 +5,6 @@
    This file uses the official @modelcontextprotocol/ext-apps SDK
    to handle MCP protocol communication.
    
-   Benefits of SDK:
-   - Official protocol implementation
-   - Automatic updates for protocol changes
-   - Full TypeScript type safety
-   - Less boilerplate code (~50 lines vs ~540 lines)
-   - Built-in utilities (theme, fonts, size notifications)
-   
-   Customize the sections marked with "TEMPLATE-SPECIFIC" below.
-   
    See README.md for customization guidelines.
    ============================================ */
 

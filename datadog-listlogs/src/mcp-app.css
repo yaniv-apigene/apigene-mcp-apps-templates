@@ -69,6 +69,59 @@ body.dark {
   gap: 12px;
 }
 
+.refresh-btn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--dd-gray-300);
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: var(--dd-gray-600);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+body.dark .refresh-btn {
+  background: var(--dd-gray-800);
+  border-color: var(--dd-gray-600);
+  color: var(--dd-gray-400);
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: var(--dd-gray-100);
+  border-color: var(--dd-purple);
+  color: var(--dd-purple);
+}
+
+body.dark .refresh-btn:hover:not(:disabled) {
+  background: var(--dd-gray-700);
+  border-color: var(--dd-purple-light);
+  color: var(--dd-purple-light);
+}
+
+.refresh-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.refresh-btn .icon-inline {
+  width: 18px;
+  height: 18px;
+}
+
+.refresh-btn.refresh-loading .icon-inline {
+  animation: refresh-spin 0.8s linear infinite;
+}
+
+@keyframes refresh-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .datadog-logo {
   display: flex;
   align-items: center;
@@ -891,6 +944,32 @@ body.dark .empty-state-title {
 
 body.dark .empty-state-message {
   color: var(--dd-gray-500);
+}
+
+.empty-state-refresh {
+  margin-top: 8px;
+  padding: 10px 20px;
+  border: 1px solid var(--dd-purple);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dd-purple);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+body.dark .empty-state-refresh {
+  border-color: var(--dd-purple-light);
+  color: var(--dd-purple-light);
+}
+
+.empty-state-refresh:hover {
+  background: var(--dd-gray-100);
+}
+
+body.dark .empty-state-refresh:hover {
+  background: var(--dd-gray-700);
 }
 
 /* Sticky header */

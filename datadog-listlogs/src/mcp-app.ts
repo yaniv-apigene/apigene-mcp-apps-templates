@@ -112,6 +112,15 @@ function iconDatadogSmall(): string {
   </svg>`;
 }
 
+function iconRefresh(): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+    <path d="M3 3v5h5"></path>
+    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+    <path d="M16 21h5v-5"></path>
+  </svg>`;
+}
+
 /* ============================================
    COMMON UTILITY FUNCTIONS
    ============================================ */
@@ -266,6 +275,7 @@ function showEmpty(message: string = 'No data available.') {
         <span class="empty-state-icon icon-inline">${iconInbox()}</span>
         <h3 class="empty-state-title">No logs found</h3>
         <p class="empty-state-message">${escapeHtml(message)}</p>
+        <button type="button" class="empty-state-refresh" onclick="refreshLogs()">Refresh logs</button>
       </div>
     `;
   }
@@ -745,6 +755,66 @@ function showCopyNotification(message: string) {
   filterLogs();
 };
 
+/** Parameters for run_action_ui server tool (refresh logs from last 5 minutes) */
+const REFRESH_LOGS_TOOL_PARAMS = {
+  app_name: 'datadog',
+  user_input: 'Get logs from the last 5 minutes',
+  context: {
+    operationId: 'ListLogs',
+    filter: { from: 'now-5m', to: 'now' },
+    page: { limit: 25 }
+  },
+  reasoning: "User requested last 5 minutes of logs. I'm using the ListLogs operation with time range from 'now-5m' to 'now' to capture logs from the last 5 minutes."
+};
+
+/**
+ * Extract payload for renderData from a tools/call result (same shape as ui/notifications/tool-result params).
+ */
+function dataFromToolResult(result: any): any {
+  if (!result) return undefined;
+  if (result.structuredContent !== undefined) return result.structuredContent;
+  return result;
+}
+
+/**
+ * Call server tool run_action_ui to refresh logs (last 5 minutes).
+ * Uses MCP tools/call request; re-renders from the response result (host may not send a separate tool-result notification).
+ */
+(window as any).refreshLogs = function() {
+  const btn = document.getElementById('refresh-logs-btn');
+  if (btn) {
+    btn.classList.add('refresh-loading');
+    btn.setAttribute('aria-busy', 'true');
+    (btn as HTMLButtonElement).disabled = true;
+  }
+  sendRequest('tools/call', {
+    name: 'run_action_ui',
+    arguments: REFRESH_LOGS_TOOL_PARAMS
+  })
+    .then((result: any) => {
+      if (result?.isError) {
+        showCopyNotification('Refresh returned an error.');
+        return;
+      }
+      const data = dataFromToolResult(result);
+      if (data !== undefined) {
+        renderData(data);
+      }
+      // If host also sends ui/notifications/tool-result, renderData will run again (idempotent).
+    })
+    .catch(err => {
+      console.error('Refresh logs failed:', err);
+      showCopyNotification('Refresh failed. Check console.');
+    })
+    .finally(() => {
+      if (btn) {
+        btn.classList.remove('refresh-loading');
+        btn.setAttribute('aria-busy', 'false');
+        (btn as HTMLButtonElement).disabled = false;
+      }
+    });
+};
+
 /**
  * Main render function
  */
@@ -800,6 +870,9 @@ function renderData(data: any) {
           <div class="header-brand">
             <span class="datadog-logo icon-inline">${iconDatadogSmall()}</span>
             <h1>Datadog Logs</h1>
+            <button type="button" class="refresh-btn" id="refresh-logs-btn" onclick="refreshLogs()" title="Refresh logs (last 5 minutes)" aria-label="Refresh logs">
+              <span class="icon-inline">${iconRefresh()}</span>
+            </button>
           </div>
         </div>
 

@@ -2,29 +2,6 @@
 
 This is a base template for creating MCP (Model Context Protocol) apps using the **official `@modelcontextprotocol/ext-apps` SDK**. It includes all common infrastructure needed for MCP apps, with Vite bundling to create a single-file HTML output.
 
-## 🆚 SDK vs Manual Implementation
-
-This template uses the **official SDK** approach (vs the manual protocol implementation in `base-template`):
-
-### **Advantages of SDK Approach:**
-
-- ✅ **Official Protocol**: SDK maintained by MCP team
-- ✅ **Less Code**: ~50 lines vs ~540 lines of protocol handling
-- ✅ **Type Safety**: Full TypeScript types for all MCP constructs
-- ✅ **Future Proof**: Automatic updates when protocol evolves
-- ✅ **Helper Utilities**: Built-in theme, font, and style helpers
-- ✅ **Auto Resize**: One-line size notification setup
-- ✅ **Better DX**: Clearer callback patterns
-
-### **Bundle Output:**
-
-Both approaches create a single HTML file, but SDK bundles include:
-
-- Your app code (~10-20KB)
-- SDK library (~40-50KB minified)
-- All CSS inlined
-- **Total**: ~60-70KB single file
-
 ## Quick Start
 
 ### 1. **Copy and Setup**
