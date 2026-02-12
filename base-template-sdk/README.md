@@ -60,7 +60,28 @@ npm run build
 npm run dev
 ```
 
-### 7. **Use in MCP Server**
+### 7. **Test with the built-in MCP server (optional)**
+
+This template includes a minimal MCP server that supports MCP Apps so you can test your UI without building your own server:
+
+```bash
+# Build the app and start the test server (HTTP on port 3001)
+npm start
+
+# Or: build once, then run the server
+npm run build
+npm run server
+
+# Development: watch app + run server (rebuilds on change)
+npm run dev:full
+```
+
+- **HTTP (default):** `http://localhost:3001/mcp` — use with [basic-host](https://github.com/modelcontextprotocol/ext-apps/tree/main/examples/basic-host), Cursor, or any MCP client that supports Streamable HTTP.
+- **stdio:** `npx tsx main.ts --stdio` — for Claude Desktop or stdio-based clients.
+
+The server registers one tool, **`show_demo`**, that returns sample data to the app. Point your host at this server and call `show_demo` to see the app render. To use your own data, edit `server.ts` and change the tool handler.
+
+### 8. **Use in your own MCP Server**
 
 The bundled file is at `dist/mcp-app.html`. Use it in your MCP server:
 
@@ -99,6 +120,8 @@ base-template-sdk/
 ├── tsconfig.json         # TypeScript configuration
 ├── vite.config.ts        # Vite bundling configuration
 ├── mcp-app.html          # Main HTML file (source)
+├── server.ts             # Optional: test MCP server with app tool
+├── main.ts               # Optional: server entry (HTTP/stdio)
 ├── src/
 │   ├── mcp-app.ts        # TypeScript logic (SDK-based)
 │   ├── mcp-app.css       # Template-specific styles

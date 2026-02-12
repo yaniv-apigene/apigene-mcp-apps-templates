@@ -186,6 +186,7 @@ function renderData(data: any) {
     // This is a basic example that just shows the JSON data
     app.innerHTML = `
       <div class="container">
+        <p class="mcp-app-badge">Called from MCP App</p>
         <h1>Data Received</h1>
         <pre>${escapeHtml(JSON.stringify(unwrapped, null, 2))}</pre>
       </div>
