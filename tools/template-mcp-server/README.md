@@ -9,19 +9,21 @@ Tool: `show_demo_for`
 - Accepts either:
   - `template`: folder name (recommended)
   - `request`: natural phrase, e.g. `show demo for xyz-users`
-- If template exists and is built, opens its `dist/mcp-app.html` and sends mock payload.
+- If template exists and is built, opens `templates/<template>/dist/mcp-app.html` and sends mock payload.
+- If template exists but is not built, server auto-runs build before opening.
 - If template does not exist, returns `Template not found: <name>`.
 - If template exists, returns the concrete UI tool name to call:
   - `show_demo_<template>`
 
 Per-template UI tools:
-- One tool is registered for each template folder:
+- One tool is registered for each template folder in `templates/`:
   - `show_demo_xyz-users`
   - `show_demo_vercel-deployments-sdk`
   - etc.
 - These tools open template-specific resource URIs, so UI does not get stuck on the previous template.
+- Missing `dist/mcp-app.html` is auto-generated on first call (`npm run build`, fallback `npm install` + build).
 - Payload source:
-  1. `<template>/response.json`
+  1. `templates/<template>/response.json`
   2. fallback: `tools/template-lab/mock-data/default.json`
 
 Example tool calls:

@@ -33,10 +33,10 @@ rsync -av \
   --exclude='node_modules' \
   --exclude='dist' \
   --exclude='.DS_Store' \
-  base-template-sdk/ my-app-mcp/
+  templates/base-template-sdk/ templates/my-app-mcp/
 
 # 2) Install deps
-cd my-app-mcp
+cd templates/my-app-mcp
 npm install
 
 # 3) Customize
@@ -61,7 +61,7 @@ npm run preview  # preview built dist
 ## File Layout
 
 ```text
-base-template-sdk/
+templates/base-template-sdk/
 ├── src/
 │   ├── mcp-app.ts
 │   ├── mcp-app.css

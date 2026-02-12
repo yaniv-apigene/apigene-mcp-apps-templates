@@ -8,7 +8,7 @@ This is a base template for creating MCP (Model Context Protocol) apps using the
 
 ```bash
 # Copy the template directory
-cp -r base-template-sdk my-app-mcp
+cp -r templates/base-template-sdk my-app-mcp
 cd my-app-mcp
 
 # Install dependencies
@@ -94,7 +94,7 @@ registerAppResource(
 ## File Structure
 
 ```
-base-template-sdk/
+templates/base-template-sdk/
 ├── package.json          # Dependencies and scripts
 ├── tsconfig.json         # TypeScript configuration
 ├── vite.config.ts        # Vite bundling configuration

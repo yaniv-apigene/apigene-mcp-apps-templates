@@ -20,7 +20,7 @@ rsync -av \
   --exclude='node_modules' \
   --exclude='dist' \
   --exclude='.DS_Store' \
-  base-template-sdk/ new-template-name/
+  templates/base-template-sdk/ new-template-name/
 
 cd new-template-name
 npm install
@@ -31,7 +31,7 @@ npm run build
 
 ```bash
 # Copy entire directory
-cp -r base-template-sdk new-template-name
+cp -r templates/base-template-sdk new-template-name
 
 # Enter and clean up
 cd new-template-name
@@ -113,10 +113,10 @@ When programmatically copying this template:
 
 ```bash
 # ✅ CORRECT: Exclude build artifacts
-rsync -av --exclude='node_modules' --exclude='dist' base-template-sdk/ new-app/
+rsync -av --exclude='node_modules' --exclude='dist' templates/base-template-sdk/ new-app/
 
 # ❌ WRONG: Copy everything including build artifacts
-cp -r base-template-sdk new-app
+cp -r templates/base-template-sdk new-app
 ```
 
 ---

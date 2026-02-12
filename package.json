@@ -1,0 +1,48 @@
+{
+  "name": "@apigene/mcp-app-playground",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.0.2",
+  "description": "MCP app templates with local preview and MCP demo tools",
+  "type": "module",
+  "author": "Apigene <hello@apigene.ai> (https://apigene.ai)",
+  "license": "MIT",
+  "homepage": "https://apigene.ai",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "templates",
+    "mcp-apps",
+    "apigene",
+    "claude",
+    "mcpjam"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.24.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "tsx": "^4.21.0",
+    "zod": "^3.24.1"
+  },
+  "bin": {
+    "mcp-app-playground": "./bin/mcp-app-playground.mjs"
+  },
+  "files": [
+    "bin",
+    "templates",
+    "tools",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node bin/mcp-app-playground.mjs start",
+    "lab": "node tools/template-lab/server.mjs",
+    "list": "node bin/mcp-app-playground.mjs list",
+    "mcp:http": "node --import tsx tools/template-mcp-server/main.ts",
+    "mcp:stdio": "node --import tsx tools/template-mcp-server/main.ts --stdio"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,11 +1,13 @@
 import http from "node:http";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "../..");
+const templatesRoot = path.join(repoRoot, "templates");
 const publicDir = path.join(__dirname, "public");
 const mockDir = path.join(__dirname, "mock-data");
 const port = Number(process.env.PORT || 4311);
@@ -37,15 +39,14 @@ function contentTypeFor(filePath) {
 }
 
 async function listTemplates() {
-  const entries = await fs.readdir(repoRoot, { withFileTypes: true });
+  const entries = await fs.readdir(templatesRoot, { withFileTypes: true });
   const templates = [];
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
     if (entry.name.startsWith(".")) continue;
-    if (entry.name === "tools") continue;
 
-    const dirPath = path.join(repoRoot, entry.name);
+    const dirPath = path.join(templatesRoot, entry.name);
     const srcHtml = path.join(dirPath, "mcp-app.html");
     const distHtml = path.join(dirPath, "dist", "mcp-app.html");
     const responseJson = path.join(dirPath, "response.json");
@@ -71,7 +72,7 @@ async function listTemplates() {
       hasSource,
       hasDist,
       hasResponse,
-      distPath: `/${entry.name}/dist/mcp-app.html`,
+      distPath: `/templates/${entry.name}/dist/mcp-app.html`,
     });
   }
 
@@ -86,7 +87,7 @@ async function loadMockPayloadForTemplate(templateName) {
     return null;
   }
 
-  const templateResponsePath = path.join(repoRoot, templateName, "response.json");
+  const templateResponsePath = path.join(templatesRoot, templateName, "response.json");
   if (template.hasResponse) {
     const content = await fs.readFile(templateResponsePath, "utf8");
     return {
@@ -100,6 +101,65 @@ async function loadMockPayloadForTemplate(templateName) {
   return {
     payload: JSON.parse(defaultContent),
     source: "tools/template-lab/mock-data/default.json",
+  };
+}
+
+function runCommand(command, args, cwd) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, {
+      cwd,
+      stdio: ["ignore", "pipe", "pipe"],
+      shell: process.platform === "win32",
+    });
+
+    let stdout = "";
+    let stderr = "";
+
+    child.stdout.on("data", (chunk) => {
+      stdout += String(chunk);
+    });
+    child.stderr.on("data", (chunk) => {
+      stderr += String(chunk);
+    });
+
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (code === 0) {
+        resolve({ stdout, stderr });
+        return;
+      }
+      reject(new Error(`${command} ${args.join(" ")} failed (${code})\n${stderr || stdout}`));
+    });
+  });
+}
+
+async function ensureTemplateBuilt(templateName) {
+  const templates = await listTemplates();
+  const template = templates.find((t) => t.name === templateName);
+  if (!template) {
+    return { ok: false, error: `Template not found: ${templateName}` };
+  }
+
+  if (template.hasDist) {
+    return { ok: true, built: false, message: "already_built" };
+  }
+
+  const templateDir = path.join(templatesRoot, templateName);
+  let installAttempted = false;
+
+  try {
+    await runCommand("npm", ["run", "build"], templateDir);
+  } catch {
+    installAttempted = true;
+    await runCommand("npm", ["install"], templateDir);
+    await runCommand("npm", ["run", "build"], templateDir);
+  }
+
+  return {
+    ok: true,
+    built: true,
+    installed: installAttempted,
+    message: installAttempted ? "installed_and_built" : "built",
   };
 }
 
@@ -143,6 +203,26 @@ const server = http.createServer(async (req, res) => {
       }
 
       sendJson(res, 200, result);
+      return;
+    }
+
+    if (pathname === "/api/template/prepare") {
+      const templateName = url.searchParams.get("name");
+      if (!templateName) {
+        sendJson(res, 400, { ok: false, error: "Missing template name" });
+        return;
+      }
+
+      try {
+        const result = await ensureTemplateBuilt(templateName);
+        const status = result.ok ? 200 : 404;
+        sendJson(res, status, result);
+      } catch (error) {
+        sendJson(res, 500, {
+          ok: false,
+          error: error instanceof Error ? error.message : "Failed to build template",
+        });
+      }
       return;
     }
 

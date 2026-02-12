@@ -27,6 +27,15 @@ async function fetchMockPayload(templateName) {
   return res.json();
 }
 
+async function prepareTemplate(templateName) {
+  const res = await fetch(`/api/template/prepare?name=${encodeURIComponent(templateName)}`);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.ok) {
+    throw new Error(data.error || `Failed to prepare template (${res.status})`);
+  }
+  return data;
+}
+
 function postToFrame(payload) {
   if (!frameEl.contentWindow) return;
   frameEl.contentWindow.postMessage(payload, "*");
@@ -78,23 +87,23 @@ async function loadSelectedTemplate() {
   const selected = templates.find((template) => template.name === selectEl.value);
   if (!selected) return;
 
-  if (!selected.hasDist) {
-    frameEl.removeAttribute("src");
-    frameEl.srcdoc = `<!doctype html><html><body style="font-family:sans-serif;padding:16px;">\
-      <h3 style="margin:0 0 8px;">Template not built</h3>\
-      <p style="margin:0;color:#475569;">Run <code>npm run build</code> inside <code>${selected.name}</code>, then reload Template Lab.</p>\
-    </body></html>`;
-    setStatus(`Selected: ${selected.name}\nStatus: dist/mcp-app.html not found`);
-    return;
-  }
+  setStatus(`Selected: ${selected.name}\nPreparing template...`);
 
-  setStatus(`Selected: ${selected.name}\nLoading preview...`);
+  const prepareResult = await prepareTemplate(selected.name);
+  selected.hasDist = true;
+
+  if (prepareResult.built) {
+    const method = prepareResult.installed ? "install + build" : "build";
+    setStatus(`Selected: ${selected.name}\nPrepared via ${method}\nLoading preview...`);
+  } else {
+    setStatus(`Selected: ${selected.name}\nAlready built\nLoading preview...`);
+  }
   frameEl.src = `/template/${selected.distPath.replace(/^\//, "")}`;
 }
 
 frameEl.addEventListener("load", async () => {
   const selected = templates.find((template) => template.name === selectEl.value);
-  if (!selected || !selected.hasDist) return;
+  if (!selected) return;
 
   try {
     const source = await sendInitialEvents(selected.name);

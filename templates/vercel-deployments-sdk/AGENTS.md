@@ -19,7 +19,7 @@ This base template uses **`@modelcontextprotocol/ext-apps` SDK for utilities onl
 ## File Structure
 
 ```
-base-template-sdk/
+templates/base-template-sdk/
 ├── src/
 │   ├── mcp-app.ts          # Main logic (message handling + renderData)
 │   ├── mcp-app-impl.ts     # (Optional) Data parsing/formatting
@@ -29,7 +29,7 @@ base-template-sdk/
 ├── package.json            # Dependencies
 ├── vite.config.ts          # Build configuration
 ├── README.md               # User documentation
-├── agent.md                # This file (agent guide)
+├── AGENTS.md                # This file (agent guide)
 └── dist/
     └── mcp-app.html        # Built single-file output (~60-70KB)
 ```

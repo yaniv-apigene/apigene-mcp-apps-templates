@@ -5,6 +5,7 @@ import {
 } from "@modelcontextprotocol/ext-apps/server";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import fs from "node:fs/promises";
+import { spawn } from "node:child_process";
 import {
   existsSync,
   readdirSync,
@@ -14,6 +15,7 @@ import path from "node:path";
 import { z } from "zod";
 
 const REPO_ROOT = path.resolve(import.meta.dirname, "../..");
+const TEMPLATES_ROOT = path.join(REPO_ROOT, "templates");
 const DEFAULT_MOCK_PATH = path.join(
   REPO_ROOT,
   "tools",
@@ -26,8 +28,9 @@ type TemplateInfo = {
   name: string;
   toolName: string;
   resourceUri: string;
-  hasBuiltHtml: boolean;
 };
+
+const buildInFlight = new Map<string, Promise<void>>();
 
 function normalizeTemplateName(input: string): string {
   return input.trim().toLowerCase().replace(/\s+/g, "-");
@@ -49,24 +52,20 @@ function toToolName(templateName: string): string {
 }
 
 function listTemplates(): TemplateInfo[] {
-  const entries = readdirSync(REPO_ROOT, { withFileTypes: true });
+  const entries = readdirSync(TEMPLATES_ROOT, { withFileTypes: true });
   const templates: TemplateInfo[] = [];
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
     if (entry.name.startsWith(".")) continue;
-    if (entry.name === "tools") continue;
 
-    const sourceHtml = path.join(REPO_ROOT, entry.name, "mcp-app.html");
+    const sourceHtml = path.join(TEMPLATES_ROOT, entry.name, "mcp-app.html");
     if (!existsSync(sourceHtml)) continue;
-
-    const hasBuiltHtml = existsSync(path.join(REPO_ROOT, entry.name, "dist", "mcp-app.html"));
 
     templates.push({
       name: entry.name,
       toolName: toToolName(entry.name),
       resourceUri: `ui://template-demo/${entry.name}/mcp-app.html`,
-      hasBuiltHtml,
     });
   }
 
@@ -75,7 +74,7 @@ function listTemplates(): TemplateInfo[] {
 }
 
 async function readMockPayload(templateName: string): Promise<unknown> {
-  const templateResponse = path.join(REPO_ROOT, templateName, "response.json");
+  const templateResponse = path.join(TEMPLATES_ROOT, templateName, "response.json");
   const content = await fs
     .readFile(templateResponse, "utf8")
     .catch(async () => fs.readFile(DEFAULT_MOCK_PATH, "utf8"));
@@ -93,8 +92,83 @@ function toStructuredContent(payload: unknown): Record<string, unknown> {
 }
 
 function readTemplateHtmlSync(templateName: string): string {
-  const htmlPath = path.join(REPO_ROOT, templateName, "dist", "mcp-app.html");
+  const htmlPath = path.join(TEMPLATES_ROOT, templateName, "dist", "mcp-app.html");
   return readFileSync(htmlPath, "utf8");
+}
+
+function templateDistPath(templateName: string): string {
+  return path.join(TEMPLATES_ROOT, templateName, "dist", "mcp-app.html");
+}
+
+function isTemplateBuilt(templateName: string): boolean {
+  return existsSync(templateDistPath(templateName));
+}
+
+function runCommand(command: string, args: string[], cwd: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, {
+      cwd,
+      stdio: ["ignore", "pipe", "pipe"],
+      shell: process.platform === "win32",
+    });
+
+    let out = "";
+    let err = "";
+
+    child.stdout.on("data", (chunk) => {
+      out += String(chunk);
+    });
+
+    child.stderr.on("data", (chunk) => {
+      err += String(chunk);
+    });
+
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (code === 0) {
+        resolve();
+        return;
+      }
+      reject(new Error(`${command} ${args.join(" ")} failed (${code})\n${err || out}`));
+    });
+  });
+}
+
+function escapeHtml(input: string): string {
+  return input
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+async function ensureTemplateBuilt(templateName: string): Promise<void> {
+  if (isTemplateBuilt(templateName)) return;
+
+  const existing = buildInFlight.get(templateName);
+  if (existing) {
+    await existing;
+    return;
+  }
+
+  const templateDir = path.join(TEMPLATES_ROOT, templateName);
+  const buildPromise = (async () => {
+    try {
+      await runCommand("npm", ["run", "build"], templateDir);
+    } catch {
+      await runCommand("npm", ["install"], templateDir);
+      await runCommand("npm", ["run", "build"], templateDir);
+    }
+  })();
+
+  buildInFlight.set(templateName, buildPromise);
+
+  try {
+    await buildPromise;
+  } finally {
+    buildInFlight.delete(templateName);
+  }
 }
 
 export function createServer(): McpServer {
@@ -126,8 +200,9 @@ export function createServer(): McpServer {
       _meta: {},
     },
     async (args) => {
+      const currentTemplates = listTemplates();
       const templateName = parseTemplateName(args as Record<string, unknown> | undefined);
-      const availableTemplates = templates.map((t) => t.name);
+      const availableTemplates = currentTemplates.map((t) => t.name);
 
       if (!templateName) {
         return {
@@ -146,7 +221,7 @@ export function createServer(): McpServer {
         };
       }
 
-      const found = templates.find((t) => t.name === templateName);
+      const found = currentTemplates.find((t) => t.name === templateName);
       if (!found) {
         return {
           content: [{ type: "text", text: `Template not found: ${templateName}` }],
@@ -159,28 +234,11 @@ export function createServer(): McpServer {
         };
       }
 
-      if (!found.hasBuiltHtml) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Template '${templateName}' is not built yet. Run npm run build inside ${templateName}.`,
-            },
-          ],
-          structuredContent: {
-            ok: false,
-            reason: "template_not_built",
-            template: templateName,
-            tool: found.toolName,
-          },
-        };
-      }
-
       return {
         content: [
           {
             type: "text",
-            text: `Use tool '${found.toolName}' to open demo for ${templateName}.`,
+            text: `Use tool '${found.toolName}' to open demo for ${templateName}. If needed, it will be built automatically.`,
           },
         ],
         structuredContent: {
@@ -200,19 +258,33 @@ export function createServer(): McpServer {
       template.resourceUri,
       { mimeType: RESOURCE_MIME_TYPE },
       async () => {
-        const html = template.hasBuiltHtml
-          ? readTemplateHtmlSync(template.name)
-          : `<!doctype html><html><body style="font-family:sans-serif;padding:16px;"><h3>Template not built</h3><p>Run <code>npm run build</code> in <code>${template.name}</code>.</p></body></html>`;
+        try {
+          await ensureTemplateBuilt(template.name);
+          const html = readTemplateHtmlSync(template.name);
 
-        return {
-          contents: [
-            {
-              uri: template.resourceUri,
-              mimeType: RESOURCE_MIME_TYPE,
-              text: html,
-            },
-          ],
-        };
+          return {
+            contents: [
+              {
+                uri: template.resourceUri,
+                mimeType: RESOURCE_MIME_TYPE,
+                text: html,
+              },
+            ],
+          };
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Unknown build error";
+          const html = `<!doctype html><html><body style="font-family:sans-serif;padding:16px;"><h3>Template build failed</h3><pre style="white-space:pre-wrap;">${escapeHtml(message)}</pre></body></html>`;
+
+          return {
+            contents: [
+              {
+                uri: template.resourceUri,
+                mimeType: RESOURCE_MIME_TYPE,
+                text: html,
+              },
+            ],
+          };
+        }
       },
     );
 
@@ -230,17 +302,19 @@ export function createServer(): McpServer {
         },
       },
       async () => {
-        if (!template.hasBuiltHtml) {
+        try {
+          await ensureTemplateBuilt(template.name);
+        } catch (error) {
           return {
             content: [
               {
                 type: "text",
-                text: `Template '${template.name}' is not built yet. Run npm run build inside ${template.name}.`,
+                text: `Template build failed for '${template.name}': ${error instanceof Error ? error.message : "unknown error"}`,
               },
             ],
             structuredContent: {
               ok: false,
-              reason: "template_not_built",
+              reason: "template_build_failed",
               template: template.name,
             },
           };
