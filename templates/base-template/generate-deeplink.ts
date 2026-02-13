@@ -19,7 +19,7 @@ function generatePromptDeeplink(promptText: string): string {
   return url.toString();
 }
 
-const promptText = `Create a new MCP app using the base template. Copy the base-template directory from apigene-mcp-apps-templates/base-template to a new directory with your app name. Then:
+const promptText = `Create a new MCP app using the base template. Copy the base-template directory from https://github.com/apigene/mcp-apps (templates/base-template) to a new directory with your app name. Then:
 
 1. Update APP_NAME, APP_VERSION in src/mcp-app.ts
 2. Update the HTML title in mcp-app.html
@@ -47,3 +47,5 @@ console.log(webDeeplink);
 console.log('\n📋 Prompt Text:\n');
 console.log(promptText);
 console.log('\n');
+
+export {};

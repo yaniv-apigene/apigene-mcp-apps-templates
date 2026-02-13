@@ -2,6 +2,8 @@
 
 Open-source repository of MCP App templates and local tooling.
 
+**Source:** [github.com/apigene/mcp-apps](https://github.com/apigene/mcp-apps)
+
 ## Repository Structure
 
 - `templates/` — all MCP app templates
