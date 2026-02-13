@@ -1,0 +1,44 @@
+{
+  "repositories": [
+    {
+      "owner": "apigene",
+      "name": "ai-chatbot",
+      "repository": "https://github.com/apigene/ai-chatbot"
+    },
+    {
+      "owner": "apigene",
+      "name": "apigene-backend",
+      "repository": "https://github.com/apigene/apigene-backend"
+    },
+    {
+      "owner": "apigene",
+      "name": "apigene-frontend",
+      "repository": "https://github.com/apigene/apigene-frontend"
+    },
+    {
+      "owner": "apigene",
+      "name": "apigene-copilot",
+      "repository": "https://github.com/apigene/apigene-copilot"
+    },
+    {
+      "owner": "apigene",
+      "name": "apigene-mcp",
+      "repository": "https://github.com/apigene/apigene-mcp"
+    },
+    {
+      "owner": "apigene",
+      "name": "mcp-apps",
+      "repository": "https://github.com/apigene/mcp-apps"
+    },
+    {
+      "owner": "apigene",
+      "name": "clerk-mcp-server",
+      "repository": "https://github.com/apigene/clerk-mcp-server"
+    },
+    {
+      "owner": "apigene",
+      "name": "langgraph-mcp-demo",
+      "repository": "https://github.com/apigene/langgraph-mcp-demo"
+    }
+  ]
+}
