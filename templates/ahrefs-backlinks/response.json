@@ -1,0 +1,51 @@
+{
+  "body": {
+    "backlinks": [
+      {
+        "url_from": "https://modelcontextprotocol.io/clients",
+        "url_to": "https://docs.apigene.ai/user-guide/copilot",
+        "domain_rating_source": 87,
+        "traffic_domain": 200370,
+        "anchor": "Apigene Copilot Documentation",
+        "first_seen": "2024-11-26T07:55:11Z",
+        "last_visited": "2026-02-14T18:43:37Z"
+      },
+      {
+        "url_from": "https://modelcontextprotocol.io/clients",
+        "url_to": "https://apigene.ai/",
+        "domain_rating_source": 87,
+        "traffic_domain": 200370,
+        "anchor": "Apigene MCP Client",
+        "first_seen": "2024-11-26T07:55:11Z",
+        "last_visited": "2026-02-14T18:43:37Z"
+      },
+      {
+        "url_from": "https://docs.sentry.io/organization/integrations/debugging/apigene/",
+        "url_to": "https://www.apigene.ai/integrations/Sentry",
+        "domain_rating_source": 90,
+        "traffic_domain": 209957,
+        "anchor": "Apigene installation instructions",
+        "first_seen": "2024-11-28T16:14:43Z",
+        "last_visited": "2026-02-12T18:54:49Z"
+      },
+      {
+        "url_from": "https://mcpservers.org/servers/docs-apigene-ai",
+        "url_to": "https://docs.apigene.ai/",
+        "domain_rating_source": 67,
+        "traffic_domain": 15409,
+        "anchor": "View on docs.apigene.ai",
+        "first_seen": "2026-01-23T21:56:29Z",
+        "last_visited": "2026-02-13T07:14:00Z"
+      },
+      {
+        "url_from": "https://www.saashub.com/best-genai-software/c/ai",
+        "url_to": "https://www.apigene.ai/",
+        "domain_rating_source": 76,
+        "traffic_domain": 1983,
+        "anchor": "apigene.ai",
+        "first_seen": "2024-12-09T08:13:46Z",
+        "last_visited": "2025-09-18T19:14:15Z"
+      }
+    ]
+  }
+}
