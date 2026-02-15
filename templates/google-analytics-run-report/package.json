@@ -1,0 +1,20 @@
+{
+  "name": "mcp-app-google-analytics-run-report",
+  "version": "1.0.0",
+  "description": "Google Analytics GA4 Run Report MCP App template with charts and tables",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0",
+    "vite-plugin-singlefile": "^2.0.0"
+  }
+}
