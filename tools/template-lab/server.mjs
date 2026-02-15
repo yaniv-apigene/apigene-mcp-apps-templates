@@ -38,6 +38,22 @@ function contentTypeFor(filePath) {
   return "application/octet-stream";
 }
 
+const METADATA_FILE = "template-metadata.json";
+
+async function loadTemplateMetadata(dirPath) {
+  const metaPath = path.join(dirPath, METADATA_FILE);
+  try {
+    const content = await fs.readFile(metaPath, "utf8");
+    const data = JSON.parse(content);
+    return {
+      uiElements: Array.isArray(data.uiElements) ? data.uiElements : [],
+      mcpFeatures: Array.isArray(data.mcpFeatures) ? data.mcpFeatures : [],
+    };
+  } catch {
+    return { uiElements: [], mcpFeatures: [] };
+  }
+}
+
 async function listTemplates() {
   const entries = await fs.readdir(templatesRoot, { withFileTypes: true });
   const templates = [];
@@ -67,12 +83,16 @@ async function listTemplates() {
       .then(() => true)
       .catch(() => false);
 
+    const metadata = await loadTemplateMetadata(dirPath);
+
     templates.push({
       name: entry.name,
       hasSource,
       hasDist,
       hasResponse,
       distPath: `/templates/${entry.name}/dist/mcp-app.html`,
+      uiElements: metadata.uiElements,
+      mcpFeatures: metadata.mcpFeatures,
     });
   }
 

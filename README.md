@@ -86,6 +86,7 @@ Inside each template folder (`templates/<name>/`):
 - `src/mcp-app.css`
 - `dist/mcp-app.html` (after build)
 - `response.json` (recommended for local preview/testing)
+- `template-metadata.json` (optional; for Template Lab filtering by UI elements and MCP features — see `tools/template-lab/TEMPLATE_METADATA.md`)
 
 ## Notes
 

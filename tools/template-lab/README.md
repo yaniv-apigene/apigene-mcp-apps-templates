@@ -28,3 +28,4 @@ Open: `http://localhost:4311`
 - On template selection, the playground auto-builds when `dist/mcp-app.html` is missing.
 - If build fails, the playground will try `npm install` once and then rebuild.
 - Put a `response.json` in `templates/<template>/` to control preview payload.
+- Optional: add `template-metadata.json` with `uiElements` and `mcpFeatures` arrays so users can filter templates in the lab. See [TEMPLATE_METADATA.md](./TEMPLATE_METADATA.md).
