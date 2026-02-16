@@ -1,7 +1,7 @@
 {
-  "name": "google-search-console-mcp",
+  "name": "google-search-console-query-v2",
   "version": "1.0.0",
-  "description": "Google Search Console MCP App using the official SDK with Vite bundling",
+  "description": "Google Search Console MCP App (query v2) with Vite bundling",
   "type": "module",
   "private": true,
   "scripts": {
@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@modelcontextprotocol/ext-apps": "^1.0.0",
     "chart.js": "^4.4.0"
   },
   "devDependencies": {

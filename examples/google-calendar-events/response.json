@@ -1,0 +1,330 @@
+{
+  "status_code": 200,
+  "headers": {
+    "Date": "Tue, 10 Feb 2026 20:59:49 GMT",
+    "Expires": "Tue, 10 Feb 2026 20:59:49 GMT",
+    "Cache-Control": "private, max-age=0, must-revalidate, no-transform",
+    "Content-Type": "application/json; charset=UTF-8",
+    "Vary": "Origin, X-Origin, Referer",
+    "Content-Encoding": "gzip",
+    "Server": "ESF",
+    "X-XSS-Protection": "0",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-Content-Type-Options": "nosniff",
+    "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+    "x-l2-request-path": "l2-managed-14",
+    "Transfer-Encoding": "chunked"
+  },
+  "body": {
+    "kind": "calendar#events",
+    "etag": "\"p33ft1pcqob7p40o\"",
+    "summary": "user@example.com",
+    "description": "",
+    "updated": "2026-02-10T18:08:09.726Z",
+    "timeZone": "Asia/Jerusalem",
+    "accessRole": "owner",
+    "defaultReminders": [
+      {
+        "method": "popup",
+        "minutes": 10
+      }
+    ],
+    "nextSyncToken": "CN_Q5ZrCz5IDEN_Q5ZrCz5IDGAUgtqHunAMotqHunAM=",
+    "items": [
+      {
+        "kind": "calendar#event",
+        "etag": "\"3523338262106174\"",
+        "id": "kv69hhc3760fl9rdvert6morqg",
+        "status": "confirmed",
+        "htmlLink": "https://www.google.com/calendar/event?eid=example1",
+        "created": "2025-06-04T09:26:50.000Z",
+        "updated": "2025-10-28T16:32:11.053Z",
+        "creator": {
+          "email": "user@example.com",
+          "self": true
+        },
+        "organizer": {
+          "email": "user@example.com",
+          "self": true
+        },
+        "start": {
+          "dateTime": "2025-06-10T18:30:00+03:00",
+          "timeZone": "Asia/Jerusalem"
+        },
+        "end": {
+          "dateTime": "2025-06-10T20:00:00+03:00",
+          "timeZone": "Asia/Jerusalem"
+        },
+        "recurrence": [
+          "EXDATE;TZID=Asia/Jerusalem:20250617T183000",
+          "RRULE:FREQ=WEEKLY"
+        ],
+        "iCalUID": "kv69hhc3760fl9rdvert6morqg@google.com",
+        "sequence": 1,
+        "reminders": {
+          "useDefault": true
+        },
+        "eventType": "default"
+      },
+      {
+        "kind": "calendar#event",
+        "etag": "\"3527873836852798\"",
+        "id": "0l3tibquhdeb2ka6rlnhsvn95o",
+        "status": "confirmed",
+        "htmlLink": "https://www.google.com/calendar/event?eid=example2",
+        "created": "2025-06-29T17:25:07.000Z",
+        "updated": "2025-11-23T22:28:38.426Z",
+        "summary": "Busy block",
+        "creator": {
+          "email": "user@example.com",
+          "self": true
+        },
+        "organizer": {
+          "email": "user@example.com",
+          "self": true
+        },
+        "start": {
+          "dateTime": "2025-06-30T08:00:00+03:00",
+          "timeZone": "Asia/Jerusalem"
+        },
+        "end": {
+          "dateTime": "2025-06-30T11:00:00+03:00",
+          "timeZone": "Asia/Jerusalem"
+        },
+        "recurrence": [
+          "RRULE:FREQ=DAILY"
+        ],
+        "iCalUID": "0l3tibquhdeb2ka6rlnhsvn95o@google.com",
+        "sequence": 1,
+        "reminders": {
+          "useDefault": true
+        },
+        "eventType": "default"
+      },
+      {
+        "kind": "calendar#event",
+        "etag": "\"3534705055442078\"",
+        "id": "3i1j8k3sqghifm8aneoopoglpj",
+        "status": "confirmed",
+        "htmlLink": "https://www.google.com/calendar/event?eid=example3",
+        "created": "2024-04-14T17:26:25.000Z",
+        "updated": "2026-01-02T11:15:27.721Z",
+        "summary": "Focus block",
+        "creator": {
+          "email": "user@example.com",
+          "self": true
+        },
+        "organizer": {
+          "email": "user@example.com",
+          "self": true
+        },
+        "start": {
+          "dateTime": "2024-04-14T13:00:00+03:00",
+          "timeZone": "Asia/Jerusalem"
+        },
+        "end": {
+          "dateTime": "2024-04-14T15:00:00+03:00",
+          "timeZone": "Asia/Jerusalem"
+        },
+        "recurrence": [
+          "EXDATE;TZID=Asia/Jerusalem:20240502T130000,20240707T130000,20240714T130000,20240716T130000,20240717T130000,20240718T130000,20240724T130000,20240728T130000,20240813T130000,20240819T130000,20240912T130000,20240913T130000,20240915T130000,20240916T130000,20240918T130000,20240919T130000,20240920T130000,20240925T130000,20241006T130000,20241009T130000,20241010T130000,20241020T130000,20241021T130000,20241114T130000,20241210T130000,20250319T130000,20250515T130000,20250522T130000,20250529T130000,20250605T130000",
+          "RRULE:FREQ=DAILY"
+        ],
+        "iCalUID": "3i1j8k3sqghifm8aneoopoglpj@google.com",
+        "sequence": 0,
+        "reminders": {
+          "useDefault": true
+        },
+        "eventType": "default"
+      },
+      {
+        "kind": "calendar#event",
+        "etag": "\"3541070113978910\"",
+        "id": "2hkeatptrjt6j1v0gcd7d53rm3",
+        "status": "confirmed",
+        "htmlLink": "https://www.google.com/calendar/event?eid=example4",
+        "created": "2026-02-08T07:17:26.000Z",
+        "updated": "2026-02-08T07:17:36.989Z",
+        "summary": "Team sync",
+        "creator": {
+          "email": "user@example.com",
+          "self": true
+        },
+        "organizer": {
+          "email": "user@example.com",
+          "self": true
+        },
+        "start": {
+          "dateTime": "2026-02-10T09:00:00+02:00",
+          "timeZone": "Asia/Jerusalem"
+        },
+        "end": {
+          "dateTime": "2026-02-10T09:30:00+02:00",
+          "timeZone": "Asia/Jerusalem"
+        },
+        "iCalUID": "2hkeatptrjt6j1v0gcd7d53rm3@google.com",
+        "sequence": 0,
+        "attendees": [
+          {
+            "email": "user@example.com",
+            "organizer": true,
+            "self": true,
+            "responseStatus": "accepted"
+          },
+          {
+            "email": "attendee1@example.com",
+            "responseStatus": "needsAction"
+          }
+        ],
+        "extendedProperties": {
+          "shared": {
+            "meetingId": "11122233344",
+            "zmMeetingNum": "11122233344",
+            "meetingParams": "{\"topic\":\"Team sync\",\"type\":2,\"start_time\":\"2026-02-10T09:00:00+02:00\",\"duration\":30,\"timezone\":\"Asia/Jerusalem\",\"invitees_hash\":\"Fk0MSd+PvttALXSPqk6PtA==\",\"all_day\":false}"
+          }
+        },
+        "conferenceData": {
+          "entryPoints": [
+            {
+              "entryPointType": "video",
+              "uri": "https://example.com/meeting/1",
+              "label": "example.com/meeting/1",
+              "meetingCode": "11122233344",
+              "passcode": "107772"
+            },
+            {
+              "regionCode": "US",
+              "entryPointType": "phone",
+              "uri": "tel:+15074734847,,11122233344#",
+              "label": "+1 507-473-4847",
+              "passcode": "107772"
+            },
+            {
+              "entryPointType": "more",
+              "uri": "https://example.com/meeting/1"
+            }
+          ],
+          "conferenceSolution": {
+            "key": {
+              "type": "addOn"
+            },
+            "name": "Zoom Meeting",
+            "iconUri": "https://lh3.googleusercontent.com/pw/AM-JKLUkiyTEgH-6DiQP85RGtd_BORvAuFnS9katNMgwYQBJUTiDh12qtQxMJFWYH2Dj30hNsNUrr-kzKMl7jX-Qd0FR7JmVSx-Fhruf8xTPPI-wdsMYez6WJE7tz7KmqsORKBEnBTiILtMJXuMvphqKdB9X=s128-no"
+          },
+          "conferenceId": "11122233344",
+          "notes": "Meeting host: <a href=\"mailto:user@example.com\" target=\"_blank\">user@example.com</a><br /><br />Join meeting: <a href=\"https://example.com/meeting/1\" target=\"_blank\">https://example.com/meeting/1</a>",
+          "parameters": {
+            "addOnParameters": {
+              "parameters": {
+                "scriptId": "1O_9DeEljSH2vrECr8XeFYYRxFFiowFKOivqSDz316BlBcDXrF00BXrkO",
+                "realMeetingId": "11122233344",
+                "creatorUserId": "_sgCi1GhSJSCE-c50NE6hQ",
+                "meetingUuid": "C3bc0VLqT5upv+hyokT9SQ==",
+                "meetingType": "2",
+                "originalEventId": "2hkeatptrjt6j1v0gcd7d53rm3"
+              }
+            }
+          }
+        },
+        "reminders": {
+          "useDefault": true
+        },
+        "eventType": "default"
+      },
+      {
+        "kind": "calendar#event",
+        "etag": "\"3541462223042014\"",
+        "id": "59u3g9l60jtglqal9d49e1l2lg",
+        "status": "confirmed",
+        "htmlLink": "https://www.google.com/calendar/event?eid=example5",
+        "created": "2026-02-09T17:06:58.000Z",
+        "updated": "2026-02-10T13:45:11.521Z",
+        "summary": "Project review",
+        "creator": {
+          "email": "user@example.com",
+          "self": true
+        },
+        "organizer": {
+          "email": "user@example.com",
+          "self": true
+        },
+        "start": {
+          "dateTime": "2026-02-10T16:30:00+02:00",
+          "timeZone": "Asia/Jerusalem"
+        },
+        "end": {
+          "dateTime": "2026-02-10T17:00:00+02:00",
+          "timeZone": "Asia/Jerusalem"
+        },
+        "iCalUID": "59u3g9l60jtglqal9d49e1l2lg@google.com",
+        "sequence": 1,
+        "attendees": [
+          {
+            "email": "attendee2@example.com",
+            "responseStatus": "needsAction"
+          },
+          {
+            "email": "user@example.com",
+            "organizer": true,
+            "self": true,
+            "responseStatus": "accepted"
+          }
+        ],
+        "extendedProperties": {
+          "shared": {
+            "meetingId": "55566677788",
+            "zmMeetingNum": "55566677788",
+            "meetingParams": "{\"topic\":\"Project review\",\"type\":2,\"start_time\":\"2026-02-10T16:30:00+02:00\",\"duration\":30,\"timezone\":\"Asia/Jerusalem\",\"invitees_hash\":\"XZ+HCdXLggRV75n3HGDFFQ==\",\"all_day\":false}"
+          }
+        },
+        "conferenceData": {
+          "entryPoints": [
+            {
+              "entryPointType": "video",
+              "uri": "https://example.com/meeting/2",
+              "label": "example.com/meeting/2",
+              "meetingCode": "55566677788",
+              "passcode": "616778"
+            },
+            {
+              "regionCode": "US",
+              "entryPointType": "phone",
+              "uri": "tel:+19292056099,,55566677788#",
+              "label": "+1 929-205-6099",
+              "passcode": "616778"
+            },
+            {
+              "entryPointType": "more",
+              "uri": "https://example.com/meeting/2"
+            }
+          ],
+          "conferenceSolution": {
+            "key": {
+              "type": "addOn"
+            },
+            "name": "Zoom Meeting",
+            "iconUri": "https://lh3.googleusercontent.com/pw/AM-JKLUkiyTEgH-6DiQP85RGtd_BORvAuFnS9katNMgwYQBJUTiDh12qtQxMJFWYH2Dj30hNsNUrr-kzKMl7jX-Qd0FR7JmVSx-Fhruf8xTPPI-wdsMYez6WJE7tz7KmqsORKBEnBTiILtMJXuMvphqKdB9X=s128-no"
+          },
+          "conferenceId": "55566677788",
+          "notes": "Meeting host: <a href=\"mailto:user@example.com\" target=\"_blank\">user@example.com</a><br /><br />Join meeting: <a href=\"https://example.com/meeting/2\" target=\"_blank\">https://example.com/meeting/2</a>",
+          "parameters": {
+            "addOnParameters": {
+              "parameters": {
+                "scriptId": "1O_9DeEljSH2vrECr8XeFYYRxFFiowFKOivqSDz316BlBcDXrF00BXrkO",
+                "realMeetingId": "55566677788",
+                "creatorUserId": "_sgCi1GhSJSCE-c50NE6hQ",
+                "meetingUuid": "/fZm8bD+Q12TyfRe/buqIA==",
+                "meetingType": "2",
+                "originalEventId": "59u3g9l60jtglqal9d49e1l2lg"
+              }
+            }
+          }
+        },
+        "reminders": {
+          "useDefault": true
+        },
+        "eventType": "default"
+      }
+    ]
+  }
+}

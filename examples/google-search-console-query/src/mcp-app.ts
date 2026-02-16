@@ -38,12 +38,11 @@ let lastRequestContext: Record<string, unknown> | null = null;
 
 /* ============================================
    EXTERNAL DEPENDENCIES
-   ============================================
-   If you use external libraries (like Chart.js), declare them here.
    ============================================ */
 
-// Chart.js is loaded via script tag in HTML
-declare const Chart: any;
+import Chart from "chart.js/auto";
+import "./global.css";
+import "./mcp-app.css";
 
 /* ============================================
    COMMON UTILITY FUNCTIONS
@@ -69,6 +68,11 @@ function extractData(msg: any) {
  */
 function unwrapData(data: any): any {
   if (!data) return null;
+  
+  // Format 0: API response wrapper { status_code, body: { rows, responseAggregationType } } (e.g. Search Console)
+  if (data.body && Array.isArray(data.body.rows)) {
+    return data.body;
+  }
   
   // Format 1: Standard table format { columns: [], rows: [] }
   if (data.columns || (Array.isArray(data.rows) && data.rows.length > 0) || 
@@ -655,8 +659,8 @@ function createGradient(ctx: CanvasRenderingContext2D, color: string, height: nu
  */
 function renderLineChart(canvas: HTMLCanvasElement, chartData: any, visibleSeries: Set<number> | null = null) {
   // Check if Chart.js is available
-  if (typeof Chart === 'undefined' || !Chart.Chart) {
-    console.error('[mcp-app]', 'Chart.js is not loaded. Chart object:', typeof Chart, Chart);
+  if (typeof Chart === 'undefined') {
+    console.error('[mcp-app]', 'Chart.js is not loaded.');
     showChartError(canvas.parentElement?.parentElement, 'Chart.js library not available');
     return;
   }
@@ -859,8 +863,8 @@ function renderLineChart(canvas: HTMLCanvasElement, chartData: any, visibleSerie
  */
 function renderPieChart(canvas: HTMLCanvasElement, values: number[], colors: string[], labels: string[] | null = null) {
   // Check if Chart.js is available
-  if (typeof Chart === 'undefined' || !Chart.Chart) {
-    console.error('[mcp-app]', 'Chart.js is not loaded. Chart object:', typeof Chart, Chart);
+  if (typeof Chart === 'undefined') {
+    console.error('[mcp-app]', 'Chart.js is not loaded.');
     showChartError(canvas.parentElement?.parentElement, 'Chart.js library not available');
     return;
   }
@@ -1032,9 +1036,12 @@ function renderData(data: any) {
     return;
   }
 
+  // Unwrap API response wrappers (e.g. { status_code, headers, body: { rows } }) so table/chart logic sees inner payload
+  const payload = unwrapData(data) ?? data;
+
   try {
     // Normalize data to table format
-    const tableData = normalizeTableData(data);
+    const tableData = normalizeTableData(payload);
     
     if (!tableData || !tableData.rows || tableData.rows.length === 0) {
       console.warn('[mcp-app]', 'Invalid or empty data:', data);
@@ -1540,7 +1547,7 @@ function renderData(data: any) {
     // Wait for Chart.js to be available, then render charts
     const waitForChartJS = (attempts = 0, maxAttempts = 100) => {
       // Check if Chart.js is loaded
-      const chartJsAvailable = typeof Chart !== 'undefined' && Chart.Chart;
+      const chartJsAvailable = typeof Chart !== 'undefined';
       const chartJsError = (window as any).chartJsLoadError;
       
       if (chartJsAvailable) {
@@ -2032,6 +2039,9 @@ function sendNotification(method: string, params: any) {
   window.parent.postMessage({ jsonrpc: "2.0", method, params }, '*');
 }
 
+// Only send size-changed after host has acknowledged connection (avoids "Not connected" errors)
+let isConnected = false;
+
 /* ============================================
    DISPLAY MODE HANDLING
    ============================================
@@ -2095,6 +2105,7 @@ function requestDisplayMode(mode: string): Promise<any> {
    ============================================ */
 
 function notifySizeChanged() {
+  if (!isConnected) return;
   const width = document.body.scrollWidth || document.documentElement.scrollWidth;
   const height = document.body.scrollHeight || document.documentElement.scrollHeight;
   
@@ -2134,11 +2145,7 @@ function setupSizeObserver() {
       attributeFilter: ['style', 'class']
     });
   }
-  
-  // Send initial size after a short delay to ensure content is rendered
-  setTimeout(() => {
-    notifySizeChanged();
-  }, 100);
+  // Initial size is sent after init completes (in init .then())
 }
 
 /* ============================================
@@ -2160,6 +2167,7 @@ sendRequest('ui/initialize', {
   },
   protocolVersion: PROTOCOL_VERSION
 }).then((result: any) => {
+  isConnected = true;
   // Extract host context from initialization result
   const ctx = result.hostContext || result;
   
@@ -2168,6 +2176,8 @@ sendRequest('ui/initialize', {
   
   // Send initialized notification after successful initialization
   sendNotification('ui/notifications/initialized', {});
+  // Send initial size so host can size the iframe
+  setTimeout(() => notifySizeChanged(), 100);
   // Apply theme from host context
   if (ctx?.theme === 'dark') {
     document.body.classList.add('dark');
@@ -2196,7 +2206,8 @@ sendRequest('ui/initialize', {
   }
 }).catch(err => {
   console.warn('[mcp-app]', 'Failed to initialize MCP App:', err);
-  // Fallback to system preference if initialization fails
+  // Allow size notifications even if init failed (e.g. timeout in playground)
+  isConnected = true;
 });
 
 initializeDarkMode();
