@@ -1,0 +1,185 @@
+{
+  "status_code": 200,
+  "body": [
+    {
+      "id": "yanivshani",
+      "name": "Yaniv Shani",
+      "city": "Ramat HaSharon, Tel Aviv District, Israel",
+      "country_code": "IL",
+      "about": "R&D executive with over two decades of managing the development of large-scale…",
+      "current_company": {
+        "link": "https://www.linkedin.com/company/apigene-ai?trk=public_profile_topcard-current-company",
+        "name": "Apigene",
+        "company_id": "apigene-ai"
+      },
+      "url": "https://cz.linkedin.com/in/yanivshani",
+      "people_also_viewed": [
+        {
+          "profile_link": "https://il.linkedin.com/in/shimon-grobman-50b4364",
+          "name": "Shimon Grobman",
+          "about": "Mend",
+          "location": "2K followers Petah Tikva"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/hagai-ben-ami-602b6018",
+          "name": "Hagai Ben-Ami",
+          "about": "Surgimate",
+          "location": "1K followers Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/drorbareket",
+          "name": "Dror Bareket",
+          "about": "Imperva",
+          "location": "1K followers Tel Aviv-Yafo"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/rahimiyaniv",
+          "name": "Yaniv Rahimi",
+          "about": "Efficient Finance Ltd",
+          "location": "3K followers Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/ronenyacobi",
+          "name": "Ronen Yacobi",
+          "about": "Similarweb",
+          "location": "1K followers Center District, Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/kobi1023",
+          "name": "Kobi Brooks",
+          "about": "Elementor",
+          "location": "2K followers Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/gil-schmidt-3b3b3710",
+          "name": "Gil Schmidt",
+          "about": "SAP",
+          "location": "943 followers Tel Aviv District, Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/yaniv-toplian-27936a4",
+          "name": "Yaniv Toplian",
+          "about": "Cenevo (Formerly Labguru & Titian Software)",
+          "location": "3K followers Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/dorswisa",
+          "name": "Dor Swisa",
+          "about": "Sola Security",
+          "location": "4K followers Ramat Gan"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/aleksey-kovalevsky-2781b162",
+          "name": "Aleksey Kovalevsky",
+          "about": "Seeking Alpha",
+          "location": "3K followers Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/tohart",
+          "name": "Tohar Trabinovitch",
+          "about": "Salesforce",
+          "location": "2K followers Tel Aviv District, Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/eran-karisi-94974447",
+          "name": "Eran Karisi",
+          "about": "Prodly",
+          "location": "2K followers Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/vitaly-futoriansky-3b9a132a",
+          "name": "Vitaly Futoriansky",
+          "about": "Natural Intelligence",
+          "location": "2K followers Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/itzikzandok",
+          "name": "Itzik Zandok",
+          "about": "Proofpoint",
+          "location": "896 followers Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/inbal-shoval-binshtock-238660a5",
+          "name": "Inbal Shoval Binshtock",
+          "about": "Pomvom [ TASE: PMVM ]",
+          "location": "5K followers Hod HaSharon"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/orendanewitz",
+          "name": "Oren Danewitz",
+          "about": "Digital Turbine",
+          "location": "2K followers Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/leonfleysher",
+          "name": "Leon Fleysher",
+          "about": "Toluna Corporate",
+          "location": "1K followers Haifa District, Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/sniryael",
+          "name": "Snir Yael",
+          "about": "Navan",
+          "location": "2K followers Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/tal-kaminsky-a8308152",
+          "name": "Tal Kaminsky",
+          "about": "WalkMe™",
+          "location": "1K followers Tel Aviv District, Israel"
+        },
+        {
+          "profile_link": "https://il.linkedin.com/in/naor-bar-816666a8",
+          "name": "Naor Bar",
+          "about": "BIScience",
+          "location": "2K followers Israel"
+        }
+      ],
+      "educations_details": "The Interdisciplinary Center",
+      "education": [
+        {
+          "title": "The Interdisciplinary Center",
+          "url": "https://il.linkedin.com/school/reichman-university/",
+          "start_year": "1996",
+          "end_year": "1999"
+        }
+      ],
+      "recommendations_count": 4,
+      "avatar": "https://media.licdn.com/dms/image/v2/D4D03AQFmbXj7N4a5bw/profile-displayphoto-scale_200_200/B4DZv3ARR1G4AY-/0/1769375602439?e=2147483647&v=beta&t=T5N765PkTC5E4w9coNOCDXEWt_f6NNH40Ldu_6zDMag",
+      "languages": [
+        {
+          "subtitle": "-",
+          "title": "English"
+        },
+        {
+          "subtitle": "-",
+          "title": "Hebrew"
+        }
+      ],
+      "recommendations": [
+        "Jibing Chen “I worked very closely with Yaniv for about 7 years. Yaniv well understand industry and customer needs, also has strong leadership and great enthusiasm to work with SoC, ISV, Carriers and OEMs to drive JavaME eco-system. I have been always impressed by Yaniv's sharp thinking on both business and technology. Yaniv led Global Oracle JavaME Mobile org. and achieved huge success with important customers from tier 1 carriers: Vodafone, China Mobile, to leading OEMs: Samsung, LGE, Huawei, ZTE, HTC etc. Yaniv well handled all technical and business complication and led team to deliver projects on time and won customer trust.”",
+        "Wonil K. “When I joined Sun Microsystems (now Oracle) embedded Java team, I had a chance to work with him for the biggest Korea OEM customer project. At that time, he was a technical leader who is in charge of many things including S/W implementation, project management and customer facing. Prior that time and since that time, I never saw one who has such a deep passion on his/her own work. He is the best professional whom I ever met. Plus on that, he knew how to delegate properly. It made me grown as a technical manager position. Naturally, he became a decision maker of our team and I truly believe he made the golden age of our team with his great leadership.”"
+      ],
+      "followers": 6871,
+      "connections": 500,
+      "current_company_company_id": "apigene-ai",
+      "current_company_name": "Apigene",
+      "location": "Ramat HaSharon",
+      "input_url": "https://www.linkedin.com/in/yanivshani",
+      "linkedin_id": "yanivshani",
+      "linkedin_num_id": "1586343",
+      "banner_image": "https://static.licdn.com/aero-v1/sc/h/5q92mjc5c51bjlwaj3rs9aa82",
+      "similar_profiles": [],
+      "default_avatar": false,
+      "memorialized_account": false,
+      "bio_links": [],
+      "first_name": "Yaniv",
+      "last_name": "Shani",
+      "influencer": false,
+      "timestamp": "2026-02-07T21:10:28.451Z",
+      "input": {
+        "url": "https://www.linkedin.com/in/yanivshani"
+      }
+    }
+  ]
+}
