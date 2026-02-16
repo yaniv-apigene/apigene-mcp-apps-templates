@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "../..");
-const templatesRoot = path.join(repoRoot, "templates");
+const examplesRoot = path.join(repoRoot, "examples");
 const publicDir = path.join(__dirname, "public");
 const mockDir = path.join(__dirname, "mock-data");
 const port = Number(process.env.PORT || 4311);
@@ -55,14 +55,14 @@ async function loadTemplateMetadata(dirPath) {
 }
 
 async function listTemplates() {
-  const entries = await fs.readdir(templatesRoot, { withFileTypes: true });
+  const entries = await fs.readdir(examplesRoot, { withFileTypes: true });
   const templates = [];
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
     if (entry.name.startsWith(".")) continue;
 
-    const dirPath = path.join(templatesRoot, entry.name);
+    const dirPath = path.join(examplesRoot, entry.name);
     const srcHtml = path.join(dirPath, "mcp-app.html");
     const distHtml = path.join(dirPath, "dist", "mcp-app.html");
     const responseJson = path.join(dirPath, "response.json");
@@ -90,7 +90,7 @@ async function listTemplates() {
       hasSource,
       hasDist,
       hasResponse,
-      distPath: `/templates/${entry.name}/dist/mcp-app.html`,
+      distPath: `/examples/${entry.name}/dist/mcp-app.html`,
       uiElements: metadata.uiElements,
       mcpFeatures: metadata.mcpFeatures,
     });
@@ -107,7 +107,7 @@ async function loadMockPayloadForTemplate(templateName) {
     return null;
   }
 
-  const templateResponsePath = path.join(templatesRoot, templateName, "response.json");
+  const templateResponsePath = path.join(examplesRoot, templateName, "response.json");
   if (template.hasResponse) {
     const content = await fs.readFile(templateResponsePath, "utf8");
     return {
@@ -120,7 +120,7 @@ async function loadMockPayloadForTemplate(templateName) {
   const defaultContent = await fs.readFile(defaultPath, "utf8");
   return {
     payload: JSON.parse(defaultContent),
-    source: "tools/template-lab/mock-data/default.json",
+    source: "playground/playground-app/mock-data/default.json",
   };
 }
 
@@ -164,7 +164,7 @@ async function ensureTemplateBuilt(templateName) {
     return { ok: true, built: false, message: "already_built" };
   }
 
-  const templateDir = path.join(templatesRoot, templateName);
+  const templateDir = path.join(examplesRoot, templateName);
   let installAttempted = false;
 
   try {
@@ -247,8 +247,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname.startsWith("/template/")) {
-      let rel = pathname.replace(/^\/template\//, "").replace(/^templates\//, "");
-      let filePath = safeJoin(repoRoot, path.join("templates", rel));
+      let rel = pathname.replace(/^\/template\//, "").replace(/^examples\//, "").replace(/^templates\//, "");
+      let filePath = safeJoin(repoRoot, path.join("examples", rel));
       if (!filePath) {
         sendText(res, 400, "Invalid path", "text/plain");
         return;

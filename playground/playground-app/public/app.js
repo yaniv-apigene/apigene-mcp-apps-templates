@@ -112,7 +112,7 @@ async function sendInitialEvents(templateName) {
   return source;
 }
 
-const REPO_TEMPLATES = "https://github.com/apigene/mcp-apps/tree/main/templates";
+const REPO_TEMPLATES = "https://github.com/apigene/mcp-apps/tree/main/examples";
 
 function filterTemplates(list) {
   const uiArr = Array.from(selectedUiElements);
@@ -217,7 +217,7 @@ function updateSourceLink() {
   if (!link) return;
   const selected = templates.find((t) => t.name === selectEl.value);
   link.href = selected ? `${REPO_TEMPLATES}/${encodeURIComponent(selected.name)}` : REPO_TEMPLATES;
-  link.textContent = selected ? `Open source: templates/${selected.name}/ →` : "View all templates on GitHub →";
+  link.textContent = selected ? `Open source: examples/${selected.name}/ →` : "View all examples on GitHub →";
 }
 
 function clearFilters() {

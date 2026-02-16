@@ -15,11 +15,11 @@ import path from "node:path";
 import { z } from "zod";
 
 const REPO_ROOT = path.resolve(import.meta.dirname, "../..");
-const TEMPLATES_ROOT = path.join(REPO_ROOT, "templates");
+const EXAMPLES_ROOT = path.join(REPO_ROOT, "examples");
 const DEFAULT_MOCK_PATH = path.join(
   REPO_ROOT,
-  "tools",
-  "template-lab",
+  "playground",
+  "playground-app",
   "mock-data",
   "default.json",
 );
@@ -52,14 +52,14 @@ function toToolName(templateName: string): string {
 }
 
 function listTemplates(): TemplateInfo[] {
-  const entries = readdirSync(TEMPLATES_ROOT, { withFileTypes: true });
+  const entries = readdirSync(EXAMPLES_ROOT, { withFileTypes: true });
   const templates: TemplateInfo[] = [];
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
     if (entry.name.startsWith(".")) continue;
 
-    const sourceHtml = path.join(TEMPLATES_ROOT, entry.name, "mcp-app.html");
+    const sourceHtml = path.join(EXAMPLES_ROOT, entry.name, "mcp-app.html");
     if (!existsSync(sourceHtml)) continue;
 
     templates.push({
@@ -74,7 +74,7 @@ function listTemplates(): TemplateInfo[] {
 }
 
 async function readMockPayload(templateName: string): Promise<unknown> {
-  const templateResponse = path.join(TEMPLATES_ROOT, templateName, "response.json");
+  const templateResponse = path.join(EXAMPLES_ROOT, templateName, "response.json");
   const content = await fs
     .readFile(templateResponse, "utf8")
     .catch(async () => fs.readFile(DEFAULT_MOCK_PATH, "utf8"));
@@ -92,9 +92,9 @@ function toStructuredContent(payload: unknown): Record<string, unknown> {
 }
 
 const distPath = (name: string) =>
-  path.join(TEMPLATES_ROOT, name, "dist", "mcp-app.html");
+  path.join(EXAMPLES_ROOT, name, "dist", "mcp-app.html");
 const sourcePath = (name: string) =>
-  path.join(TEMPLATES_ROOT, name, "mcp-app.html");
+  path.join(EXAMPLES_ROOT, name, "mcp-app.html");
 
 function readTemplateHtmlSync(templateName: string): string {
   const dist = distPath(templateName);
@@ -109,7 +109,7 @@ function isTemplateBuilt(templateName: string): boolean {
 }
 
 function templateHasBuildScript(templateName: string): boolean {
-  const pkgPath = path.join(TEMPLATES_ROOT, templateName, "package.json");
+  const pkgPath = path.join(EXAMPLES_ROOT, templateName, "package.json");
   if (!existsSync(pkgPath)) return false;
   try {
     const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
@@ -167,7 +167,7 @@ async function ensureTemplateBuilt(templateName: string): Promise<void> {
     return;
   }
 
-  const templateDir = path.join(TEMPLATES_ROOT, templateName);
+  const templateDir = path.join(EXAMPLES_ROOT, templateName);
   const buildPromise = (async () => {
     try {
       await runCommand("npm", ["run", "build"], templateDir);

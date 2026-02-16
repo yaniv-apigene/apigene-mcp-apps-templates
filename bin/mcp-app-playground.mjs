@@ -9,9 +9,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "..");
 
-const templatesRoot = path.join(repoRoot, "templates");
-const labDir = path.join(repoRoot, "tools", "template-lab");
-const mcpMain = path.join(repoRoot, "tools", "template-mcp-server", "main.ts");
+const examplesRoot = path.join(repoRoot, "examples");
+const labDir = path.join(repoRoot, "playground", "playground-app");
+const mcpMain = path.join(repoRoot, "playground", "playground-mcp-server", "main.ts");
 
 const tty = process.stdout?.isTTY;
 const c = {
@@ -43,7 +43,7 @@ function help() {
 
  ${style(c.bold, "Commands")}
    ${cmd("start")}        Start MCP Apps Playground + MCP server (HTTP). Optionally opens the lab in your browser.
-   ${cmd("list")}        List all available templates in templates/
+   ${cmd("list")}        List all available examples in examples/
    ${cmd("build")}       Install deps and build every template that has a build script
    ${cmd("lab")}         Run only the MCP Apps Playground (web preview server)
    ${cmd("mcp")} ${opt("http")}   Run only the MCP demo server over HTTP
@@ -58,7 +58,7 @@ function help() {
    npx mcp-app-playground lab
    ${dim("Then open")} http://localhost:4311
 
-   ${dim("# Build all templates (e.g. before CI):")}
+   ${dim("# Build all examples (e.g. before CI):")}
    npx mcp-app-playground build
 `);
 }
@@ -114,10 +114,10 @@ function runDev(shouldOpenBrowser = false) {
 
   console.log(style(c.bold, "\n MCP Apps Playground\n"));
   console.log(style(c.dim, " Starting servers...\n"));
-  console.log("  " + style(c.cyan, "Playground") + "  " + style(c.blue, "http://localhost:4311") + style(c.dim, "  — preview templates in the browser"));
+  console.log("  " + style(c.cyan, "Playground") + "  " + style(c.blue, "http://localhost:4311") + style(c.dim, "  — preview examples in the browser"));
   console.log("  " + style(c.cyan, "MCP server") + "  " + style(c.blue, "http://127.0.0.1:3001/mcp") + style(c.dim, "  — add this URL in Cursor / Claude / your MCP client\n"));
   console.log(style(c.bold, " MCP tools (use after adding the server URL above):\n"));
-  console.log("  " + style(c.green, "list_demo_apps") + style(c.dim, "  — list all app templates you can demo; call this first to see available apps"));
+  console.log("  " + style(c.green, "list_demo_apps") + style(c.dim, "  — list all demo apps you can try; call this first to see available apps"));
   console.log("  " + style(c.green, "show_demo_app") + style(c.dim, "  — open a demo by name, e.g. show_demo_app with template: \"xyz-users\" or say \"show demo app xyz-users\"\n"));
   if (shouldOpenBrowser) {
     console.log(style(c.dim, " Opening playground in your browser in a moment.\n"));
@@ -130,39 +130,39 @@ function runDev(shouldOpenBrowser = false) {
 }
 
 function listTemplates() {
-  if (!fs.existsSync(templatesRoot)) {
-    console.error(style(c.red, " Error: ") + "templates/ directory not found.");
+  if (!fs.existsSync(examplesRoot)) {
+    console.error(style(c.red, " Error: ") + "examples/ directory not found.");
     process.exit(1);
   }
 
   const items = fs
-    .readdirSync(templatesRoot, { withFileTypes: true })
+    .readdirSync(examplesRoot, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
-    .filter((entry) => fs.existsSync(path.join(templatesRoot, entry.name, "mcp-app.html")))
+    .filter((entry) => fs.existsSync(path.join(examplesRoot, entry.name, "mcp-app.html")))
     .map((entry) => entry.name)
     .sort((a, b) => a.localeCompare(b));
 
   if (!items.length) {
-    console.log(style(c.yellow, " No templates found.") + style(c.dim, " Add templates in templates/ with mcp-app.html."));
+    console.log(style(c.yellow, " No examples found.") + style(c.dim, " Add examples in examples/ with mcp-app.html."));
     return;
   }
 
-  console.log(style(c.bold, " Available templates") + style(c.dim, ` (${items.length})`) + "\n");
+  console.log(style(c.bold, " Available examples") + style(c.dim, ` (${items.length})`) + "\n");
   for (const name of items) {
     console.log("  " + style(c.cyan, name));
   }
-  console.log(style(c.dim, "\n Use one as a base: cp -r templates/base-template-sdk templates/my-app"));
+  console.log(style(c.dim, "\n Use one as a base: cp -r examples/base-template-sdk examples/my-app"));
 }
 
 function getTemplatesWithBuild() {
-  if (!fs.existsSync(templatesRoot)) return [];
+  if (!fs.existsSync(examplesRoot)) return [];
   return fs
-    .readdirSync(templatesRoot, { withFileTypes: true })
+    .readdirSync(examplesRoot, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
-    .filter((entry) => fs.existsSync(path.join(templatesRoot, entry.name, "mcp-app.html")))
+    .filter((entry) => fs.existsSync(path.join(examplesRoot, entry.name, "mcp-app.html")))
     .map((entry) => entry.name)
     .filter((name) => {
-      const pkgPath = path.join(templatesRoot, name, "package.json");
+      const pkgPath = path.join(examplesRoot, name, "package.json");
       if (!fs.existsSync(pkgPath)) return false;
       try {
         const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
@@ -177,14 +177,14 @@ function getTemplatesWithBuild() {
 function buildAllTemplates() {
   const templates = getTemplatesWithBuild();
   if (!templates.length) {
-    console.log(style(c.yellow, " No templates with a build script found.") + style(c.dim, " Add a \"build\" script in template package.json to include it."));
+    console.log(style(c.yellow, " No examples with a build script found.") + style(c.dim, " Add a \"build\" script in example package.json to include it."));
     return;
   }
-  console.log(style(c.bold, " Build all templates") + style(c.dim, ` (${templates.length} template${templates.length === 1 ? "" : "s"})`) + "\n");
-  console.log(style(c.dim, " Each template: npm install → npm run build\n"));
+  console.log(style(c.bold, " Build all examples") + style(c.dim, ` (${templates.length} example${templates.length === 1 ? "" : "s"})`) + "\n");
+  console.log(style(c.dim, " Each example: npm install → npm run build\n"));
   let failed = 0;
   for (const name of templates) {
-    const cwd = path.join(templatesRoot, name);
+    const cwd = path.join(examplesRoot, name);
     console.log(style(c.cyan, " ▶ " + name));
     const install = spawnSync("npm", ["install"], {
       cwd,
@@ -209,10 +209,10 @@ function buildAllTemplates() {
     }
   }
   if (failed) {
-    console.error("\n" + style(c.red, " ✗ ") + style(c.bold, `${failed} template(s) failed to build.`));
+    console.error("\n" + style(c.red, " ✗ ") + style(c.bold, `${failed} example(s) failed to build.`));
     process.exit(1);
   }
-  console.log("\n" + style(c.green, " ✓ All templates built successfully."));
+  console.log("\n" + style(c.green, " ✓ All examples built successfully."));
 }
 
 const [, , cmd, sub] = process.argv;
@@ -245,7 +245,7 @@ if (cmd === "list") {
   runDev(!cmd);
 } else if (cmd === "lab") {
   console.log(style(c.bold, "\n MCP Apps Playground") + style(c.dim, " (preview only)\n"));
-  console.log("  " + style(c.blue, "http://localhost:4311") + style(c.dim, "  — open in your browser to preview templates\n"));
+  console.log("  " + style(c.blue, "http://localhost:4311") + style(c.dim, "  — open in your browser to preview examples\n"));
   console.log(style(c.dim, " Press Ctrl+C to stop.\n"));
   run("node", ["server.mjs"], labDir);
 } else if (cmd === "mcp") {
