@@ -83,7 +83,7 @@ function unwrapData(data: any): any {
  * Escape HTML to prevent XSS attacks
  */
 function escapeHtml(str: any): string {
-  if (typeof str !== "string") return str;
+  if (typeof str !== "string") return String(str);
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
@@ -679,10 +679,10 @@ function renderData(data: any) {
     // Search handler
     const searchInput = document.getElementById('search-input') as HTMLInputElement;
     if (searchInput) {
-      let searchTimeout: NodeJS.Timeout;
+      let searchTimeout: number;
       searchInput.addEventListener('input', () => {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
+        searchTimeout = window.setTimeout(() => {
           const query = searchInput.value;
           filteredOrganizations = searchOrganizations(allOrganizations, query);
           renderCompanies(filteredOrganizations);

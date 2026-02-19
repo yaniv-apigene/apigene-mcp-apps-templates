@@ -75,6 +75,25 @@ import "./mcp-app.css";
 const APP_VERSION = "1.0.0";
 
 /* ============================================
+   TYPE DEFINITIONS
+   ============================================ */
+
+/** Google Search Console row from API response */
+interface GSCRow {
+  keys: string[];
+  clicks: number;
+  impressions: number;
+  ctr: number;
+  position: number;
+}
+
+/** Normalized table data for rendering */
+interface TableData {
+  columns: string[];
+  rows: (string | number)[][];
+}
+
+/* ============================================
    COMMON UTILITY FUNCTIONS
    ============================================ */
 
@@ -104,9 +123,16 @@ function unwrapData(data: any): any {
     return data;
   }
 
-  // Handle GitHub API response format - check for body array
-  if (data.body && Array.isArray(data.body)) {
-    return data.body;
+  // Handle API response format with body wrapper
+  if (data.body) {
+    // body is array (e.g. GitHub API)
+    if (Array.isArray(data.body)) {
+      return data.body;
+    }
+    // body is object with rows (e.g. Google Search Console)
+    if (data.body.rows && Array.isArray(data.body.rows)) {
+      return data.body;
+    }
   }
 
   // Nested formats
@@ -143,7 +169,7 @@ function unwrapData(data: any): any {
  * Escape HTML to prevent XSS attacks
  */
 function escapeHtml(str: any): string {
-  if (typeof str !== "string") return str;
+  if (typeof str !== "string") return String(str);
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
@@ -498,19 +524,36 @@ function normalizeTableData(data: any) {
       const rows: any[] = [];
       
       // Handle keys array (like Google Search Console)
+      // keys can contain multiple dimensions: e.g. ["date", "page"] or ["date", "query", "country"]
       if (firstRow.keys && Array.isArray(firstRow.keys)) {
-        columns.push('Date');
+        const keyCount = firstRow.keys.length;
+        // Try to get dimension names from lastRequestContext, otherwise use generic names
+        const requestedDimensions = (lastRequestContext?.dimensions && Array.isArray(lastRequestContext.dimensions))
+          ? (lastRequestContext.dimensions as string[]).filter((d): d is string => typeof d === 'string')
+          : [];
+        for (let i = 0; i < keyCount; i++) {
+          if (requestedDimensions[i]) {
+            // Capitalize first letter of dimension name
+            columns.push(requestedDimensions[i].charAt(0).toUpperCase() + requestedDimensions[i].slice(1));
+          } else {
+            columns.push(`Dimension ${i + 1}`);
+          }
+        }
         Object.keys(firstRow).forEach(key => {
           if (key !== 'keys') {
             columns.push(key.charAt(0).toUpperCase() + key.slice(1));
           }
         });
-        
-        unwrapped.rows.forEach((row: any) => {
-          const rowArray = [row.keys?.[0] || ''];
+
+        unwrapped.rows.forEach((row: GSCRow) => {
+          const rowArray: (string | number)[] = [];
+          // Add all keys to the row
+          if (row.keys && Array.isArray(row.keys)) {
+            row.keys.forEach((k: string) => rowArray.push(k ?? ''));
+          }
           Object.keys(row).forEach(key => {
             if (key !== 'keys') {
-              rowArray.push(row[key]);
+              rowArray.push(row[key as keyof Omit<GSCRow, 'keys'>]);
             }
           });
           rows.push(rowArray);

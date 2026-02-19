@@ -58,7 +58,7 @@ function unwrapData(data: any): any {
 
 
 function escapeHtml(str: any): string {
-  if (typeof str !== "string") return str;
+  if (typeof str !== "string") return String(str);
   const div = document.createElement("div");
   div.textContent = str;
   return div.innerHTML;
