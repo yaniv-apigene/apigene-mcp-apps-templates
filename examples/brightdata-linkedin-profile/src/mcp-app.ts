@@ -219,8 +219,8 @@ function renderRecommendationCard(recommendation: string, index: number): string
  * Main render function - renders the LinkedIn profile
  */
 function renderData(data: any) {
-  const app = document.getElementById('app');
-  if (!app) return;
+  const appElement = document.getElementById('app');
+  if (!appElement) return;
 
   if (!data) {
     showEmpty('No LinkedIn profile data received');
@@ -262,7 +262,7 @@ function renderData(data: any) {
     const followers = profile.followers || 0;
     const recommendationsCount = profile.recommendations_count || recommendations.length;
 
-    app.innerHTML = `
+    appElement.innerHTML = `
       <div class="linkedin-container">
         <!-- Profile Header -->
         <div class="profile-header">
@@ -413,7 +413,8 @@ function renderData(data: any) {
     `;
 
   } catch (error: any) {
-    app.sendLog({ level: "error", data: `Render error: ${JSON.stringify(error)}`, logger: APP_NAME });
+    const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
+    app.sendLog({ level: "error", data: `Render error: ${errorMsg}`, logger: APP_NAME });
     showError(`Error rendering LinkedIn profile: ${error.message}`);
   }
 }
@@ -529,7 +530,8 @@ app.ontoolcancelled = (params) => {
 };
 
 app.onerror = (error) => {
-  app.sendLog({ level: "error", data: `App error: ${JSON.stringify(error)}`, logger: APP_NAME });
+  const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
+  app.sendLog({ level: "error", data: `App error: ${errorMsg}`, logger: APP_NAME });
 };
 
 app.onhostcontextchanged = (ctx) => {
@@ -551,7 +553,8 @@ app
     }
   })
   .catch((error) => {
-    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${JSON.stringify(error)}`, logger: APP_NAME });
+    const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
+    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${errorMsg}`, logger: APP_NAME });
   });
 
 export {};

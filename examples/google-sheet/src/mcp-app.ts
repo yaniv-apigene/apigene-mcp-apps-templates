@@ -415,8 +415,8 @@ function setupTableInteractivity() {
    ============================================ */
 
 function renderData(data: any) {
-  const app = document.getElementById('app');
-  if (!app) return;
+  const appElement = document.getElementById('app');
+  if (!appElement) return;
 
   if (!data) {
     showEmpty('No sheet data received');
@@ -460,7 +460,7 @@ function renderData(data: any) {
     if (spreadsheetId) {
       const embedUrl = buildEmbedUrl(spreadsheetId);
 
-      app.innerHTML = `
+      appElement.innerHTML = `
         <div class="container">
           <div class="sheet-header">
             <div class="sheet-info">
@@ -490,7 +490,7 @@ function renderData(data: any) {
       const headers = values.length > 0 ? values[0] : [];
       const rows = values.slice(1);
 
-      app.innerHTML = `
+      appElement.innerHTML = `
         <div class="container">
           <div class="sheet-header">
             <div class="sheet-info">

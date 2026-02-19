@@ -93,9 +93,9 @@ function escapeHtml(str: any): string {
  * Show error message in the app
  */
 function showError(message: string) {
-  const app = document.getElementById('app');
-  if (app) {
-    app.innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
+  const appContainer = document.getElementById('app');
+  if (appContainer) {
+    appContainer.innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
   }
 }
 
@@ -104,9 +104,9 @@ function showError(message: string) {
  * Override the default message by passing a custom message
  */
 function showEmpty(message: string = 'No data available.') {
-  const app = document.getElementById('app');
-  if (app) {
-    app.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+  const appContainer = document.getElementById('app');
+  if (appContainer) {
+    appContainer.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
   }
 }
 
@@ -376,8 +376,8 @@ function stopPlayback() {
    ============================================ */
 
 function renderData(data: any) {
-  const app = document.getElementById('app');
-  if (!app) return;
+  const appContainer = document.getElementById('app');
+  if (!appContainer) return;
   
   // Stop any playing audio when re-rendering (but keep track selection)
   if (!selectedTrackId) {
@@ -442,8 +442,8 @@ function renderData(data: any) {
 }
 
 function renderTracksList(tracks: any[], unwrapped: any) {
-  const app = document.getElementById('app');
-  if (!app) return;
+  const appContainer = document.getElementById('app');
+  if (!appContainer) return;
   
   // Get total count if available (handle multiple data formats)
   const total = unwrapped?.response_content?.tracks?.total || 
@@ -451,7 +451,7 @@ function renderTracksList(tracks: any[], unwrapped: any) {
                 unwrapped?.tracks?.total || 
                 tracks.length;
   
-  app.innerHTML = `
+  appContainer.innerHTML = `
     <div class="spotify-container">
       <div class="spotify-header">
         <div class="spotify-logo">
@@ -508,7 +508,7 @@ function renderTracksList(tracks: any[], unwrapped: any) {
   `;
   
   // Event delegation for all interactive elements
-  app.addEventListener('click', (e) => {
+  appContainer.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
 
     // Handle play button clicks
@@ -536,8 +536,8 @@ function renderTracksList(tracks: any[], unwrapped: any) {
 }
 
 function renderTrackDetail(track: any) {
-  const app = document.getElementById('app');
-  if (!app) return;
+  const appContainer = document.getElementById('app');
+  if (!appContainer) return;
   
   const imageUrl = getAlbumImage(track.album);
   const artistNames = getArtistNames(track.artists || []);
@@ -563,7 +563,7 @@ function renderTrackDetail(track: any) {
     }
   }
   
-  app.innerHTML = `
+  appContainer.innerHTML = `
     <div class="spotify-container">
       <div class="spotify-header">
         <button class="back-button" data-action="back" title="Back to list">
@@ -731,7 +731,7 @@ function renderTrackDetail(track: any) {
   }
 
   // Event delegation for all interactive elements in detail view
-  app.addEventListener('click', (e) => {
+  appContainer.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
 
     // Handle back button click

@@ -319,13 +319,13 @@ function extractSheetData(data: any): any {
  * Render Google Sheet directly from spreadsheet ID
  */
 function renderSheetFromId(spreadsheetId: string, range?: string, rowCount?: number) {
-  const app = document.getElementById('app');
-  if (!app) return;
+  const appElement = document.getElementById('app');
+  if (!appElement) return;
   
   const embedUrl = buildEmbedUrl(spreadsheetId);
   const editUrl = buildEditUrl(spreadsheetId);
-  
-  app.innerHTML = `
+
+  appElement.innerHTML = `
     <div class="container">
       <div class="sheet-header">
         <div class="sheet-info">
@@ -477,8 +477,8 @@ function setupTableInteractivity() {
    ============================================ */
 
 function renderData(data: any) {
-  const app = document.getElementById('app');
-  if (!app) return;
+  const appElement = document.getElementById('app');
+  if (!appElement) return;
   
   if (!data) {
     showEmpty('No sheet data received');
@@ -527,7 +527,7 @@ function renderData(data: any) {
       const headers = values.length > 0 ? values[0] : [];
       const rows = values.slice(1);
       
-      app.innerHTML = `
+      appElement.innerHTML = `
         <div class="container">
           <div class="sheet-header">
             <div class="sheet-info">
@@ -544,7 +544,7 @@ function renderData(data: any) {
               ${headers.length > 0 ? `
                 <thead>
                   <tr>
-                    ${headers.map((header: any, idx: number) => 
+                    ${headers.map((header: any, idx: number) =>
                       `<th data-col="${idx}" title="${escapeHtml(String(header || ''))}">${escapeHtml(String(header || ''))}</th>`
                     ).join('')}
                   </tr>
@@ -576,7 +576,7 @@ function renderData(data: any) {
       const headers = values.length > 0 ? values[0] : [];
       const rows = values.slice(1);
       
-      app.innerHTML = `
+      appElement.innerHTML = `
         <div class="container">
           <div class="sheet-header">
             <div class="sheet-info">
@@ -593,7 +593,7 @@ function renderData(data: any) {
               ${headers.length > 0 ? `
                 <thead>
                   <tr>
-                    ${headers.map((header: any, idx: number) => 
+                    ${headers.map((header: any, idx: number) =>
                       `<th data-col="${idx}" title="${escapeHtml(String(header || ''))}">${escapeHtml(String(header || ''))}</th>`
                     ).join('')}
                   </tr>

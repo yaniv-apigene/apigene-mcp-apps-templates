@@ -267,8 +267,8 @@ function renderCommentCard(comment: any, index: number): string {
  * Main render function - renders the LinkedIn post
  */
 function renderData(data: any) {
-  const app = document.getElementById('app');
-  if (!app) return;
+  const appElement = document.getElementById('app');
+  if (!appElement) return;
 
   if (!data) {
     app.sendLog({ level: "debug", data: "renderData: no data", logger: APP_NAME });

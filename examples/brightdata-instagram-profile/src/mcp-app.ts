@@ -368,8 +368,8 @@ function renderPost(post: any): string {
  * Main render function
  */
 function renderData(data: any) {
-  const app = document.getElementById('app');
-  if (!app) return;
+  const appElement = document.getElementById('app');
+  if (!appElement) return;
 
   app.sendLog({ level: "debug", data: `[Instagram Profile] Rendering data: ${JSON.stringify(data)}`, logger: APP_NAME });
 
@@ -427,11 +427,12 @@ function renderData(data: any) {
 
     container.appendChild(postsSection);
 
-    app.innerHTML = '';
-    app.appendChild(container);
+    appElement.innerHTML = '';
+    appElement.appendChild(container);
 
   } catch (error: any) {
-    app.sendLog({ level: "error", data: `Render error: ${JSON.stringify(error)}`, logger: APP_NAME });
+    const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
+    app.sendLog({ level: "error", data: `Render error: ${errorMsg}`, logger: APP_NAME });
     showError(`Error rendering profile: ${error.message}`);
   }
 }
@@ -515,7 +516,8 @@ app.ontoolcancelled = (params) => {
 };
 
 app.onerror = (error) => {
-  app.sendLog({ level: "error", data: `App error: ${JSON.stringify(error)}`, logger: APP_NAME });
+  const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
+  app.sendLog({ level: "error", data: `App error: ${errorMsg}`, logger: APP_NAME });
 };
 
 app.onhostcontextchanged = (ctx) => {
@@ -537,7 +539,8 @@ app
     }
   })
   .catch((error) => {
-    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${JSON.stringify(error)}`, logger: APP_NAME });
+    const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
+    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${errorMsg}`, logger: APP_NAME });
   });
 
 export {};
