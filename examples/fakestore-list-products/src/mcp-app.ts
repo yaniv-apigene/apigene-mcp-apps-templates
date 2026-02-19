@@ -166,7 +166,7 @@ function renderData(data: any) {
       </div>
     `;
   } catch (error: any) {
-    console.error("Render error:", error);
+    app.sendLog({ level: "error", data: `Render error: ${JSON.stringify(error)}`, logger: APP_NAME });
     showError(`Error rendering products: ${error.message}`);
   }
 }
@@ -213,20 +213,20 @@ const app = new App(
 );
 
 app.onteardown = async () => {
-  console.info("Resource teardown requested");
+  app.sendLog({ level: "info", data: "Resource teardown requested", logger: APP_NAME });
   return {};
 };
 
 app.ontoolinput = (params) => {
-  console.info("Tool input received:", params.arguments);
+  app.sendLog({ level: "info", data: `Tool input received: ${JSON.stringify(params.arguments)}`, logger: APP_NAME });
 };
 
 app.ontoolresult = (params) => {
-  console.info("Tool result received");
+  app.sendLog({ level: "info", data: "Tool result received", logger: APP_NAME });
 
   // Check for tool execution errors
   if (params.isError) {
-    console.error("Tool execution failed:", params.content);
+    app.sendLog({ level: "error", data: `Tool execution failed: ${JSON.stringify(params.content)}`, logger: APP_NAME });
     const errorText =
       params.content?.map((c: any) => c.text || "").join("\n") ||
       "Tool execution failed";
@@ -238,23 +238,23 @@ app.ontoolresult = (params) => {
   if (data !== undefined) {
     renderData(data);
   } else {
-    console.warn("Tool result received but no data found:", params);
+    app.sendLog({ level: "warning", data: `Tool result received but no data found: ${JSON.stringify(params)}`, logger: APP_NAME });
     showEmpty("No data received");
   }
 };
 
 app.ontoolcancelled = (params) => {
   const reason = params.reason || "Unknown reason";
-  console.info("Tool cancelled:", reason);
+  app.sendLog({ level: "info", data: `Tool cancelled: ${reason}`, logger: APP_NAME });
   showError(`Operation cancelled: ${reason}`);
 };
 
 app.onerror = (error) => {
-  console.error("App error:", error);
+  app.sendLog({ level: "error", data: `App error: ${JSON.stringify(error)}`, logger: APP_NAME });
 };
 
 app.onhostcontextchanged = (ctx) => {
-  console.info("Host context changed:", ctx);
+  app.sendLog({ level: "info", data: `Host context changed: ${JSON.stringify(ctx)}`, logger: APP_NAME });
   handleHostContextChanged(ctx);
 };
 
@@ -265,14 +265,14 @@ app.onhostcontextchanged = (ctx) => {
 app
   .connect()
   .then(() => {
-    console.info("MCP App connected to host");
+    app.sendLog({ level: "info", data: "MCP App connected to host", logger: APP_NAME });
     const ctx = app.getHostContext();
     if (ctx) {
       handleHostContextChanged(ctx);
     }
   })
   .catch((error) => {
-    console.error("Failed to connect to MCP host:", error);
+    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${JSON.stringify(error)}`, logger: APP_NAME });
   });
 
 export {};

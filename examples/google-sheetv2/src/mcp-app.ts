@@ -148,7 +148,7 @@ function extractSpreadsheetId(url: string): string | null {
       return match[1];
     }
   } catch (error) {
-    console.error('Error extracting spreadsheet ID:', error);
+    app.sendLog({ level: "error", data: `Error extracting spreadsheet ID: ${error}`, logger: APP_NAME });
   }
   
   return null;
@@ -465,7 +465,7 @@ function setupTableInteractivity() {
             target.style.backgroundColor = originalBg;
           }, 200);
         } catch (err) {
-          console.warn('Failed to copy:', err);
+          app.sendLog({ level: "warning", data: `Failed to copy: ${err}`, logger: APP_NAME });
         }
       }
     });
@@ -508,7 +508,7 @@ function renderData(data: any) {
     
     // Log for debugging
     if (!spreadsheetId) {
-      console.log('Data structure received:', JSON.stringify(data, null, 2).substring(0, 500));
+      app.sendLog({ level: "debug", data: `Data structure received: ${JSON.stringify(data, null, 2).substring(0, 500)}`, logger: APP_NAME });
     }
     
     // Extract sheet data for metadata display
@@ -621,7 +621,7 @@ function renderData(data: any) {
     // Notify host of size change after rendering completes
     
   } catch (error: any) {
-    console.error('Render error:', error);
+    app.sendLog({ level: "error", data: `Render error: ${error}`, logger: APP_NAME });
     showError(`Error rendering sheet: ${error.message}`);
   }
 }
@@ -668,23 +668,23 @@ const app = new App(
 );
 
 app.onteardown = async () => {
-  console.info("Resource teardown requested");
+  app.sendLog({ level: "info", data: "Resource teardown requested", logger: APP_NAME });
   return {};
 };
 
 app.ontoolinput = (params) => {
-  console.info("Tool input received:", params.arguments);
+  app.sendLog({ level: "info", data: `Tool input received: ${JSON.stringify(params.arguments)}`, logger: APP_NAME });
 
   // Extract spreadsheet ID from params.arguments.context.spreadsheetId
   const toolArguments = params.arguments as any;
   let spreadsheetId = toolArguments?.context?.spreadsheetId;
-  console.log('[Google Sheets App] Extracted spreadsheetId:', spreadsheetId);
+  app.sendLog({ level: "debug", data: `Extracted spreadsheetId: ${spreadsheetId}`, logger: APP_NAME });
 
   if (spreadsheetId) {
-    console.log('[Google Sheets App] Found spreadsheet ID in tool-input:', spreadsheetId);
+    app.sendLog({ level: "debug", data: `Found spreadsheet ID in tool-input: ${spreadsheetId}`, logger: APP_NAME });
     renderSheetFromId(spreadsheetId);
   } else {
-    console.warn('[Google Sheets App] No spreadsheet ID found in params.arguments.context.spreadsheetId');
+    app.sendLog({ level: "warning", data: "No spreadsheet ID found in params.arguments.context.spreadsheetId", logger: APP_NAME });
     // Fallback: try to extract from URL if present
     const toolInput = toolArguments;
 
@@ -697,37 +697,37 @@ app.ontoolinput = (params) => {
                       toolInput.message?.request?.url;
 
       if (requestUrl) {
-        console.log('[Google Sheets App] Found request URL:', requestUrl);
+        app.sendLog({ level: "debug", data: `Found request URL: ${requestUrl}`, logger: APP_NAME });
         const extractedId = extractSpreadsheetId(requestUrl);
         if (extractedId) {
-          console.log('[Google Sheets App] Extracted spreadsheet ID from URL:', extractedId);
+          app.sendLog({ level: "debug", data: `Extracted spreadsheet ID from URL: ${extractedId}`, logger: APP_NAME });
           renderSheetFromId(extractedId);
         } else {
-          console.warn('[Google Sheets App] Could not extract spreadsheet ID from URL:', requestUrl);
+          app.sendLog({ level: "warning", data: `Could not extract spreadsheet ID from URL: ${requestUrl}`, logger: APP_NAME });
         }
       } else {
         // Try deep search as fallback
-        console.log('[Google Sheets App] Attempting deep search for spreadsheet ID...');
+        app.sendLog({ level: "debug", data: "Attempting deep search for spreadsheet ID...", logger: APP_NAME });
         const deepId = getSpreadsheetId(toolInput);
         if (deepId) {
-          console.log('[Google Sheets App] Found spreadsheet ID via deep search:', deepId);
+          app.sendLog({ level: "debug", data: `Found spreadsheet ID via deep search: ${deepId}`, logger: APP_NAME });
           renderSheetFromId(deepId);
         } else {
-          console.warn('[Google Sheets App] No spreadsheet ID found in tool-input after all attempts');
+          app.sendLog({ level: "warning", data: "No spreadsheet ID found in tool-input after all attempts", logger: APP_NAME });
         }
       }
     } else {
-      console.warn('[Google Sheets App] No tool-input data found in params');
+      app.sendLog({ level: "warning", data: "No tool-input data found in params", logger: APP_NAME });
     }
   }
 };
 
 app.ontoolresult = (params) => {
-  console.info("Tool result received");
+  app.sendLog({ level: "info", data: "Tool result received", logger: APP_NAME });
 
   // Check for tool execution errors
   if (params.isError) {
-    console.error("Tool execution failed:", params.content);
+    app.sendLog({ level: "error", data: `Tool execution failed: ${JSON.stringify(params.content)}`, logger: APP_NAME });
     const errorText =
       params.content?.map((c: any) => c.text || "").join("\n") ||
       "Tool execution failed";
@@ -744,32 +744,32 @@ app.ontoolresult = (params) => {
                                  toolResultParams?.request?.context?.spreadsheetId;
 
   if (spreadsheetIdFromResult) {
-    console.log('[Google Sheets App] Found spreadsheet ID in tool-result:', spreadsheetIdFromResult);
+    app.sendLog({ level: "debug", data: `Found spreadsheet ID in tool-result: ${spreadsheetIdFromResult}`, logger: APP_NAME });
     renderSheetFromId(spreadsheetIdFromResult);
     return;
   }
 
   if (data !== undefined) {
-    console.log('[Google Sheets App] Rendering data from tool-result');
+    app.sendLog({ level: "debug", data: "Rendering data from tool-result", logger: APP_NAME });
     renderData(data);
   } else {
-    console.warn("Tool result received but no data found:", params);
+    app.sendLog({ level: "warning", data: `Tool result received but no data found: ${JSON.stringify(params)}`, logger: APP_NAME });
     showEmpty("No data received");
   }
 };
 
 app.ontoolcancelled = (params) => {
   const reason = params.reason || "Unknown reason";
-  console.info("Tool cancelled:", reason);
+  app.sendLog({ level: "info", data: `Tool cancelled: ${reason}`, logger: APP_NAME });
   showError(`Operation cancelled: ${reason}`);
 };
 
 app.onerror = (error) => {
-  console.error("App error:", error);
+  app.sendLog({ level: "error", data: `App error: ${error}`, logger: APP_NAME });
 };
 
 app.onhostcontextchanged = (ctx) => {
-  console.info("Host context changed:", ctx);
+  app.sendLog({ level: "info", data: `Host context changed: ${JSON.stringify(ctx)}`, logger: APP_NAME });
   handleHostContextChanged(ctx);
 };
 
@@ -780,14 +780,14 @@ app.onhostcontextchanged = (ctx) => {
 app
   .connect()
   .then(() => {
-    console.info("MCP App connected to host");
+    app.sendLog({ level: "info", data: "MCP App connected to host", logger: APP_NAME });
     const ctx = app.getHostContext();
     if (ctx) {
       handleHostContextChanged(ctx);
     }
   })
   .catch((error) => {
-    console.error("Failed to connect to MCP host:", error);
+    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${error}`, logger: APP_NAME });
   });
 
 export {};

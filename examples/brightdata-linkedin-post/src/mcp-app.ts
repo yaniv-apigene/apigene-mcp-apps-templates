@@ -28,10 +28,6 @@ import "./mcp-app.css";
 const APP_NAME = "Brightdata Linkedin Post";
 const APP_VERSION = "1.0.0";
 
-function debugLog(...args: any[]) {
-  console.log("[LinkedIn Post]", ...args);
-}
-
 /* ============================================
    COMMON UTILITY FUNCTIONS
    ============================================ */
@@ -275,40 +271,40 @@ function renderData(data: any) {
   if (!app) return;
 
   if (!data) {
-    debugLog("renderData: no data");
+    app.sendLog({ level: "debug", data: "renderData: no data", logger: APP_NAME });
     showEmpty('No LinkedIn post data received');
     return;
   }
 
-  debugLog("renderData: received", typeof data === "object" ? Object.keys(data) : typeof data);
+  app.sendLog({ level: "debug", data: `renderData: received ${typeof data === "object" ? Object.keys(data) : typeof data}`, logger: APP_NAME });
 
   try {
     // Unwrap nested structures
     const unwrapped = unwrapData(data);
-    debugLog("renderData: unwrapped keys", typeof unwrapped === "object" && unwrapped !== null ? Object.keys(unwrapped) : typeof unwrapped);
+    app.sendLog({ level: "debug", data: `renderData: unwrapped keys ${typeof unwrapped === "object" && unwrapped !== null ? Object.keys(unwrapped) : typeof unwrapped}`, logger: APP_NAME });
 
     // Bright Data format: body.content[0].text is a JSON string of post array
     const content = unwrapped?.body?.content;
     if (Array.isArray(content) && content.length > 0) {
       const first = content[0];
-      debugLog("renderData: body.content[0]", { type: first?.type, hasText: typeof first?.text === "string", textLength: typeof first?.text === "string" ? first.text.length : 0 });
+      app.sendLog({ level: "debug", data: `renderData: body.content[0] ${JSON.stringify({ type: first?.type, hasText: typeof first?.text === "string", textLength: typeof first?.text === "string" ? first.text.length : 0 })}`, logger: APP_NAME });
       if (first?.type === 'text' && typeof first.text === 'string') {
         try {
           const parsed = JSON.parse(first.text) as any[];
           if (Array.isArray(parsed) && parsed.length > 0) {
-            debugLog("renderData: Bright Data format OK, posts count =", parsed.length);
+            app.sendLog({ level: "debug", data: `renderData: Bright Data format OK, posts count = ${parsed.length}`, logger: APP_NAME });
             const post = parsed[0];
             return renderPost(post);
           }
-          debugLog("renderData: Bright Data parse OK but empty or not array", { isArray: Array.isArray(parsed), length: parsed?.length });
+          app.sendLog({ level: "debug", data: `renderData: Bright Data parse OK but empty or not array ${JSON.stringify({ isArray: Array.isArray(parsed), length: parsed?.length })}`, logger: APP_NAME });
         } catch (parseErr) {
-          debugLog("renderData: Bright Data JSON.parse failed", parseErr);
+          app.sendLog({ level: "debug", data: `renderData: Bright Data JSON.parse failed ${parseErr}`, logger: APP_NAME });
         }
       } else {
-        debugLog("renderData: body.content[0] not text block, skipping Bright Data path");
+        app.sendLog({ level: "debug", data: "renderData: body.content[0] not text block, skipping Bright Data path", logger: APP_NAME });
       }
     } else {
-      debugLog("renderData: no body.content array", { hasBody: !!unwrapped?.body, contentIsArray: Array.isArray(content), contentLength: content?.length });
+      app.sendLog({ level: "debug", data: `renderData: no body.content array ${JSON.stringify({ hasBody: !!unwrapped?.body, contentIsArray: Array.isArray(content), contentLength: content?.length })}`, logger: APP_NAME });
     }
 
     // Handle array response (body is an array)
@@ -327,17 +323,17 @@ function renderData(data: any) {
       post = unwrapped;
       source = "unwrapped";
     }
-    debugLog("renderData: post source =", source, "post =", post ? (post.id ?? post.url ?? "(no id/url)") : null);
+    app.sendLog({ level: "debug", data: `renderData: post source = ${source}, post = ${post ? (post.id ?? post.url ?? "(no id/url)") : null}`, logger: APP_NAME });
 
     if (!post) {
-      debugLog("renderData: no post found, unwrapped =", unwrapped);
+      app.sendLog({ level: "debug", data: `renderData: no post found, unwrapped = ${JSON.stringify(unwrapped)}`, logger: APP_NAME });
       showEmpty('No post data found');
       return;
     }
 
     renderPost(post);
   } catch (error: any) {
-    console.error('Render error:', error);
+    app.sendLog({ level: "error", data: `Render error: ${error}`, logger: APP_NAME });
     showError(`Error rendering LinkedIn post: ${error.message}`);
   }
 }
@@ -346,12 +342,12 @@ function renderData(data: any) {
  * Render a single post object into the app container
  */
 function renderPost(post: any) {
-  const app = document.getElementById('app');
-  if (!app) {
-    debugLog("renderPost: #app not found");
+  const appEl = document.getElementById('app');
+  if (!appEl) {
+    app.sendLog({ level: "debug", data: "renderPost: #app not found", logger: APP_NAME });
     return;
   }
-  debugLog("renderPost: rendering", { id: post.id, url: post.url, hasPostText: !!(post.post_text || post.post_text_html) });
+  app.sendLog({ level: "debug", data: `renderPost: rendering ${JSON.stringify({ id: post.id, url: post.url, hasPostText: !!(post.post_text || post.post_text_html) })}`, logger: APP_NAME });
 
     const url = post.url || '';
     const postId = post.id || '';
@@ -377,7 +373,7 @@ function renderPost(post: any) {
     const userNameMatch = userUrl.match(/in\/([^?]+)/);
     const userName = userNameMatch ? userNameMatch[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : userId;
 
-    app.innerHTML = `
+    appEl.innerHTML = `
       <div class="linkedin-post-container">
         <!-- Post Card -->
         <div class="post-card">
@@ -575,20 +571,20 @@ const app = new App(
 );
 
 app.onteardown = async () => {
-  console.info("Resource teardown requested");
+  app.sendLog({ level: "info", data: "Resource teardown requested", logger: APP_NAME });
   return {};
 };
 
 app.ontoolinput = (params) => {
-  console.info("Tool input received:", params.arguments);
+  app.sendLog({ level: "info", data: `Tool input received: ${JSON.stringify(params.arguments)}`, logger: APP_NAME });
 };
 
 app.ontoolresult = (params) => {
-  console.info("Tool result received");
+  app.sendLog({ level: "info", data: "Tool result received", logger: APP_NAME });
 
   // Check for tool execution errors
   if (params.isError) {
-    console.error("Tool execution failed:", params.content);
+    app.sendLog({ level: "error", data: `Tool execution failed: ${JSON.stringify(params.content)}`, logger: APP_NAME });
     const errorText =
       params.content?.map((c: any) => c.text || "").join("\n") ||
       "Tool execution failed";
@@ -600,23 +596,23 @@ app.ontoolresult = (params) => {
   if (data !== undefined) {
     renderData(data);
   } else {
-    console.warn("Tool result received but no data found:", params);
+    app.sendLog({ level: "warning", data: `Tool result received but no data found: ${JSON.stringify(params)}`, logger: APP_NAME });
     showEmpty("No data received");
   }
 };
 
 app.ontoolcancelled = (params) => {
   const reason = params.reason || "Unknown reason";
-  console.info("Tool cancelled:", reason);
+  app.sendLog({ level: "info", data: `Tool cancelled: ${reason}`, logger: APP_NAME });
   showError(`Operation cancelled: ${reason}`);
 };
 
 app.onerror = (error) => {
-  console.error("App error:", error);
+  app.sendLog({ level: "error", data: `App error: ${error}`, logger: APP_NAME });
 };
 
 app.onhostcontextchanged = (ctx) => {
-  console.info("Host context changed:", ctx);
+  app.sendLog({ level: "info", data: `Host context changed: ${JSON.stringify(ctx)}`, logger: APP_NAME });
   handleHostContextChanged(ctx);
 };
 
@@ -627,14 +623,14 @@ app.onhostcontextchanged = (ctx) => {
 app
   .connect()
   .then(() => {
-    console.info("MCP App connected to host");
+    app.sendLog({ level: "info", data: "MCP App connected to host", logger: APP_NAME });
     const ctx = app.getHostContext();
     if (ctx) {
       handleHostContextChanged(ctx);
     }
   })
   .catch((error) => {
-    console.error("Failed to connect to MCP host:", error);
+    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${error}`, logger: APP_NAME });
   });
 
 export {};

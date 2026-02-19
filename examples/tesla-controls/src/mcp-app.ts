@@ -143,7 +143,7 @@ async function sendControlAction(action: string, params?: any) {
   try {
     // Note: In standalone mode, control actions would need to be handled differently
     // This is a placeholder - the host would need to provide this capability
-    console.info(`Control action requested: ${action}`, params);
+    app.sendLog({ level: "info", data: `Control action requested: ${action} ${params ? JSON.stringify(params) : ''}`, logger: APP_NAME });
 
     // Update state based on action (simulated)
     updateStateFromAction(action, null);
@@ -153,7 +153,7 @@ async function sendControlAction(action: string, params?: any) {
 
     return {};
   } catch (error: any) {
-    console.error(`Failed to execute ${action}:`, error);
+    app.sendLog({ level: "error", data: `Failed to execute ${action}: ${error}`, logger: APP_NAME });
     showActionFeedback(action, false);
     throw error;
   }
@@ -358,7 +358,7 @@ function attachEventListeners() {
         try {
           await sendControlAction(action);
         } catch (error) {
-          console.error('Action failed:', error);
+          app.sendLog({ level: "error", data: `Action failed: ${error}`, logger: APP_NAME });
         }
       }
     });
@@ -394,7 +394,7 @@ function renderData(data: any) {
     renderTeslaControls();
 
   } catch (error: any) {
-    console.error('Render error:', error);
+    app.sendLog({ level: "error", data: `Render error: ${error}`, logger: APP_NAME });
     showError(`Error rendering data: ${error.message}`);
   }
 }
@@ -441,20 +441,20 @@ const app = new App(
 );
 
 app.onteardown = async () => {
-  console.info("Resource teardown requested");
+  app.sendLog({ level: "info", data: "Resource teardown requested", logger: APP_NAME });
   return {};
 };
 
 app.ontoolinput = (params) => {
-  console.info("Tool input received:", params.arguments);
+  app.sendLog({ level: "info", data: `Tool input received: ${JSON.stringify(params.arguments)}`, logger: APP_NAME });
 };
 
 app.ontoolresult = (params) => {
-  console.info("Tool result received");
+  app.sendLog({ level: "info", data: "Tool result received", logger: APP_NAME });
 
   // Check for tool execution errors
   if (params.isError) {
-    console.error("Tool execution failed:", params.content);
+    app.sendLog({ level: "error", data: `Tool execution failed: ${JSON.stringify(params.content)}`, logger: APP_NAME });
     const errorText =
       params.content?.map((c: any) => c.text || "").join("\n") ||
       "Tool execution failed";
@@ -472,16 +472,16 @@ app.ontoolresult = (params) => {
 
 app.ontoolcancelled = (params) => {
   const reason = params.reason || "Unknown reason";
-  console.info("Tool cancelled:", reason);
+  app.sendLog({ level: "info", data: `Tool cancelled: ${reason}`, logger: APP_NAME });
   showError(`Operation cancelled: ${reason}`);
 };
 
 app.onerror = (error) => {
-  console.error("App error:", error);
+  app.sendLog({ level: "error", data: `App error: ${error}`, logger: APP_NAME });
 };
 
 app.onhostcontextchanged = (ctx) => {
-  console.info("Host context changed:", ctx);
+  app.sendLog({ level: "info", data: `Host context changed: ${JSON.stringify(ctx)}`, logger: APP_NAME });
   handleHostContextChanged(ctx);
 };
 
@@ -492,14 +492,14 @@ app.onhostcontextchanged = (ctx) => {
 app
   .connect()
   .then(() => {
-    console.info("MCP App connected to host");
+    app.sendLog({ level: "info", data: "MCP App connected to host", logger: APP_NAME });
     const ctx = app.getHostContext();
     if (ctx) {
       handleHostContextChanged(ctx);
     }
   })
   .catch((error) => {
-    console.error("Failed to connect to MCP host:", error);
+    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${error}`, logger: APP_NAME });
   });
 
 export {};

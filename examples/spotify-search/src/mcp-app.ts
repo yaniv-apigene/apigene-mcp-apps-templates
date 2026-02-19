@@ -391,36 +391,36 @@ function renderData(data: any) {
 
   try {
     const unwrapped = unwrapData(data);
-    console.log('Unwrapped data:', unwrapped);
-    
+    app.sendLog({ level: "debug", data: `Unwrapped data: ${JSON.stringify(unwrapped)}`, logger: APP_NAME });
+
     // Extract tracks from Spotify API response
     let tracks: any[] = [];
     // Handle response_content.tracks.items format (from API gateway)
     if (unwrapped?.response_content?.tracks?.items && Array.isArray(unwrapped.response_content.tracks.items)) {
       tracks = unwrapped.response_content.tracks.items;
-      console.log('Found tracks in response_content.tracks.items:', tracks.length);
+      app.sendLog({ level: "debug", data: `Found tracks in response_content.tracks.items: ${tracks.length}`, logger: APP_NAME });
     } else if (unwrapped?.body?.tracks?.items && Array.isArray(unwrapped.body.tracks.items)) {
       tracks = unwrapped.body.tracks.items;
-      console.log('Found tracks in body.tracks.items:', tracks.length);
+      app.sendLog({ level: "debug", data: `Found tracks in body.tracks.items: ${tracks.length}`, logger: APP_NAME });
     } else if (unwrapped?.tracks?.items && Array.isArray(unwrapped.tracks.items)) {
       tracks = unwrapped.tracks.items;
-      console.log('Found tracks in tracks.items:', tracks.length);
+      app.sendLog({ level: "debug", data: `Found tracks in tracks.items: ${tracks.length}`, logger: APP_NAME });
     } else if (Array.isArray(unwrapped)) {
       tracks = unwrapped;
-      console.log('Found tracks as direct array:', tracks.length);
+      app.sendLog({ level: "debug", data: `Found tracks as direct array: ${tracks.length}`, logger: APP_NAME });
     } else {
-      console.warn('No tracks found in data structure. Available keys:', Object.keys(unwrapped || {}));
+      app.sendLog({ level: "warning", data: `No tracks found in data structure. Available keys: ${Object.keys(unwrapped || {})}`, logger: APP_NAME });
     }
-    
+
     tracksData = tracks;
-    
+
     if (tracks.length === 0) {
-      console.warn('No tracks extracted. Showing empty state.');
+      app.sendLog({ level: "warning", data: "No tracks extracted. Showing empty state.", logger: APP_NAME });
       showEmpty('No tracks found');
       return;
     }
-    
-    console.log('Rendering', tracks.length, 'tracks');
+
+    app.sendLog({ level: "debug", data: `Rendering ${tracks.length} tracks`, logger: APP_NAME });
     
     // Render detail view or list view
     if (selectedTrackId) {
@@ -435,8 +435,8 @@ function renderData(data: any) {
       renderTracksList(tracks, unwrapped);
     }
   } catch (error: any) {
-    console.error('Render error:', error);
-    console.error('Data that failed to render:', data);
+    app.sendLog({ level: "error", data: `Render error: ${error}`, logger: APP_NAME });
+    app.sendLog({ level: "error", data: `Data that failed to render: ${JSON.stringify(data)}`, logger: APP_NAME });
     showError(`Error rendering data: ${error.message}`);
   }
 }
@@ -835,21 +835,21 @@ const app = new App(
 // Register event handlers BEFORE connect()
 
 app.onteardown = async () => {
-  console.info("Resource teardown requested");
+  app.sendLog({ level: "info", data: "Resource teardown requested", logger: APP_NAME });
   stopPlayback();
   return {};
 };
 
 app.ontoolinput = (params) => {
-  console.info("Tool input received:", params.arguments);
+  app.sendLog({ level: "info", data: `Tool input received: ${JSON.stringify(params.arguments)}`, logger: APP_NAME });
 };
 
 app.ontoolresult = (params) => {
-  console.info("Tool result received");
+  app.sendLog({ level: "info", data: "Tool result received", logger: APP_NAME });
 
   // Check for tool execution errors
   if (params.isError) {
-    console.error("Tool execution failed:", params.content);
+    app.sendLog({ level: "error", data: `Tool execution failed: ${JSON.stringify(params.content)}`, logger: APP_NAME });
     const errorText =
       params.content?.map((c: any) => c.text || "").join("\n") ||
       "Tool execution failed";
@@ -861,23 +861,23 @@ app.ontoolresult = (params) => {
   if (data !== undefined) {
     renderData(data);
   } else {
-    console.warn("Tool result received but no data found:", params);
+    app.sendLog({ level: "warning", data: `Tool result received but no data found: ${JSON.stringify(params)}`, logger: APP_NAME });
     showEmpty("No data received");
   }
 };
 
 app.ontoolcancelled = (params) => {
   const reason = params.reason || "Unknown reason";
-  console.info("Tool cancelled:", reason);
+  app.sendLog({ level: "info", data: `Tool cancelled: ${reason}`, logger: APP_NAME });
   showError(`Operation cancelled: ${reason}`);
 };
 
 app.onerror = (error) => {
-  console.error("App error:", error);
+  app.sendLog({ level: "error", data: `App error: ${error}`, logger: APP_NAME });
 };
 
 app.onhostcontextchanged = (ctx) => {
-  console.info("Host context changed:", ctx);
+  app.sendLog({ level: "info", data: `Host context changed: ${JSON.stringify(ctx)}`, logger: APP_NAME });
   handleHostContextChanged(ctx);
 };
 
@@ -888,14 +888,14 @@ app.onhostcontextchanged = (ctx) => {
 app
   .connect()
   .then(() => {
-    console.info("MCP App connected to host");
+    app.sendLog({ level: "info", data: "MCP App connected to host", logger: APP_NAME });
     const ctx = app.getHostContext();
     if (ctx) {
       handleHostContextChanged(ctx);
     }
   })
   .catch((error) => {
-    console.error("Failed to connect to MCP host:", error);
+    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${error}`, logger: APP_NAME });
   });
 
 // Export empty object to ensure this file is treated as an ES module

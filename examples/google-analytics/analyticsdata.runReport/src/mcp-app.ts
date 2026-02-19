@@ -151,7 +151,7 @@ function showEmpty(message: string = 'No data available.') {
  */
 function showChartError(container: Element | null | undefined, message: string) {
   if (!container) {
-    console.warn('Cannot show chart error - container not found');
+    app.sendLog({ level: "warning", data: 'Cannot show chart error - container not found', logger: APP_NAME });
     return;
   }
 
@@ -169,7 +169,7 @@ function showChartError(container: Element | null | undefined, message: string) 
       </div>
     `;
   } else {
-    console.warn('Chart wrapper not found in container');
+    app.sendLog({ level: "warning", data: 'Chart wrapper not found in container', logger: APP_NAME });
   }
 }
 
@@ -722,7 +722,7 @@ function getChartColors() {
  */
 function renderBarChart(canvas: HTMLCanvasElement, labels: string[], values: number[], maxItems: number = 15) {
   if (typeof Chart === 'undefined' || !Chart.Chart) {
-    console.error('Chart.js is not loaded.');
+    app.sendLog({ level: "error", data: 'Chart.js is not loaded.', logger: APP_NAME });
     showChartError(canvas.parentElement?.parentElement, 'Chart.js library not available');
     return;
   }
@@ -867,7 +867,7 @@ function renderBarChart(canvas: HTMLCanvasElement, labels: string[], values: num
  */
 function renderPieChart(canvas: HTMLCanvasElement, values: number[], chartLabels: string[], maxItems: number = 10) {
   if (typeof Chart === 'undefined' || !Chart.Chart) {
-    console.error('Chart.js is not loaded.');
+    app.sendLog({ level: "error", data: 'Chart.js is not loaded.', logger: APP_NAME });
     showChartError(canvas.parentElement?.parentElement, 'Chart.js library not available');
     return;
   }
@@ -1001,7 +1001,7 @@ function renderData(data: any) {
     const tableData = normalizeTableData(data);
 
     if (!tableData || !tableData.rows || tableData.rows.length === 0) {
-      console.warn('Invalid or empty data:', data);
+      app.sendLog({ level: "warning", data: `Invalid or empty data: ${JSON.stringify(data)}`, logger: APP_NAME });
       showEmpty('No valid data available');
       return;
     }
@@ -1333,7 +1333,7 @@ function renderData(data: any) {
           try {
             renderBarChart(barCanvas, chartLabels, chartValues, 15);
           } catch (error) {
-            console.error('Error rendering bar chart:', error);
+            app.sendLog({ level: "error", data: `Error rendering bar chart: ${JSON.stringify(error)}`, logger: APP_NAME });
             showChartError(barCanvas.closest('.chart-card'), 'Failed to render bar chart: ' + (error as Error).message);
           }
         }
@@ -1343,7 +1343,7 @@ function renderData(data: any) {
           try {
             renderPieChart(pieCanvas, chartValues, chartLabels, 10);
           } catch (error) {
-            console.error('Error rendering pie chart:', error);
+            app.sendLog({ level: "error", data: `Error rendering pie chart: ${JSON.stringify(error)}`, logger: APP_NAME });
             showChartError(pieCanvas.closest('.chart-card'), 'Failed to render pie chart: ' + (error as Error).message);
           }
         }
@@ -1361,7 +1361,7 @@ function renderData(data: any) {
           renderCharts();
         }, 100);
       } else if (chartJsError) {
-        console.error('Chart.js failed to load');
+        app.sendLog({ level: "error", data: 'Chart.js failed to load', logger: APP_NAME });
         const barCanvas = document.getElementById('barchart');
         const pieCanvas = document.getElementById('piechart');
         if (barCanvas) {
@@ -1373,7 +1373,7 @@ function renderData(data: any) {
       } else if (attempts < maxAttempts) {
         setTimeout(() => waitForChartJS(attempts + 1, maxAttempts), 50);
       } else {
-        console.error('Chart.js failed to load after', maxAttempts, 'attempts');
+        app.sendLog({ level: "error", data: `Chart.js failed to load after ${maxAttempts} attempts`, logger: APP_NAME });
         const barCanvas = document.getElementById('barchart');
         const pieCanvas = document.getElementById('piechart');
         if (barCanvas) {
@@ -1407,7 +1407,7 @@ function renderData(data: any) {
     waitForChartJS();
 
   } catch (error: any) {
-    console.error('Render error:', error);
+    app.sendLog({ level: "error", data: `Render error: ${JSON.stringify(error)}`, logger: APP_NAME });
     showError(`Error rendering dashboard: ${error.message}`);
   }
 }
@@ -1459,7 +1459,7 @@ window.addEventListener('message', function(event: MessageEvent) {
       if (data !== undefined) {
         renderData(data);
       } else {
-        console.warn('ui/notifications/tool-result received but no data found:', msg);
+        app.sendLog({ level: "warning", data: `ui/notifications/tool-result received but no data found: ${JSON.stringify(msg)}`, logger: APP_NAME });
         showEmpty('No data received');
       }
       break;
@@ -1482,7 +1482,7 @@ window.addEventListener('message', function(event: MessageEvent) {
     case 'ui/notifications/tool-input':
       const toolArguments = msg.params?.arguments;
       if (toolArguments) {
-        console.log('Tool input received:', toolArguments);
+        app.sendLog({ level: "debug", data: `Tool input received: ${JSON.stringify(toolArguments)}`, logger: APP_NAME });
       }
       break;
 
@@ -1498,7 +1498,7 @@ window.addEventListener('message', function(event: MessageEvent) {
       if (msg.params) {
         const fallbackData = msg.params.structuredContent || msg.params;
         if (fallbackData && fallbackData !== msg) {
-          console.warn('Unknown method:', msg.method, '- attempting to render data');
+          app.sendLog({ level: "warning", data: `Unknown method: ${msg.method} - attempting to render data`, logger: APP_NAME });
           renderData(fallbackData);
         }
       }
@@ -1568,7 +1568,7 @@ function requestDisplayMode(mode: string): Promise<any> {
       return result;
     })
     .catch(err => {
-      console.warn('Failed to request display mode:', err);
+      app.sendLog({ level: "warning", data: `Failed to request display mode: ${JSON.stringify(err)}`, logger: APP_NAME });
       throw err;
     });
 }
@@ -1595,7 +1595,7 @@ window.addEventListener("beforeunload", () => {
   cleanupResize();
 });
 
-console.info("MCP App initialized (proxy mode - SDK utilities only)");
+app.sendLog({ level: "info", data: "MCP App initialized (proxy mode - SDK utilities only)", logger: APP_NAME });
 
 /* ============================================
    ADVANCED INTERACTIVE FEATURES

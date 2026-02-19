@@ -699,7 +699,7 @@ function renderData(data: any) {
     // Render initial results
     renderFilteredResults();
   } catch (error: any) {
-    console.error('Render error:', error);
+    app.sendLog({ level: "error", data: `Render error: ${JSON.stringify(error)}`, logger: APP_NAME });
     showError(`Error rendering search results: ${error.message}`);
   }
 }
@@ -717,7 +717,7 @@ window.addEventListener('message', function(event: MessageEvent) {
 
   // Handle requests that require responses (like ui/resource-teardown)
   if (msg.id !== undefined && msg.method === 'ui/resource-teardown') {
-    console.info("Resource teardown requested");
+    app.sendLog({ level: "info", data: "Resource teardown requested", logger: APP_NAME });
 
     // Send response to host (required for teardown)
     window.parent.postMessage({
@@ -736,24 +736,24 @@ window.addEventListener('message', function(event: MessageEvent) {
   switch (msg.method) {
     // Handle tool result notifications (main data)
     case 'ui/notifications/tool-result':
-      console.info("Tool result received");
+      app.sendLog({ level: "info", data: "Tool result received", logger: APP_NAME });
       const data = msg.params?.structuredContent || msg.params;
       if (data !== undefined) {
         renderData(data);
       } else {
-        console.warn('Tool result received but no data found:', msg);
+        app.sendLog({ level: "warning", data: `Tool result received but no data found: ${JSON.stringify(msg)}`, logger: APP_NAME });
         showEmpty('No data received');
       }
       break;
 
     // Handle tool input notifications (optional - for loading states)
     case 'ui/notifications/tool-input':
-      console.info("Tool input received:", msg.params?.arguments);
+      app.sendLog({ level: "info", data: `Tool input received: ${JSON.stringify(msg.params?.arguments)}`, logger: APP_NAME });
       break;
 
     // Handle host context changes (theme, display mode, fonts)
     case 'ui/notifications/host-context-changed':
-      console.info("Host context changed:", msg.params);
+      app.sendLog({ level: "info", data: `Host context changed: ${JSON.stringify(msg.params)}`, logger: APP_NAME });
       if (msg.params?.theme) {
         applyDocumentTheme(msg.params.theme);
       }
@@ -771,7 +771,7 @@ window.addEventListener('message', function(event: MessageEvent) {
     // Handle tool cancellation
     case 'ui/notifications/tool-cancelled':
       const reason = msg.params?.reason || "Unknown reason";
-      console.info("Tool cancelled:", reason);
+      app.sendLog({ level: "info", data: `Tool cancelled: ${reason}`, logger: APP_NAME });
       showError(`Operation cancelled: ${reason}`);
       break;
 
@@ -783,7 +783,7 @@ window.addEventListener('message', function(event: MessageEvent) {
       if (msg.params) {
         const fallbackData = msg.params.structuredContent || msg.params;
         if (fallbackData && fallbackData !== msg) {
-          console.warn('Unknown method:', msg.method, '- attempting to render data');
+          app.sendLog({ level: "warning", data: `Unknown method: ${msg.method} - attempting to render data`, logger: APP_NAME });
           renderData(fallbackData);
         }
       }
@@ -854,7 +854,7 @@ function requestDisplayMode(mode: string): Promise<any> {
       return result;
     })
     .catch(err => {
-      console.warn('Failed to request display mode:', err);
+      app.sendLog({ level: "warning", data: `Failed to request display mode: ${JSON.stringify(err)}`, logger: APP_NAME });
       throw err;
     });
 }
@@ -881,7 +881,7 @@ window.addEventListener("beforeunload", () => {
   cleanupResize();
 });
 
-console.info("MCP App initialized (proxy mode - SDK utilities only)");
+app.sendLog({ level: "info", data: "MCP App initialized (proxy mode - SDK utilities only)", logger: APP_NAME });
 
 // Export empty object to ensure this file is treated as an ES module
 export {};

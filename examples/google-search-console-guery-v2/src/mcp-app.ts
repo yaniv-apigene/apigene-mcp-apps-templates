@@ -197,16 +197,16 @@ function showSendNotification(message: string) {
  */
 function showChartError(container: Element | null | undefined, message: string) {
   if (!container) {
-    console.warn('[mcp-app]', 'Cannot show chart error - container not found');
+    app.sendLog({ level: "warning", data: `[mcp-app] Cannot show chart error - container not found`, logger: APP_NAME });
     return;
   }
-  
+
   const wrapper = container.querySelector('.chart-wrapper');
   if (wrapper) {
     const isDark = document.body.classList.contains('dark');
     const textColor = isDark ? '#9aa0a6' : '#5f6368';
     const bgColor = isDark ? '#2a2d35' : '#f8f9fa';
-    
+
     wrapper.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 320px; padding: 40px; background: ${bgColor}; border-radius: 8px; color: ${textColor}; text-align: center;">
         <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">📊</div>
@@ -215,7 +215,7 @@ function showChartError(container: Element | null | undefined, message: string) 
       </div>
     `;
   } else {
-    console.warn('[mcp-app]', 'Chart wrapper not found in container');
+    app.sendLog({ level: "warning", data: `[mcp-app] Chart wrapper not found in container`, logger: APP_NAME });
   }
 }
 
@@ -669,7 +669,7 @@ function createGradient(ctx: CanvasRenderingContext2D, color: string, height: nu
 function renderLineChart(canvas: HTMLCanvasElement, chartData: any, visibleSeries: Set<number> | null = null) {
   // Check if Chart.js is available
   if (typeof Chart === 'undefined') {
-    console.error('[mcp-app]', 'Chart.js is not loaded.');
+    app.sendLog({ level: "error", data: `[mcp-app] Chart.js is not loaded.`, logger: APP_NAME });
     showChartError(canvas.parentElement?.parentElement, 'Chart.js library not available');
     return;
   }
@@ -682,13 +682,13 @@ function renderLineChart(canvas: HTMLCanvasElement, chartData: any, visibleSerie
 
   const { labels, series } = chartData;
   if (!labels || labels.length === 0 || !series || series.length === 0) {
-    console.warn('[mcp-app]', 'Invalid chart data:', { labels, series });
+    app.sendLog({ level: "warning", data: `[mcp-app] Invalid chart data: ${JSON.stringify({ labels, series })}`, logger: APP_NAME });
     return;
   }
-  
+
   const ctx = canvas?.getContext('2d');
   if (!canvas || !ctx) {
-    console.warn('[mcp-app]', 'Invalid canvas element or 2d context not available');
+    app.sendLog({ level: "warning", data: `[mcp-app] Invalid canvas element or 2d context not available`, logger: APP_NAME });
     return;
   }
 
@@ -873,7 +873,7 @@ function renderLineChart(canvas: HTMLCanvasElement, chartData: any, visibleSerie
 function renderPieChart(canvas: HTMLCanvasElement, values: number[], colors: string[], labels: string[] | null = null) {
   // Check if Chart.js is available
   if (typeof Chart === 'undefined') {
-    console.error('[mcp-app]', 'Chart.js is not loaded.');
+    app.sendLog({ level: "error", data: `[mcp-app] Chart.js is not loaded.`, logger: APP_NAME });
     showChartError(canvas.parentElement?.parentElement, 'Chart.js library not available');
     return;
   }
@@ -885,12 +885,12 @@ function renderPieChart(canvas: HTMLCanvasElement, values: number[], colors: str
   }
 
   if (!values || values.length === 0) {
-    console.warn('[mcp-app]', 'Invalid pie chart values:', values);
+    app.sendLog({ level: "warning", data: `[mcp-app] Invalid pie chart values: ${JSON.stringify(values)}`, logger: APP_NAME });
     return;
   }
-  
+
   if (!canvas || !canvas.getContext('2d')) {
-    console.warn('[mcp-app]', 'Invalid canvas element or 2d context not available');
+    app.sendLog({ level: "warning", data: `[mcp-app] Invalid canvas element or 2d context not available`, logger: APP_NAME });
     return;
   }
 
@@ -1031,9 +1031,9 @@ function getApiErrorMessage(data: any): string | null {
  * Main render function - renders the dashboard
  */
 function renderData(data: any) {
-  const app = document.getElementById('app');
-  if (!app) return;
-  
+  const appEl = document.getElementById('app');
+  if (!appEl) return;
+
   if (!data) {
     showEmpty('No data received');
     return;
@@ -1048,9 +1048,9 @@ function renderData(data: any) {
   try {
     // Normalize data to table format
     const tableData = normalizeTableData(data);
-    
+
     if (!tableData || !tableData.rows || tableData.rows.length === 0) {
-      console.warn('[mcp-app]', 'Invalid or empty data:', data);
+      app.sendLog({ level: "warning", data: `[mcp-app] Invalid or empty data: ${JSON.stringify(data)}`, logger: APP_NAME });
       showEmpty('No valid data available');
       return;
     }
@@ -1510,8 +1510,8 @@ function renderData(data: any) {
     container.appendChild(tableContainer);
     
     // Replace app content
-    app.innerHTML = '';
-    app.appendChild(container);
+    appEl.innerHTML = '';
+    appEl.appendChild(container);
     
     // Function to render charts
     const renderCharts = () => {
@@ -1522,25 +1522,25 @@ function renderData(data: any) {
             const visibleSeries = new Set(lineChartData.series.map((_: any, i: number) => i));
             renderLineChart(lineCanvas, lineChartData, visibleSeries);
           } catch (error) {
-            console.error('[mcp-app]', 'Error rendering line chart:', error);
+            app.sendLog({ level: "error", data: `[mcp-app] Error rendering line chart: ${JSON.stringify(error)}`, logger: APP_NAME });
             showChartError(lineCanvas.closest('.chart-card'), 'Failed to render line chart: ' + (error as Error).message);
           }
         } else {
-          console.warn('[mcp-app]', 'Line chart canvas not found');
+          app.sendLog({ level: "warning", data: `[mcp-app] Line chart canvas not found`, logger: APP_NAME });
         }
       }
-      
+
       if (pieChartData && pieChartData.values && pieChartData.values.length > 0) {
         const pieCanvas = document.getElementById('piechart') as HTMLCanvasElement;
         if (pieCanvas?.getContext('2d')) {
           try {
             renderPieChart(pieCanvas, pieChartData.values, CHART_COLORS, pieChartData.labels);
           } catch (error) {
-            console.error('[mcp-app]', 'Error rendering pie chart:', error);
+            app.sendLog({ level: "error", data: `[mcp-app] Error rendering pie chart: ${JSON.stringify(error)}`, logger: APP_NAME });
             showChartError(pieCanvas.closest('.chart-card'), 'Failed to render pie chart: ' + (error as Error).message);
           }
         } else {
-          console.warn('[mcp-app]', 'Pie chart canvas not found');
+          app.sendLog({ level: "warning", data: `[mcp-app] Pie chart canvas not found`, logger: APP_NAME });
         }
       }
       
@@ -1560,7 +1560,7 @@ function renderData(data: any) {
         }, 100);
       } else if (chartJsError) {
         // Chart.js failed to load
-        console.error('[mcp-app]', 'Chart.js failed to load - CDN blocked or unavailable');
+        app.sendLog({ level: "error", data: `[mcp-app] Chart.js failed to load - CDN blocked or unavailable`, logger: APP_NAME });
         const lineCanvas = document.getElementById('linechart');
         const pieCanvas = document.getElementById('piechart');
         if (lineCanvas) {
@@ -1574,7 +1574,7 @@ function renderData(data: any) {
         setTimeout(() => waitForChartJS(attempts + 1, maxAttempts), 50);
       } else {
         // Timeout - Chart.js didn't load
-        console.error('[mcp-app]', 'Chart.js failed to load after', maxAttempts, 'attempts');
+        app.sendLog({ level: "error", data: `[mcp-app] Chart.js failed to load after ${maxAttempts} attempts`, logger: APP_NAME });
         const lineCanvas = document.getElementById('linechart');
         const pieCanvas = document.getElementById('piechart');
         if (lineCanvas) {
@@ -1608,7 +1608,7 @@ function renderData(data: any) {
     waitForChartJS();
     
   } catch (error: any) {
-    console.error('[mcp-app]', 'Render error:', error);
+    app.sendLog({ level: "error", data: `[mcp-app] Render error: ${JSON.stringify(error)}`, logger: APP_NAME });
     showError(`Error rendering dashboard: ${error.message}`);
   }
 }
@@ -1737,7 +1737,7 @@ function runQueryWithFilters() {
       context
     }
   };
-  console.log('[mcp-app]', 'tools/call payload:', JSON.stringify(toolCallPayload, null, 2));
+  app.sendLog({ level: "debug", data: `[mcp-app] tools/call payload: ${JSON.stringify(toolCallPayload, null, 2)}`, logger: APP_NAME });
   app.callTool(toolCallPayload.name, toolCallPayload.arguments)
     .then((result: any) => {
       if (result?.isError) {
@@ -1753,7 +1753,7 @@ function runQueryWithFilters() {
       }
     })
     .catch((err: Error) => {
-      console.error('[mcp-app]', 'Run query failed:', err);
+      app.sendLog({ level: "error", data: `[mcp-app] Run query failed: ${JSON.stringify(err)}`, logger: APP_NAME });
       showError(`Query failed: ${err.message}`);
     })
     .finally(() => {
@@ -1845,7 +1845,7 @@ function formatRequestAndResponseForLLM(
       showSendNotification('Sent to LLM for analysis and recommendations');
     })
     .catch((err: Error) => {
-      console.error('Send to LLM failed:', err);
+      app.sendLog({ level: "error", data: `Send to LLM failed: ${JSON.stringify(err)}`, logger: APP_NAME });
       showSendNotification('Failed to send. Check console.');
     })
     .finally(() => {
@@ -1936,7 +1936,7 @@ function setupToolbarInteractions() {
         this.classList.toggle('active');
       }
       // In a real app, this would filter the data
-      console.log('[mcp-app]', 'Filter selected:', this.dataset.filter);
+      app.sendLog({ level: "debug", data: `[mcp-app] Filter selected: ${JSON.stringify(this.dataset.filter)}`, logger: APP_NAME });
     });
   });
 }
@@ -2006,7 +2006,7 @@ const app = new App(
 );
 
 app.onteardown = async () => {
-  console.info("Resource teardown requested");
+  app.sendLog({ level: "info", data: "Resource teardown requested", logger: APP_NAME });
   // Clean up chart instances
   if (lineChartInstance) {
     lineChartInstance.destroy();
@@ -2020,23 +2020,23 @@ app.onteardown = async () => {
 };
 
 app.ontoolinput = (params) => {
-  console.info("Tool input received:", params.arguments);
+  app.sendLog({ level: "info", data: `Tool input received: ${JSON.stringify(params.arguments)}`, logger: APP_NAME });
   const toolArguments = params.arguments;
   if (toolArguments && typeof toolArguments === 'object') {
     lastToolInput = toolArguments as Record<string, unknown>;
     if ((toolArguments as any).context && typeof (toolArguments as any).context === 'object') {
       lastRequestContext = (toolArguments as any).context as Record<string, unknown>;
     }
-    console.log('[mcp-app]', 'Tool input stored for New query panel:', lastToolInput);
+    app.sendLog({ level: "debug", data: `[mcp-app] Tool input stored for New query panel: ${JSON.stringify(lastToolInput)}`, logger: APP_NAME });
   }
 };
 
 app.ontoolresult = (params) => {
-  console.info("Tool result received");
+  app.sendLog({ level: "info", data: "Tool result received", logger: APP_NAME });
 
   // Check for tool execution errors
   if (params.isError) {
-    console.error("Tool execution failed:", params.content);
+    app.sendLog({ level: "error", data: `Tool execution failed: ${JSON.stringify(params.content)}`, logger: APP_NAME });
     const errorText =
       params.content?.map((c: any) => c.text || "").join("\n") ||
       "Tool execution failed";
@@ -2048,23 +2048,23 @@ app.ontoolresult = (params) => {
   if (data !== undefined) {
     renderData(data);
   } else {
-    console.warn("Tool result received but no data found:", params);
+    app.sendLog({ level: "warning", data: `Tool result received but no data found: ${JSON.stringify(params)}`, logger: APP_NAME });
     showEmpty("No data received");
   }
 };
 
 app.ontoolcancelled = (params) => {
   const reason = params.reason || "Unknown reason";
-  console.info("Tool cancelled:", reason);
+  app.sendLog({ level: "info", data: `Tool cancelled: ${JSON.stringify(reason)}`, logger: APP_NAME });
   showError(`Operation cancelled: ${reason}`);
 };
 
 app.onerror = (error) => {
-  console.error("App error:", error);
+  app.sendLog({ level: "error", data: `App error: ${JSON.stringify(error)}`, logger: APP_NAME });
 };
 
 app.onhostcontextchanged = (ctx) => {
-  console.info("Host context changed:", ctx);
+  app.sendLog({ level: "info", data: `Host context changed: ${JSON.stringify(ctx)}`, logger: APP_NAME });
   handleHostContextChanged(ctx);
 };
 
@@ -2075,14 +2075,14 @@ app.onhostcontextchanged = (ctx) => {
 app
   .connect()
   .then(() => {
-    console.info("MCP App connected to host");
+    app.sendLog({ level: "info", data: "MCP App connected to host", logger: APP_NAME });
     const ctx = app.getHostContext();
     if (ctx) {
       handleHostContextChanged(ctx);
     }
   })
   .catch((error) => {
-    console.error("Failed to connect to MCP host:", error);
+    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${JSON.stringify(error)}`, logger: APP_NAME });
   });
 
 export {};

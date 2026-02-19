@@ -379,7 +379,7 @@ function prepareHtmlForIframe(html: string): string {
       });
     } catch (e) {
       // Fallback if animation fails
-      console.warn('Animation failed, using fallback:', e);
+      app.sendLog({ level: "warning", data: `Animation failed, using fallback: ${e}`, logger: APP_NAME });
       activeContent.classList.remove('active');
       if (targetTab) {
         targetTab.classList.add('active');
@@ -439,10 +439,10 @@ function prepareHtmlForIframe(html: string): string {
  * Main render function
  */
 function renderData(data: any) {
-  const app = document.getElementById('app');
+  const appEl = document.getElementById('app');
 
-  if (!app) {
-    console.error('App element not found!');
+  if (!appEl) {
+    app.sendLog({ level: "error", data: "App element not found!", logger: APP_NAME });
     return;
   }
 
@@ -453,11 +453,11 @@ function renderData(data: any) {
 
   try {
     // Debug logging
-    console.log('[Firecrawl] Received data:', data);
+    app.sendLog({ level: "debug", data: `Received data: ${JSON.stringify(data)}`, logger: APP_NAME });
 
     // Unwrap nested data structures
     const unwrapped = unwrapData(data);
-    console.log('[Firecrawl] Unwrapped data:', unwrapped);
+    app.sendLog({ level: "debug", data: `Unwrapped data: ${JSON.stringify(unwrapped)}`, logger: APP_NAME });
 
     // Handle different data structures
     let scrapeData = null;
@@ -475,10 +475,10 @@ function renderData(data: any) {
       scrapeData = unwrapped;
     }
 
-    console.log('[Firecrawl] Scrape data:', scrapeData);
+    app.sendLog({ level: "debug", data: `Scrape data: ${JSON.stringify(scrapeData)}`, logger: APP_NAME });
 
     if (!scrapeData || (typeof scrapeData === 'object' && Object.keys(scrapeData).length === 0)) {
-      console.warn('[Firecrawl] No scrape data found after unwrapping');
+      app.sendLog({ level: "warning", data: "No scrape data found after unwrapping", logger: APP_NAME });
       showEmpty('No scrape data found');
       return;
     }
@@ -652,7 +652,7 @@ function renderData(data: any) {
 
     htmlContent += `</div>`;
 
-    app.innerHTML = htmlContent;
+    appEl.innerHTML = htmlContent;
 
     // Animate elements on load (only in main document, not iframe)
     const isAnimeAvailable = typeof window !== 'undefined' &&
@@ -671,7 +671,7 @@ function renderData(data: any) {
         });
       } catch (e) {
         // Fallback: use CSS animations if anime fails
-        console.warn('Anime.js animation failed, using CSS fallback:', e);
+        app.sendLog({ level: "warning", data: `Anime.js animation failed, using CSS fallback: ${e}`, logger: APP_NAME });
         document.querySelectorAll('.animate-item').forEach((el, index) => {
           (el as HTMLElement).style.opacity = '1';
           (el as HTMLElement).style.transform = 'translateY(0)';
@@ -688,8 +688,8 @@ function renderData(data: any) {
     // No iframe needed - content is rendered directly
 
   } catch (error: any) {
-    console.error('[Firecrawl] Render error:', error);
-    console.error('[Firecrawl] Error stack:', error.stack);
+    app.sendLog({ level: "error", data: `Render error: ${error}`, logger: APP_NAME });
+    app.sendLog({ level: "error", data: `Error stack: ${error.stack}`, logger: APP_NAME });
     showError(`Error rendering data: ${error.message || 'Unknown error'}`);
   }
 }
@@ -736,20 +736,20 @@ const app = new App(
 );
 
 app.onteardown = async () => {
-  console.info("Resource teardown requested");
+  app.sendLog({ level: "info", data: "Resource teardown requested", logger: APP_NAME });
   return {};
 };
 
 app.ontoolinput = (params) => {
-  console.info("Tool input received:", params.arguments);
+  app.sendLog({ level: "info", data: `Tool input received: ${JSON.stringify(params.arguments)}`, logger: APP_NAME });
 };
 
 app.ontoolresult = (params) => {
-  console.info("Tool result received");
+  app.sendLog({ level: "info", data: "Tool result received", logger: APP_NAME });
 
   // Check for tool execution errors
   if (params.isError) {
-    console.error("Tool execution failed:", params.content);
+    app.sendLog({ level: "error", data: `Tool execution failed: ${JSON.stringify(params.content)}`, logger: APP_NAME });
     const errorText =
       params.content?.map((c: any) => c.text || "").join("\n") ||
       "Tool execution failed";
@@ -761,23 +761,23 @@ app.ontoolresult = (params) => {
   if (data !== undefined) {
     renderData(data);
   } else {
-    console.warn("Tool result received but no data found:", params);
+    app.sendLog({ level: "warning", data: `Tool result received but no data found: ${JSON.stringify(params)}`, logger: APP_NAME });
     showEmpty("No data received");
   }
 };
 
 app.ontoolcancelled = (params) => {
   const reason = params.reason || "Unknown reason";
-  console.info("Tool cancelled:", reason);
+  app.sendLog({ level: "info", data: `Tool cancelled: ${reason}`, logger: APP_NAME });
   showError(`Operation cancelled: ${reason}`);
 };
 
 app.onerror = (error) => {
-  console.error("App error:", error);
+  app.sendLog({ level: "error", data: `App error: ${error}`, logger: APP_NAME });
 };
 
 app.onhostcontextchanged = (ctx) => {
-  console.info("Host context changed:", ctx);
+  app.sendLog({ level: "info", data: `Host context changed: ${JSON.stringify(ctx)}`, logger: APP_NAME });
   handleHostContextChanged(ctx);
 };
 
@@ -788,14 +788,14 @@ app.onhostcontextchanged = (ctx) => {
 app
   .connect()
   .then(() => {
-    console.info("MCP App connected to host");
+    app.sendLog({ level: "info", data: "MCP App connected to host", logger: APP_NAME });
     const ctx = app.getHostContext();
     if (ctx) {
       handleHostContextChanged(ctx);
     }
   })
   .catch((error) => {
-    console.error("Failed to connect to MCP host:", error);
+    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${error}`, logger: APP_NAME });
   });
 
 export {};

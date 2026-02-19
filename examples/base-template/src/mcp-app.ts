@@ -184,17 +184,17 @@ function renderData(data: any) {
       </div>
     `;
 
-    // Log data structure to console for debugging
-    console.log("Data received:", {
+    // Log data structure for debugging
+    app.sendLog({ level: "debug", data: `Data received: ${JSON.stringify({
       original: data,
       unwrapped: unwrapped,
       type: Array.isArray(unwrapped) ? "array" : typeof unwrapped,
       keys: Array.isArray(unwrapped)
         ? unwrapped.length + " items"
         : Object.keys(unwrapped || {}).join(", "),
-    });
+    })}`, logger: APP_NAME });
   } catch (error: any) {
-    console.error("Render error:", error);
+    app.sendLog({ level: "error", data: `Render error: ${error}`, logger: APP_NAME });
     showError(`Error rendering data: ${error.message}`);
   }
 }
@@ -259,7 +259,7 @@ const app = new App(
  * Clean up any resources (timers, observers, chart instances, etc.)
  */
 app.onteardown = async () => {
-  console.info("Resource teardown requested");
+  app.sendLog({ level: "info", data: "Resource teardown requested", logger: APP_NAME });
   // TODO: Clean up your resources here
   // - Clear any timers
   // - Cancel pending requests
@@ -273,7 +273,7 @@ app.onteardown = async () => {
  * Provides tool arguments before the result arrives
  */
 app.ontoolinput = (params) => {
-  console.info("Tool input received:", params.arguments);
+  app.sendLog({ level: "info", data: `Tool input received: ${JSON.stringify(params.arguments)}`, logger: APP_NAME });
   // TODO: You can use this for initial rendering or context
   // Example: Show loading state with input parameters
 };
@@ -283,11 +283,11 @@ app.ontoolinput = (params) => {
  * This is where the main data arrives
  */
 app.ontoolresult = (params) => {
-  console.info("Tool result received");
+  app.sendLog({ level: "info", data: "Tool result received", logger: APP_NAME });
 
   // Check for tool execution errors
   if (params.isError) {
-    console.error("Tool execution failed:", params.content);
+    app.sendLog({ level: "error", data: `Tool execution failed: ${JSON.stringify(params.content)}`, logger: APP_NAME });
     const errorText =
       params.content?.map((c: any) => c.text || "").join("\n") ||
       "Tool execution failed";
@@ -299,7 +299,7 @@ app.ontoolresult = (params) => {
   if (data !== undefined) {
     renderData(data);
   } else {
-    console.warn("Tool result received but no data found:", params);
+    app.sendLog({ level: "warning", data: `Tool result received but no data found: ${JSON.stringify(params)}`, logger: APP_NAME });
     showEmpty("No data received");
   }
 };
@@ -309,7 +309,7 @@ app.ontoolresult = (params) => {
  */
 app.ontoolcancelled = (params) => {
   const reason = params.reason || "Unknown reason";
-  console.info("Tool cancelled:", reason);
+  app.sendLog({ level: "info", data: `Tool cancelled: ${reason}`, logger: APP_NAME });
   showError(`Operation cancelled: ${reason}`);
 };
 
@@ -317,7 +317,7 @@ app.ontoolcancelled = (params) => {
  * Handle errors
  */
 app.onerror = (error) => {
-  console.error("App error:", error);
+  app.sendLog({ level: "error", data: `App error: ${error}`, logger: APP_NAME });
 };
 
 /**
@@ -325,7 +325,7 @@ app.onerror = (error) => {
  * Theme, display mode, fonts, and style variables
  */
 app.onhostcontextchanged = (ctx) => {
-  console.info("Host context changed:", ctx);
+  app.sendLog({ level: "info", data: `Host context changed: ${JSON.stringify(ctx)}`, logger: APP_NAME });
   handleHostContextChanged(ctx);
 };
 
@@ -340,7 +340,7 @@ app.onhostcontextchanged = (ctx) => {
 app
   .connect()
   .then(() => {
-    console.info("MCP App connected to host");
+    app.sendLog({ level: "info", data: "MCP App connected to host", logger: APP_NAME });
 
     // Apply initial host context
     const ctx = app.getHostContext();
@@ -349,7 +349,7 @@ app
     }
   })
   .catch((error) => {
-    console.error("Failed to connect to MCP host:", error);
+    app.sendLog({ level: "error", data: `Failed to connect to MCP host: ${error}`, logger: APP_NAME });
     // App can still work in degraded mode
   });
 
