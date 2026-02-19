@@ -33,20 +33,6 @@ const APP_VERSION = "1.0.0";
    ============================================ */
 
 /**
- * Extract data from MCP protocol messages
- * Handles standard JSON-RPC 2.0 format from run-action.html
- */
-function extractData(msg: any) {
-  if (msg?.params?.structuredContent !== undefined) {
-    return msg.params.structuredContent;
-  }
-  if (msg?.params !== undefined) {
-    return msg.params;
-  }
-  return msg;
-}
-
-/**
  * Unwrap nested API response structures
  * Handles various wrapper formats from different MCP clients
  */
@@ -97,7 +83,7 @@ function unwrapData(data: any): any {
  * Escape HTML to prevent XSS attacks
  */
 function escapeHtml(str: any): string {
-  if (typeof str !== "string") return str;
+  if (typeof str !== "string") return String(str);
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
@@ -170,6 +156,15 @@ function getArtistNames(artists: any[]): string {
   return artists.map((a: any) => a.name).join(', ');
 }
 
+/**
+ * Audio Playback State
+ *
+ * Note: HTML5 Audio API does not require special MCP permissions.
+ * The Audio API is a standard browser feature that works without
+ * requesting camera, microphone, geolocation, or clipboardWrite permissions.
+ * Audio playback is allowed by default in modern browsers (user gesture
+ * requirements are handled by click events on play buttons).
+ */
 let currentAudio: HTMLAudioElement | null = null;
 let currentlyPlayingId: string | null = null;
 let selectedTrackId: string | null = null;
@@ -177,6 +172,9 @@ let tracksData: any[] = [];
 
 /**
  * Play track preview
+ *
+ * Uses HTML5 Audio API which does not require MCP permissions.
+ * Preview URLs are 30-second clips provided by Spotify API.
  */
 function playTrack(trackId: string, previewUrl: string | null, spotifyUrl: string) {
   // If clicking the same track that's playing, pause it
@@ -223,8 +221,8 @@ function playTrack(trackId: string, previewUrl: string | null, spotifyUrl: strin
   currentlyPlayingId = null;
   
   if (!previewUrl) {
-    // No preview available, open Spotify
-    window.open(spotifyUrl, '_blank');
+    // No preview available, open Spotify via SDK
+    app.openLink(spotifyUrl);
     return;
   }
   
@@ -478,7 +476,7 @@ function renderTracksList(tracks: any[], unwrapped: any) {
               <div class="track-image-wrapper">
                 <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(track.album?.name || 'Album')}" class="track-image" loading="lazy">
                 <div class="track-overlay">
-                  <button class="play-button" onclick="event.stopPropagation(); playTrack('${escapeHtml(track.id)}', ${hasPreview ? `'${escapeHtml(previewUrl)}'` : 'null'}, '${escapeHtml(spotifyUrl)}')" title="${hasPreview ? 'Play preview' : 'Open in Spotify'}">
+                  <button class="play-button" data-action="play" data-track-id="${escapeHtml(track.id)}" data-preview-url="${hasPreview ? escapeHtml(previewUrl) : ''}" data-spotify-url="${escapeHtml(spotifyUrl)}" title="${hasPreview ? 'Play preview' : 'Open in Spotify'}">
                     ${hasPreview ? `
                       <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M8 5v14l11-7z"/>
@@ -509,16 +507,30 @@ function renderTracksList(tracks: any[], unwrapped: any) {
     </div>
   `;
   
-  // Add click handlers for cards (to view details)
-  const cards = app.querySelectorAll('.track-card');
-  cards.forEach(card => {
-    const trackId = card.getAttribute('data-track-id');
-    if (trackId) {
-      card.addEventListener('click', (e) => {
-        // Don't trigger if clicking buttons
-        if ((e.target as HTMLElement).closest('.play-button')) return;
+  // Event delegation for all interactive elements
+  app.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+
+    // Handle play button clicks
+    const playButton = target.closest('[data-action="play"]');
+    if (playButton) {
+      e.stopPropagation();
+      const trackId = playButton.getAttribute('data-track-id');
+      const previewUrl = playButton.getAttribute('data-preview-url') || null;
+      const spotifyUrl = playButton.getAttribute('data-spotify-url') || '#';
+      if (trackId) {
+        playTrack(trackId, previewUrl || null, spotifyUrl);
+      }
+      return;
+    }
+
+    // Handle card clicks (to view details)
+    const card = target.closest('.track-card');
+    if (card) {
+      const trackId = card.getAttribute('data-track-id');
+      if (trackId) {
         viewTrackDetails(trackId);
-      });
+      }
     }
   });
 }
@@ -554,7 +566,7 @@ function renderTrackDetail(track: any) {
   app.innerHTML = `
     <div class="spotify-container">
       <div class="spotify-header">
-        <button class="back-button" onclick="viewTracksList()" title="Back to list">
+        <button class="back-button" data-action="back" title="Back to list">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 12H5M12 19l-7-7 7-7"/>
           </svg>
@@ -574,7 +586,7 @@ function renderTrackDetail(track: any) {
           <div class="track-detail-image">
             <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(track.album?.name || 'Album')}" class="detail-album-image">
             <div class="detail-play-overlay">
-              <button class="detail-play-button" onclick="playTrack('${escapeHtml(track.id)}', ${hasPreview ? `'${escapeHtml(previewUrl)}'` : 'null'}, '${escapeHtml(spotifyUrl)}')" title="${hasPreview ? 'Play preview' : 'Open in Spotify'}">
+              <button class="detail-play-button" data-action="play" data-track-id="${escapeHtml(track.id)}" data-preview-url="${hasPreview ? escapeHtml(previewUrl) : ''}" data-spotify-url="${escapeHtml(spotifyUrl)}" title="${hasPreview ? 'Play preview' : 'Open in Spotify'}">
                 ${hasPreview ? `
                   <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M8 5v14l11-7z"/>
@@ -678,7 +690,7 @@ function renderTrackDetail(track: any) {
                   Open in Spotify
                 </a>
                 ${hasPreview ? `
-                  <button class="spotify-play-button" onclick="playTrack('${escapeHtml(track.id)}', '${escapeHtml(previewUrl)}', '${escapeHtml(spotifyUrl)}')">
+                  <button class="spotify-play-button" data-action="play" data-track-id="${escapeHtml(track.id)}" data-preview-url="${escapeHtml(previewUrl)}" data-spotify-url="${escapeHtml(spotifyUrl)}">
                     <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
@@ -717,6 +729,28 @@ function renderTrackDetail(track: any) {
       if (actionPauseIcon) (actionPauseIcon as HTMLElement).style.display = 'block';
     }
   }
+
+  // Event delegation for all interactive elements in detail view
+  app.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+
+    // Handle back button click
+    if (target.closest('[data-action="back"]')) {
+      viewTracksList();
+      return;
+    }
+
+    // Handle play button clicks
+    const playButton = target.closest('[data-action="play"]');
+    if (playButton) {
+      const trackId = playButton.getAttribute('data-track-id');
+      const previewUrl = playButton.getAttribute('data-preview-url') || null;
+      const spotifyUrl = playButton.getAttribute('data-spotify-url') || '#';
+      if (trackId) {
+        playTrack(trackId, previewUrl || null, spotifyUrl);
+      }
+    }
+  });
 }
 
 // Global navigation functions
@@ -730,12 +764,9 @@ function viewTracksList() {
   renderData({ body: { tracks: { items: tracksData } } });
 }
 
-// Make functions globally accessible
-(window as any).viewTrackDetails = viewTrackDetails;
-(window as any).viewTracksList = viewTracksList;
-
-// Make playTrack globally accessible
-(window as any).playTrack = playTrack;
+// Note: playTrack, viewTrackDetails, viewTracksList are now called via
+// event delegation (data-action attributes) instead of global onclick handlers.
+// This improves security by avoiding inline event handlers and XSS risks.
 
 /* ============================================
    DISPLAY MODE HANDLING

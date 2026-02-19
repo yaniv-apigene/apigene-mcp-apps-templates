@@ -30,6 +30,40 @@ type TemplateInfo = {
   resourceUri: string;
 };
 
+// CSP configuration per template
+// Maps template names to their required external domains
+type CSPConfig = {
+  connectDomains?: string[];
+  resourceDomains?: string[];
+  frameDomains?: string[];
+  baseUriDomains?: string[];
+};
+
+const TEMPLATE_CSP_CONFIGS: Record<string, CSPConfig> = {
+  "spotify-search": {
+    connectDomains: ["https://api.spotify.com"],
+    resourceDomains: ["https://i.scdn.co", "https://*.spotifycdn.com"],
+    frameDomains: [],
+    baseUriDomains: [],
+  },
+  "github-contributors": {
+    connectDomains: ["https://api.github.com"],
+    resourceDomains: ["https://avatars.githubusercontent.com", "https://ui-avatars.com"],
+    frameDomains: [],
+    baseUriDomains: [],
+  },
+  // Default CSP for templates with no external dependencies
+};
+
+function getTemplateCSP(templateName: string): CSPConfig {
+  return TEMPLATE_CSP_CONFIGS[templateName] ?? {
+    connectDomains: [],
+    resourceDomains: [],
+    frameDomains: [],
+    baseUriDomains: [],
+  };
+}
+
 const buildInFlight = new Map<string, Promise<void>>();
 
 function normalizeTemplateName(input: string): string {
@@ -203,7 +237,9 @@ export function createServer(): McpServer {
       description:
         "List all MCP app templates available to demo. Returns template names and the tool to open each one.",
       inputSchema: {},
-      _meta: {},
+      _meta: {
+        visibility: ["model", "app"],
+      },
     },
     async () => {
       const currentTemplates = listTemplates();
@@ -245,7 +281,9 @@ export function createServer(): McpServer {
           .optional()
           .describe("Template folder name, e.g. xyz-users"),
       },
-      _meta: {},
+      _meta: {
+        visibility: ["model", "app"],
+      },
     },
     async (args) => {
       const currentTemplates = listTemplates();
@@ -309,6 +347,7 @@ export function createServer(): McpServer {
         try {
           await ensureTemplateBuilt(template.name);
           const html = readTemplateHtmlSync(template.name);
+          const csp = getTemplateCSP(template.name);
 
           return {
             contents: [
@@ -316,11 +355,19 @@ export function createServer(): McpServer {
                 uri: template.resourceUri,
                 mimeType: RESOURCE_MIME_TYPE,
                 text: html,
+                _meta: {
+                  ui: {
+                    csp,
+                    prefersBorder: true,
+                  },
+                },
               },
             ],
           };
         } catch (error) {
           const message = error instanceof Error ? error.message : "Unknown build error";
+          const errorCode = "BUILD_FAILED";
+          // Minimal error HTML for visual feedback in the UI
           const html = `<!doctype html><html><body style="font-family:sans-serif;padding:16px;"><h3>Template build failed</h3><pre style="white-space:pre-wrap;">${escapeHtml(message)}</pre></body></html>`;
 
           return {
@@ -329,6 +376,23 @@ export function createServer(): McpServer {
                 uri: template.resourceUri,
                 mimeType: RESOURCE_MIME_TYPE,
                 text: html,
+                _meta: {
+                  ui: {
+                    csp: {
+                      connectDomains: [],
+                      resourceDomains: [],
+                      frameDomains: [],
+                      baseUriDomains: [],
+                    },
+                    prefersBorder: true,
+                    // Structured error metadata for programmatic handling
+                    error: {
+                      code: errorCode,
+                      message: message,
+                      template: template.name,
+                    },
+                  },
+                },
               },
             ],
           };
@@ -346,6 +410,7 @@ export function createServer(): McpServer {
           _: z.string().optional().describe("Optional placeholder; tool needs no arguments."),
         },
         _meta: {
+          visibility: ["model", "app"],
           ui: { resourceUri: template.resourceUri },
         },
       },

@@ -11,8 +11,6 @@
 
 const APP_NAME = "GitHub Contributors Viewer";
 
-const PROTOCOL_VERSION = "2026-01-26";
-
 /* ============================================
    GITHUB CONTRIBUTORS MCP APP
    ============================================
@@ -46,16 +44,6 @@ const APP_VERSION = "1.0.0";
 /* ============================================
    COMMON UTILITY FUNCTIONS
    ============================================ */
-
-function extractData(msg: any) {
-  if (msg?.params?.structuredContent !== undefined) {
-    return msg.params.structuredContent;
-  }
-  if (msg?.params !== undefined) {
-    return msg.params;
-  }
-  return msg;
-}
 
 function unwrapData(data: any): any {
   if (!data) return null;
@@ -101,7 +89,7 @@ function unwrapData(data: any): any {
 
 
 function escapeHtml(str: any): string {
-  if (typeof str !== "string") return str;
+  if (typeof str !== "string") return String(str);
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
