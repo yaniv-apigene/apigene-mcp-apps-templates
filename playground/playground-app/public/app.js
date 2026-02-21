@@ -180,6 +180,7 @@ function filterTemplates(list) {
 }
 
 function renderFilterChips() {
+  if (!filterUiContainer || !filterMcpContainer) return;
   filterUiContainer.innerHTML = "";
   UI_ELEMENT_OPTIONS.forEach((tag) => {
     const chip = document.createElement("button");
