@@ -1,0 +1,41 @@
+# Build and publish @apigene/mcp-app-playground to npm (enables npx @apigene/mcp-app-playground)
+# Trigger: push a version tag (e.g. v0.0.3) or run manually via Actions tab.
+# Required: Add NPM_TOKEN (npm auth token with Publish permission) to repo Secrets.
+
+name: Build and Publish to npm
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # for npm provenance
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build examples
+        run: npm run build:examples
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
