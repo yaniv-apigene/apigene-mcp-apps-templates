@@ -2,7 +2,14 @@
    CURSOR AGENTS DISPLAY - CURSOR STYLE UI
    ============================================ */
 
+/* Cursor Brand Accent Override */
 :root {
+  --mcp-accent: #000000;
+  --mcp-accent-hover: #333333;
+  --mcp-accent-light: rgba(0, 0, 0, 0.05);
+  --mcp-accent-rgb: 0, 0, 0;
+
+  /* Cursor-specific colors */
   --cursor-primary: #0066cc;
   --cursor-primary-hover: #0052a3;
   --cursor-secondary: #6b7280;
@@ -35,7 +42,7 @@ body.dark {
 .cursor-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px;
+  padding: var(--mcp-space-6);
 }
 
 .cursor-header {
@@ -49,14 +56,14 @@ body.dark {
 
 .cursor-title {
   font-size: 28px;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: var(--cursor-text);
   margin: 0;
   line-height: 1.2;
 }
 
 .cursor-subtitle {
-  font-size: 14px;
+  font-size: var(--mcp-text-sm);
   color: var(--cursor-text-secondary);
   margin-top: 8px;
   display: flex;
@@ -71,12 +78,12 @@ body.dark {
   justify-content: center;
   gap: 8px;
   padding: 8px 16px;
-  font-size: 14px;
+  font-size: var(--mcp-text-sm);
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: var(--mcp-radius-md);
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--mcp-transition);
   background: transparent;
   color: var(--cursor-text-secondary);
 }
@@ -113,9 +120,9 @@ body.dark {
 .agent-card {
   background: var(--cursor-surface);
   border: 1px solid var(--cursor-border);
-  border-radius: 8px;
-  padding: 20px;
-  transition: all 0.2s ease;
+  border-radius: var(--mcp-radius-lg);
+  padding: var(--mcp-space-5);
+  transition: var(--mcp-transition);
   cursor: pointer;
 }
 
@@ -142,7 +149,7 @@ body.dark .agent-card:hover {
 
 .agent-name {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: var(--cursor-text);
   margin: 0;
   flex: 1;
@@ -161,7 +168,7 @@ body.dark .agent-card:hover {
 }
 
 .agent-summary-preview {
-  font-size: 14px;
+  font-size: var(--mcp-text-sm);
   color: var(--cursor-text-secondary);
   line-height: 1.6;
   margin-bottom: 16px;
@@ -178,7 +185,7 @@ body.dark .agent-card:hover {
   display: inline-flex;
   align-items: center;
   padding: 4px 12px;
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-xl);
   font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
@@ -240,13 +247,13 @@ body.dark .status-unknown {
 .detail-section {
   background: var(--cursor-surface);
   border: 1px solid var(--cursor-border);
-  border-radius: 8px;
-  padding: 20px;
+  border-radius: var(--mcp-radius-lg);
+  padding: var(--mcp-space-5);
 }
 
 .detail-section-title {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: var(--cursor-text);
   margin: 0 0 16px 0;
 }
@@ -261,7 +268,7 @@ body.dark .status-unknown {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  font-size: 14px;
+  font-size: var(--mcp-text-sm);
 }
 
 .detail-label {
@@ -281,7 +288,7 @@ body.dark .status-unknown {
   font-size: 13px;
   background: var(--cursor-bg);
   padding: 4px 8px;
-  border-radius: 4px;
+  border-radius: var(--mcp-radius-sm);
   border: 1px solid var(--cursor-border);
 }
 
@@ -296,7 +303,7 @@ body.dark .status-unknown {
 }
 
 .agent-summary {
-  font-size: 14px;
+  font-size: var(--mcp-text-sm);
   line-height: 1.7;
   color: var(--cursor-text);
   white-space: pre-wrap;
@@ -311,7 +318,7 @@ body.dark .status-unknown {
 /* Responsive Design */
 @media (max-width: 768px) {
   .cursor-container {
-    padding: 16px;
+    padding: var(--mcp-space-4);
   }
   
   .cursor-header {

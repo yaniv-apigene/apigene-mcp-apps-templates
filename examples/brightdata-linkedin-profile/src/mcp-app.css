@@ -2,6 +2,18 @@
    TEMPLATE-SPECIFIC STYLES (LinkedIn Profile)
    ============================================ */
 
+/* LinkedIn Brand Accent Override */
+:root {
+  --mcp-accent: #0077b5;
+  --mcp-accent-hover: #006097;
+  --mcp-accent-light: rgba(0, 119, 181, 0.1);
+  --mcp-accent-rgb: 0, 119, 181;
+}
+
+body {
+  padding: 20px;
+}
+
 .linkedin-container {
   max-width: 1128px;
   margin: 0 auto;
@@ -67,7 +79,7 @@ body.dark .profile-avatar {
   justify-content: center;
   color: #fff;
   font-size: 3rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 
@@ -172,7 +184,7 @@ body.dark .profile-stats {
 
 .stat-value {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: rgba(0, 0, 0, 0.9);
   line-height: 1.2;
 }
@@ -207,7 +219,7 @@ body.dark .section {
 
 .section-title {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   margin-bottom: 16px;
   color: rgba(0, 0, 0, 0.9);
   padding-bottom: 0;
@@ -255,7 +267,7 @@ body.dark .education-item {
 
 .education-title {
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   margin-bottom: 2px;
   color: rgba(0, 0, 0, 0.9);
   line-height: 1.4;
@@ -269,7 +281,7 @@ body.dark .education-title {
   color: rgba(0, 0, 0, 0.9);
   text-decoration: none;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   line-height: 1.4;
 }
 
@@ -321,7 +333,7 @@ body.dark .language-item {
 }
 
 .language-name {
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: rgba(0, 0, 0, 0.9);
   font-size: 0.9375rem;
 }
@@ -438,7 +450,7 @@ body.dark .person-card:hover {
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   font-size: 0.875rem;
   flex-shrink: 0;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
@@ -451,7 +463,7 @@ body.dark .person-card:hover {
 
 .person-name-small {
   font-size: 0.9375rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   margin-bottom: 2px;
   color: rgba(0, 0, 0, 0.9);
   word-break: break-word;

@@ -207,11 +207,16 @@ function renderPatch(patch: string): string {
         newLine = newLineNum;
       }
 
+      // Remove the leading marker (+/-/space) from content
+      const contentText = (type === 'added' || type === 'deleted' || type === 'context')
+        ? line.substring(1)
+        : line;
+
       currentHunk.lines.push({
         type,
         oldLine,
         newLine,
-        content: line
+        content: contentText
       });
     }
   }
@@ -234,21 +239,13 @@ function renderPatch(patch: string): string {
           <div class="diff-hunk-content">
             <table class="diff-table">
               <tbody>
-                ${hunk.lines.map((line, idx) => {
+                ${hunk.lines.map((line) => {
                   const lineClass = line.type === 'added' ? 'diff-line-added' :
                                    line.type === 'deleted' ? 'diff-line-deleted' :
                                    line.type === 'escape' ? 'diff-line-escape' : 'diff-line-context';
+                  const marker = line.type === 'added' ? '+' : line.type === 'deleted' ? '-' : ' ';
 
-                  return `
-                    <tr class="diff-line ${lineClass}">
-                      <td class="diff-line-num diff-line-num-old">${line.oldLine !== undefined ? line.oldLine : ''}</td>
-                      <td class="diff-line-num diff-line-num-new">${line.newLine !== undefined ? line.newLine : ''}</td>
-                      <td class="diff-line-content">
-                        <span class="diff-line-marker">${line.type === 'added' ? '+' : line.type === 'deleted' ? '-' : ' '}</span>
-                        <span class="diff-line-text">${escapeHtml(line.content)}</span>
-                      </td>
-                    </tr>
-                  `;
+                  return `<tr class="diff-line ${lineClass}"><td class="diff-line-num diff-line-num-old">${line.oldLine ?? ''}</td><td class="diff-line-num diff-line-num-new">${line.newLine ?? ''}</td><td class="diff-line-content"><span class="diff-line-marker">${marker}</span><span class="diff-line-text">${escapeHtml(line.content)}</span></td></tr>`;
                 }).join('')}
               </tbody>
             </table>

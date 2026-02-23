@@ -39,7 +39,7 @@ body.dark {
 .header {
   text-align: center;
   margin-bottom: 32px;
-  padding: 24px;
+  padding: var(--mcp-space-4) var(--mcp-space-4);
 }
 
 .header-title {
@@ -51,7 +51,7 @@ body.dark {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 8px;
+  margin-bottom: var(--mcp-space-2);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -65,15 +65,15 @@ body.dark .header-title {
 .header-stats {
   display: flex;
   justify-content: center;
-  gap: 24px;
+  gap: var(--mcp-space-4) var(--mcp-space-4);
   flex-wrap: wrap;
-  margin-top: 16px;
+  margin-top: var(--mcp-space-4);
 }
 
 .stat-brick {
   background: var(--lego-white);
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: var(--mcp-space-3) var(--mcp-space-4);
+  border-radius: var(--mcp-radius-lg);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   position: relative;
   border: 3px solid var(--lego-red);
@@ -85,10 +85,10 @@ body.dark .stat-brick {
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: var(--mcp-text-xs);
   text-transform: uppercase;
   color: #666;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   letter-spacing: 1px;
 }
 
@@ -111,27 +111,27 @@ body.dark .stat-value {
 .parts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+  gap: var(--mcp-space-4) var(--mcp-space-4);
   margin-top: 32px;
 }
 
 /* LEGO Brick Card */
 .part-card {
   background: var(--lego-white);
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-lg);
   padding: 20px;
-  box-shadow: 
+  box-shadow:
     0 8px 16px rgba(0, 0, 0, 0.15),
     inset 0 -4px 0 rgba(0, 0, 0, 0.1);
   position: relative;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: var(--mcp-transition);
   border: 3px solid var(--lego-black);
   overflow: hidden;
 }
 
 .part-card:hover {
   transform: translateY(-4px);
-  box-shadow: 
+  box-shadow:
     0 12px 24px rgba(0, 0, 0, 0.2),
     inset 0 -4px 0 rgba(0, 0, 0, 0.15);
 }
@@ -166,11 +166,11 @@ body.dark .part-card::before {
   width: 100%;
   height: 200px;
   background: var(--lego-gray);
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: var(--mcp-space-4);
   overflow: hidden;
   position: relative;
 }
@@ -183,14 +183,14 @@ body.dark .part-image-container {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  border-radius: 4px;
+  border-radius: var(--mcp-radius-sm);
 }
 
 .part-image-placeholder {
   width: 80px;
   height: 80px;
   background: linear-gradient(135deg, var(--lego-red), var(--lego-yellow));
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -205,7 +205,7 @@ body.dark .part-image-container {
   height: 100%;
   min-height: 200px;
   background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   position: relative;
   overflow: hidden;
 }
@@ -226,7 +226,7 @@ body.dark .part-3d-viewer {
   justify-content: center;
   height: 100%;
   color: #666;
-  font-size: 0.875rem;
+  font-size: var(--mcp-text-sm);
 }
 
 body.dark .viewer-error {
@@ -235,14 +235,14 @@ body.dark .viewer-error {
 
 /* Part Info */
 .part-info {
-  margin-top: 12px;
+  margin-top: var(--mcp-space-3);
 }
 
 .part-number {
   font-size: 1.25rem;
   font-weight: 900;
   color: var(--lego-red);
-  margin-bottom: 8px;
+  margin-bottom: var(--mcp-space-2);
   font-family: 'Courier New', monospace;
   letter-spacing: 1px;
 }
@@ -252,10 +252,10 @@ body.dark .part-number {
 }
 
 .part-name {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--mcp-text-base);
+  font-weight: var(--mcp-font-semibold);
   color: var(--lego-black);
-  margin-bottom: 12px;
+  margin-bottom: var(--mcp-space-3);
   line-height: 1.4;
   min-height: 2.8em;
 }
@@ -265,9 +265,9 @@ body.dark .part-name {
 }
 
 .part-category {
-  font-size: 0.875rem;
+  font-size: var(--mcp-text-sm);
   color: #666;
-  margin-bottom: 12px;
+  margin-bottom: var(--mcp-space-3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -280,16 +280,16 @@ body.dark .part-category {
 .external-ids {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
+  gap: var(--mcp-space-2);
+  margin-top: var(--mcp-space-3);
 }
 
 .external-id-badge {
   display: inline-block;
   padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  border-radius: var(--mcp-radius-lg);
+  font-size: var(--mcp-text-xs);
+  font-weight: var(--mcp-font-semibold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -322,17 +322,17 @@ body.dark .part-category {
 /* Part Link */
 .part-link {
   display: inline-block;
-  margin-top: 12px;
-  padding: 8px 16px;
+  margin-top: var(--mcp-space-3);
+  padding: var(--mcp-space-2) var(--mcp-space-4);
   background: var(--lego-red);
   color: white;
   text-decoration: none;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.875rem;
+  border-radius: var(--mcp-radius-md);
+  font-weight: var(--mcp-font-semibold);
+  font-size: var(--mcp-text-sm);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  transition: background 0.2s ease;
+  transition: var(--mcp-transition);
 }
 
 .part-link:hover {
@@ -353,23 +353,23 @@ body.dark .part-link:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: var(--mcp-space-4);
   margin-top: 32px;
   padding: 20px;
 }
 
 .pagination-button {
-  padding: 12px 24px;
+  padding: var(--mcp-space-3) var(--mcp-space-4);
   background: var(--lego-blue);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: var(--mcp-text-sm);
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--mcp-transition);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -394,9 +394,9 @@ body.dark .pagination-button:hover:not(:disabled) {
 }
 
 .pagination-info {
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: var(--lego-black);
-  font-size: 0.875rem;
+  font-size: var(--mcp-text-sm);
 }
 
 body.dark .pagination-info {
@@ -408,17 +408,17 @@ body.dark .pagination-info {
   .header-title {
     font-size: 1.75rem;
   }
-  
+
   .parts-grid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: var(--mcp-space-4);
   }
-  
+
   .header-stats {
     flex-direction: column;
-    gap: 12px;
+    gap: var(--mcp-space-3);
   }
-  
+
   .stat-brick {
     width: 100%;
   }

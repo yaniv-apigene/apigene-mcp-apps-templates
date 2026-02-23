@@ -2,6 +2,18 @@
    TEMPLATE-SPECIFIC STYLES (Amazon Shopping)
    ============================================ */
 
+/* Amazon Brand Accent Override */
+:root {
+  --mcp-accent: #ff9900;
+  --mcp-accent-hover: #e68a00;
+  --mcp-accent-light: rgba(255, 153, 0, 0.1);
+  --mcp-accent-rgb: 255, 153, 0;
+}
+
+body {
+  padding: 20px;
+}
+
 .amazon-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -12,7 +24,7 @@
   margin-bottom: 32px;
   padding: 24px 32px;
   background: linear-gradient(135deg, #ff9900 0%, #ff6600 100%);
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-md);
   box-shadow: 0 4px 16px rgba(255, 153, 0, 0.3);
   color: #fff;
   position: relative;
@@ -56,7 +68,7 @@ body.dark .header {
   width: 48px;
   height: 48px;
   background: rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
+  border-radius: var(--mcp-radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,7 +118,7 @@ body.dark .header {
 .product-card {
   background: #fff;
   border: 1px solid #e0e0e0;
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-md);
   padding: 16px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -155,7 +167,7 @@ body.dark .product-card:hover {
   width: 100%;
   aspect-ratio: 1;
   margin-bottom: 16px;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   overflow: hidden;
   background: #f5f5f5;
   display: flex;
@@ -202,7 +214,7 @@ body.dark .product-image-placeholder {
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -227,7 +239,7 @@ body.dark .product-image-placeholder {
   background: #e74c3c;
   color: #fff;
   padding: 6px 10px;
-  border-radius: 6px;
+  border-radius: var(--mcp-radius-md);
   font-size: 0.875rem;
   font-weight: 700;
 }
@@ -255,7 +267,7 @@ body.dark .product-brand {
 .product-title {
   margin: 0;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   line-height: 1.4;
   min-height: 2.8em;
   display: -webkit-box;
@@ -449,7 +461,7 @@ body.dark .variation-chip-more {
   color: #0066c0;
   text-decoration: none;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   transition: color 0.2s;
   display: inline-flex;
   align-items: center;

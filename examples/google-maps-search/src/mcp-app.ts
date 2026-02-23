@@ -150,7 +150,7 @@ function showEmpty(message: string = 'No data available.') {
  *
  * Alternatively, move this to the backend and have the backend add photo URLs to responses.
  */
-const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 /**
  * Get photo URL from photo reference or use provided URL
@@ -168,6 +168,17 @@ function getPhotoUrl(photo: any, maxWidth: number = 400): string | null {
   }
 
   return null;
+}
+
+/**
+ * Get static map URL for places without photos
+ * Uses Google Maps Static API to show location on a map
+ */
+function getStaticMapUrl(lat: number, lng: number, width: number = 400, height: number = 200): string | null {
+  if (!GOOGLE_MAPS_API_KEY || lat === undefined || lng === undefined) {
+    return null;
+  }
+  return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=15&size=${width}x${height}&markers=color:red%7C${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}`;
 }
 
 /**
@@ -344,11 +355,18 @@ function renderPlacesList(places: any[]) {
 
 function renderPlaceCard(place: any): string {
   const photo = place.photos && place.photos.length > 0 ? place.photos[0] : null;
-  const photoUrl = photo ? getPhotoUrl(photo, 400) : '';
+  const photoUrl = photo ? getPhotoUrl(photo, 400) : null;
+  const lat = place.geometry?.location?.lat;
+  const lng = place.geometry?.location?.lng;
+  const staticMapUrl = !photoUrl ? getStaticMapUrl(lat, lng, 400, 200) : null;
   const rating = place.rating || 0;
   const priceLevel = formatPriceLevel(place.price_level);
   const isOpen = place.opening_hours?.open_now;
   const placeType = getPlaceTypeDisplay(place.types);
+
+  // Generate unique seed from place_id for consistent placeholder image
+  const placeholderSeed = place.place_id ? place.place_id.slice(-8) : Math.random().toString(36).slice(2, 10);
+  const placeholderUrl = `https://picsum.photos/seed/${placeholderSeed}/400/200`;
 
   return `
     <div class="place-card" data-place-id="${escapeHtml(place.place_id)}">
@@ -356,11 +374,13 @@ function renderPlaceCard(place: any): string {
         <div class="place-image-wrapper">
           <img src="${photoUrl}" alt="${escapeHtml(place.name)}" class="place-image" loading="lazy">
         </div>
+      ` : staticMapUrl ? `
+        <div class="place-image-wrapper">
+          <img src="${staticMapUrl}" alt="Map of ${escapeHtml(place.name)}" class="place-image place-static-map" loading="lazy">
+        </div>
       ` : `
-        <div class="place-image-wrapper place-image-placeholder">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-          </svg>
+        <div class="place-image-wrapper">
+          <img src="${placeholderUrl}" alt="${escapeHtml(place.name)}" class="place-image" loading="lazy">
         </div>
       `}
 
@@ -374,19 +394,19 @@ function renderPlaceCard(place: any): string {
           ` : ''}
         </div>
 
-        <p class="place-type">${escapeHtml(placeType)}</p>
-
-        <div class="place-rating">
-          <span class="rating-stars">${'★'.repeat(Math.floor(rating))}${rating % 1 >= 0.5 ? '½' : ''}</span>
-          <span class="rating-value">${formatRating(rating)}</span>
-          ${place.user_ratings_total ? `
-            <span class="rating-count">(${place.user_ratings_total.toLocaleString()})</span>
+        <div class="place-meta">
+          <span class="place-type">${escapeHtml(placeType)}</span>
+          ${rating ? `
+            <span class="meta-separator">·</span>
+            <span class="rating-stars">${'★'.repeat(Math.round(rating))}</span>
+            <span class="rating-value">${formatRating(rating)}</span>
+            ${place.user_ratings_total ? `<span class="rating-count">(${place.user_ratings_total.toLocaleString()})</span>` : ''}
+          ` : ''}
+          ${priceLevel ? `
+            <span class="meta-separator">·</span>
+            <span class="place-price">${priceLevel}</span>
           ` : ''}
         </div>
-
-        ${priceLevel ? `
-          <div class="place-price">${priceLevel}</div>
-        ` : ''}
 
         <p class="place-address" title="${escapeHtml(place.formatted_address)}">
           ${escapeHtml(place.formatted_address)}
@@ -408,6 +428,9 @@ function renderPlaceDetail(place: any) {
   const placeType = getPlaceTypeDisplay(place.types);
   const lat = place.geometry?.location?.lat;
   const lng = place.geometry?.location?.lng;
+  const staticMapUrl = !photoUrl ? getStaticMapUrl(lat, lng, 640, 440) : null;
+  const placeholderSeed = place.place_id ? place.place_id.slice(-8) : Math.random().toString(36).slice(2, 10);
+  const placeholderUrl = `https://picsum.photos/seed/${placeholderSeed}/640/440`;
 
   app.innerHTML = `
     <div class="maps-container">
@@ -423,11 +446,13 @@ function renderPlaceDetail(place: any) {
             <div class="place-detail-image">
               <img src="${photoUrl}" alt="${escapeHtml(place.name)}" class="detail-image">
             </div>
+          ` : staticMapUrl ? `
+            <div class="place-detail-image">
+              <img src="${staticMapUrl}" alt="Map of ${escapeHtml(place.name)}" class="detail-image place-static-map">
+            </div>
           ` : `
-            <div class="place-detail-image place-image-placeholder">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-              </svg>
+            <div class="place-detail-image">
+              <img src="${placeholderUrl}" alt="${escapeHtml(place.name)}" class="detail-image">
             </div>
           `}
 
@@ -438,23 +463,23 @@ function renderPlaceDetail(place: any) {
 
             <h1 class="detail-place-name">${escapeHtml(place.name)}</h1>
 
-            <div class="place-rating">
-              <span class="rating-stars">${'★'.repeat(Math.floor(rating))}${rating % 1 >= 0.5 ? '½' : ''}</span>
-              <span class="rating-value">${formatRating(rating)}</span>
-              ${place.user_ratings_total ? `
-                <span class="rating-count">(${place.user_ratings_total.toLocaleString()} reviews)</span>
+            <div class="place-meta detail-meta">
+              ${rating ? `
+                <span class="rating-stars">${'★'.repeat(Math.round(rating))}</span>
+                <span class="rating-value">${formatRating(rating)}</span>
+                ${place.user_ratings_total ? `<span class="rating-count">(${place.user_ratings_total.toLocaleString()} reviews)</span>` : ''}
+              ` : ''}
+              ${priceLevel ? `
+                <span class="meta-separator">·</span>
+                <span class="place-price">${priceLevel}</span>
+              ` : ''}
+              ${isOpen !== undefined ? `
+                <span class="meta-separator">·</span>
+                <span class="place-status ${isOpen ? 'open' : 'closed'}">
+                  ${isOpen ? 'Open now' : 'Closed'}
+                </span>
               ` : ''}
             </div>
-
-            ${priceLevel ? `
-              <div class="place-price">${priceLevel}</div>
-            ` : ''}
-
-            ${isOpen !== undefined ? `
-              <div class="place-status ${isOpen ? 'open' : 'closed'}">
-                ${isOpen ? '● Open now' : '● Closed'}
-              </div>
-            ` : ''}
 
             <p class="detail-address">${escapeHtml(place.formatted_address)}</p>
 

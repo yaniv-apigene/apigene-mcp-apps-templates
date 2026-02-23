@@ -1,9 +1,17 @@
 /* ============================================
    TESLA CONTROLS STYLES
    ============================================
-   
+
    Tesla app-inspired dark theme interface
    ============================================ */
+
+/* Tesla Brand Accent Override */
+:root {
+  --mcp-accent: #cc0000;
+  --mcp-accent-hover: #e31937;
+  --mcp-accent-light: rgba(204, 0, 0, 0.1);
+  --mcp-accent-rgb: 204, 0, 0;
+}
 
 .tesla-container {
   min-height: 100vh;
@@ -24,7 +32,7 @@ body.dark .tesla-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: var(--mcp-space-4) 20px;
   background: #1a1a1a;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
@@ -42,12 +50,12 @@ body.dark .tesla-header {
   border: none;
   color: #ffffff;
   cursor: pointer;
-  padding: 8px;
+  padding: var(--mcp-space-2);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  transition: background-color 0.2s;
+  border-radius: var(--mcp-radius-lg);
+  transition: var(--mcp-transition);
 }
 
 .back-button:hover {
@@ -60,7 +68,7 @@ body.dark .tesla-header {
 
 .tesla-title {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   margin: 0;
   flex: 1;
   text-align: center;
@@ -71,13 +79,13 @@ body.dark .tesla-header {
   border: none;
   color: #ffffff;
   cursor: pointer;
-  padding: 8px;
+  padding: var(--mcp-space-2);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  border-radius: 8px;
-  transition: background-color 0.2s;
+  border-radius: var(--mcp-radius-lg);
+  transition: var(--mcp-transition);
   font-size: 10px;
 }
 
@@ -125,7 +133,7 @@ body.dark .tesla-car {
   right: 10%;
   bottom: 20%;
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-lg);
   opacity: 0.95;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
 }
@@ -144,7 +152,7 @@ body.dark .tesla-car::before {
   right: 15%;
   bottom: 25%;
   background: rgba(0, 0, 0, 0.7);
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
 }
 
 body.dark .tesla-car::after {
@@ -156,15 +164,15 @@ body.dark .tesla-car::after {
   position: absolute;
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-lg);
   color: #ffffff;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--mcp-transition);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--mcp-text-sm);
+  font-weight: var(--mcp-font-semibold);
   backdrop-filter: blur(10px);
   z-index: 5;
 }
@@ -208,7 +216,7 @@ body.dark .tesla-car::after {
   transform: translateX(-50%);
   width: 80px;
   height: 40px;
-  padding: 8px;
+  padding: var(--mcp-space-2);
 }
 
 .frunk-control.open {
@@ -223,7 +231,7 @@ body.dark .tesla-car::after {
   transform: translateX(-50%);
   width: 60px;
   height: 60px;
-  padding: 12px;
+  padding: var(--mcp-space-3);
   border-radius: 50%;
 }
 
@@ -249,7 +257,7 @@ body.dark .tesla-car::after {
   transform: translateX(-50%);
   width: 80px;
   height: 40px;
-  padding: 8px;
+  padding: var(--mcp-space-2);
 }
 
 .trunk-control.open {
@@ -298,8 +306,8 @@ body.dark .tesla-car::after {
 }
 
 .control-label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--mcp-text-sm);
+  font-weight: var(--mcp-font-semibold);
 }
 
 /* Bottom Control Bar */
@@ -310,7 +318,7 @@ body.dark .tesla-car::after {
   padding: 20px;
   background: #1a1a1a;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  gap: 12px;
+  gap: var(--mcp-space-3);
 }
 
 body.dark .tesla-controls-bar {
@@ -323,15 +331,15 @@ body.dark .tesla-controls-bar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 16px 12px;
+  gap: var(--mcp-space-2);
+  padding: var(--mcp-space-4) var(--mcp-space-3);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-lg);
   color: #ffffff;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 12px;
+  transition: var(--mcp-transition);
+  font-size: var(--mcp-text-sm);
   font-weight: 500;
   min-height: 80px;
 }
@@ -364,7 +372,7 @@ body.dark .tesla-controls-bar {
 }
 
 .control-button span {
-  font-size: 12px;
+  font-size: var(--mcp-text-sm);
   font-weight: 500;
 }
 
@@ -444,8 +452,8 @@ body.dark .tesla-container .loading {
 .error {
   background: rgba(244, 67, 54, 0.1);
   border: 1px solid #f44336;
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: var(--mcp-radius-lg);
+  padding: var(--mcp-space-4);
   color: #f44336;
   margin: 20px;
   text-align: center;

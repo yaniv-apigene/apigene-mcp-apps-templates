@@ -3,7 +3,13 @@
    Modern ATS Design System
    ============================================ */
 
+/* Ashby Brand Accent Override */
 :root {
+  --mcp-accent: #6366f1;
+  --mcp-accent-hover: #4f46e5;
+  --mcp-accent-light: rgba(99, 102, 241, 0.1);
+  --mcp-accent-rgb: 99, 102, 241;
+
   /* Ashby-inspired colors - Modern ATS palette */
   --ashby-primary: #2563eb;
   --ashby-primary-hover: #1d4ed8;
@@ -60,74 +66,41 @@ body.dark {
 }
 
 /* Header */
-.ashby-header {
-  background: var(--ashby-bg);
-  border-bottom: 1px solid var(--ashby-border);
+.header {
+  margin: 0;
   padding: 20px 24px;
+  background: var(--ashby-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  gap: 16px;
 }
 
-body.dark .ashby-header {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.ashby-logo {
+.header-left {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
-.ashby-logo-icon {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, var(--ashby-primary) 0%, var(--ashby-primary-light) 100%);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
+.header h1 {
+  font-size: 24px;
   font-weight: 700;
-  font-size: 18px;
-}
-
-.ashby-logo-text {
-  font-size: 20px;
-  font-weight: 600;
+  margin: 0;
   color: var(--ashby-text-primary);
   letter-spacing: -0.02em;
+}
+
+.header-count {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ashby-text-tertiary);
 }
 
 .header-actions {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.header {
-  margin: 0;
-  padding: 24px;
-  background: var(--ashby-bg);
-  border-bottom: 1px solid var(--ashby-border);
-}
-
-.header h1 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 8px;
-  color: var(--ashby-text-primary);
-  letter-spacing: -0.02em;
-}
-
-.header .meta {
-  font-size: 14px;
-  color: var(--ashby-text-secondary);
-  font-weight: 500;
 }
 
 /* Toolbar */
@@ -162,11 +135,11 @@ body.dark .ashby-header {
   width: 100%;
   padding: 10px 16px 10px 40px;
   border: 1px solid var(--ashby-border);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: var(--mcp-radius-lg);
+  font-size: var(--mcp-text-sm);
   background: var(--ashby-bg);
   color: var(--ashby-text-primary);
-  transition: all 0.2s;
+  transition: var(--mcp-transition);
   font-family: 'Inter', sans-serif;
 }
 
@@ -199,14 +172,14 @@ body.dark .ashby-header {
 }
 
 .filter-select {
-  padding: 10px 14px;
+  padding: var(--mcp-space-2) var(--mcp-space-3);
   border: 1px solid var(--ashby-border);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: var(--mcp-radius-lg);
+  font-size: var(--mcp-text-sm);
   background: var(--ashby-bg);
   color: var(--ashby-text-primary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--mcp-transition);
   font-family: 'Inter', sans-serif;
   font-weight: 500;
 }
@@ -226,15 +199,15 @@ body.dark .ashby-header {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 16px;
+  padding: var(--mcp-space-2) var(--mcp-space-4);
   background: var(--ashby-bg);
   border: 1px solid var(--ashby-border);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: var(--mcp-radius-lg);
+  font-size: var(--mcp-text-sm);
   font-weight: 500;
   color: var(--ashby-text-primary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--mcp-transition);
   font-family: 'Inter', sans-serif;
 }
 
@@ -288,7 +261,7 @@ body.dark .action-btn.primary:hover {
 }
 
 .bulk-actions-text {
-  font-size: 14px;
+  font-size: var(--mcp-text-sm);
   font-weight: 500;
   margin-right: 8px;
 }
@@ -297,12 +270,12 @@ body.dark .action-btn.primary:hover {
   padding: 6px 12px;
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
+  border-radius: var(--mcp-radius-md);
   color: #ffffff;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--mcp-transition);
 }
 
 .bulk-action-btn:hover {
@@ -311,7 +284,7 @@ body.dark .action-btn.primary:hover {
 
 /* Results Count */
 .results-count {
-  font-size: 14px;
+  font-size: var(--mcp-text-sm);
   color: var(--ashby-text-secondary);
   font-weight: 500;
   padding: 12px 24px;
@@ -329,8 +302,9 @@ body.dark .action-btn.primary:hover {
 
 table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--mcp-text-sm);
 }
 
 thead {
@@ -347,7 +321,7 @@ body.dark thead {
 th {
   padding: 14px 16px;
   text-align: left;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: var(--ashby-text-secondary);
   cursor: pointer;
   user-select: none;
@@ -356,7 +330,7 @@ th {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  transition: all 0.2s;
+  transition: var(--mcp-transition);
 }
 
 th:hover {
@@ -399,6 +373,22 @@ td {
   color: var(--ashby-text-primary);
 }
 
+/* Ellipsis for text-only cells */
+td:nth-child(3),
+td:nth-child(4),
+td:nth-child(5),
+td:nth-child(6) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+/* Date column - no wrap */
+td:nth-child(9) {
+  white-space: nowrap;
+}
+
 tbody tr {
   cursor: pointer;
   transition: all 0.15s;
@@ -435,7 +425,7 @@ tbody tr:last-child td {
 
 /* Candidate Name */
 .candidate-name {
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: var(--ashby-primary);
   font-size: 15px;
   margin-bottom: 4px;
@@ -454,17 +444,23 @@ tbody tr:last-child td {
 }
 
 /* Tags */
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
 .tag {
   display: inline-block;
   padding: 4px 10px;
-  border-radius: 12px;
+  border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
   background: var(--ashby-gray-100);
   color: var(--ashby-text-secondary);
-  margin-right: 6px;
-  margin-bottom: 4px;
   border: 1px solid var(--ashby-border);
+  white-space: nowrap;
 }
 
 body.dark .tag {
@@ -474,14 +470,19 @@ body.dark .tag {
 }
 
 /* Badges */
+.badges-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
 .badge {
   display: inline-block;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
-  font-weight: 600;
-  margin-right: 6px;
-  margin-bottom: 4px;
+  font-weight: var(--mcp-font-semibold);
+  white-space: nowrap;
 }
 
 .badge-success {
@@ -513,6 +514,12 @@ body.dark .tag {
   color: var(--ashby-text-secondary);
   text-decoration: none;
   transition: color 0.2s;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
 }
 
 .email-link:hover {
@@ -524,7 +531,7 @@ body.dark .tag {
 .teams-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .team-badge {
@@ -535,6 +542,7 @@ body.dark .tag {
   font-weight: 500;
   color: var(--ashby-text-secondary);
   border: 1px solid var(--ashby-border);
+  white-space: nowrap;
 }
 
 body.dark .team-badge {
@@ -566,7 +574,7 @@ body.dark .team-badge {
 
 .modal-content {
   background: var(--ashby-bg);
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-xl);
   max-width: 800px;
   width: 100%;
   margin: 40px auto;
@@ -608,8 +616,8 @@ body.dark .modal-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  transition: all 0.2s;
+  border-radius: var(--mcp-radius-lg);
+  transition: var(--mcp-transition);
 }
 
 .close-modal-btn:hover {
@@ -632,8 +640,8 @@ body.dark .close-modal-btn:hover {
 }
 
 .modal-section-title {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--mcp-text-sm);
+  font-weight: var(--mcp-font-semibold);
   color: var(--ashby-text-secondary);
   margin-bottom: 12px;
   text-transform: uppercase;
@@ -649,14 +657,14 @@ body.dark .close-modal-btn:hover {
 
 .modal-field-label {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: var(--ashby-text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .modal-field-value {
-  font-size: 14px;
+  font-size: var(--mcp-text-sm);
   color: var(--ashby-text-primary);
   font-weight: 500;
 }
@@ -688,13 +696,13 @@ body.dark .close-modal-btn:hover {
 
 .empty-state-title {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: var(--ashby-text-primary);
   margin: 0;
 }
 
 .empty-state-message {
-  font-size: 14px;
+  font-size: var(--mcp-text-sm);
   color: var(--ashby-text-secondary);
   margin: 0;
 }
@@ -720,15 +728,22 @@ td.empty-state {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .ashby-header {
-    padding: 12px 16px;
+  .header {
+    padding: 16px;
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
-  
-  .header {
-    padding: 16px;
+
+  .header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
   }
   
   .toolbar {

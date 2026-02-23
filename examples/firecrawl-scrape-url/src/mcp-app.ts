@@ -45,6 +45,15 @@ import {
 import "./global.css";
 import "./mcp-app.css";
 
+// Markdown parser
+import { marked } from "marked";
+
+// Configure marked
+marked.setOptions({
+  breaks: true,
+  gfm: true
+});
+
 /* ============================================
    APP CONFIGURATION
    ============================================ */
@@ -169,77 +178,11 @@ function formatMetadataValue(value: any): string {
 }
 
 /**
- * Convert markdown to HTML (simple converter, no scripts)
+ * Convert markdown to HTML using marked library
  */
 function convertMarkdownToHTML(markdown: string): string {
   if (!markdown) return '';
-
-  let html = markdown;
-
-  // Headers (process in order from most specific to least)
-  html = html.replace(/^###### (.*$)/gim, '<h6>$1</h6>');
-  html = html.replace(/^##### (.*$)/gim, '<h5>$1</h5>');
-  html = html.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
-  html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-  html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-  html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-
-  // Bold and italic
-  html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
-  html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
-
-  // Links
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-
-  // Code blocks
-  html = html.replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>');
-  html = html.replace(/`([^`]+)`/gim, '<code>$1</code>');
-
-  // Lists
-  const lines = html.split('\n');
-  let inList = false;
-  let result: string[] = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    const isListItem = /^[-*+]\s+(.+)$/.test(line);
-
-    if (isListItem) {
-      if (!inList) {
-        result.push('<ul>');
-        inList = true;
-      }
-      const content = line.replace(/^[-*+]\s+/, '');
-      result.push(`<li>${content}</li>`);
-    } else {
-      if (inList) {
-        result.push('</ul>');
-        inList = false;
-      }
-      if (line) {
-        // Check if it's already a header
-        if (!line.match(/^<h[1-6]>/)) {
-          result.push(`<p>${line}</p>`);
-        } else {
-          result.push(line);
-        }
-      } else {
-        result.push('');
-      }
-    }
-  }
-
-  if (inList) {
-    result.push('</ul>');
-  }
-
-  html = result.join('\n');
-
-  // Clean up empty paragraphs
-  html = html.replace(/<p><\/p>/gim, '');
-  html = html.replace(/<p>\s*<\/p>/gim, '');
-
-  return html;
+  return marked.parse(markdown) as string;
 }
 
 /**
@@ -513,23 +456,14 @@ function renderData(data: any) {
     let htmlContent = `
       <div class="container">
         <div class="header-card">
-          <div class="header-content">
-            <div class="header-icon">
-              <span class="material-icons">language</span>
-            </div>
-            <div class="header-text">
-              <h1 class="header-title">${escapeHtml(metadata.title || 'Scraped Website')}</h1>
-              <div class="url-bar">
-                <span class="material-icons url-icon">link</span>
-                <span class="url-text">${escapeHtml(url)}</span>
-              </div>
-            </div>
-            <div class="status-indicator">
-              <div class="status-badge ${statusCode >= 400 ? 'error' : 'success'}">
-                <span class="material-icons status-icon">${statusCode >= 400 ? 'error' : 'check_circle'}</span>
-                <span>${statusCode}</span>
-              </div>
-            </div>
+          <h1 class="header-title">${escapeHtml(metadata.title || 'Scraped Website')}</h1>
+          <div class="url-bar">
+            <span class="material-icons url-icon">link</span>
+            <span class="url-text">${escapeHtml(url)}</span>
+            <span class="status-badge ${statusCode >= 400 ? 'error' : 'success'}">
+              <span class="material-icons status-icon">${statusCode >= 400 ? 'error' : 'check_circle'}</span>
+              ${statusCode}
+            </span>
           </div>
         </div>
 

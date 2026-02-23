@@ -200,45 +200,6 @@ function getFileIconSVG(mimeType: string): string {
   </svg>`;
 }
 
-/**
- * Get file type label from MIME type
- */
-function getFileType(mimeType: string): string {
-  if (mimeType.includes('folder')) {
-    return 'Folder';
-  }
-  if (mimeType.includes('spreadsheet')) {
-    return 'Google Sheets';
-  }
-  if (mimeType.includes('presentation')) {
-    return 'Google Slides';
-  }
-  if (mimeType.includes('document')) {
-    return 'Google Docs';
-  }
-  if (mimeType.includes('pdf')) {
-    return 'PDF';
-  }
-  if (mimeType.includes('image')) {
-    return 'Image';
-  }
-  if (mimeType.includes('video')) {
-    return 'Video';
-  }
-  if (mimeType.includes('audio')) {
-    return 'Audio';
-  }
-  if (mimeType.includes('wordprocessingml')) {
-    return 'Word Document';
-  }
-  if (mimeType.includes('presentationml')) {
-    return 'PowerPoint';
-  }
-  if (mimeType.includes('markdown')) {
-    return 'Markdown';
-  }
-  return 'File';
-}
 
 /**
  * Get file color based on MIME type (Google Drive colors)
@@ -396,8 +357,15 @@ function getFileCounts() {
  * Render the files UI with search and filters
  */
 function renderFiles() {
-  const app = document.getElementById('app');
-  if (!app) return;
+  const appEl = document.getElementById('app');
+  if (!appEl) return;
+
+  // Save search input state before re-render
+  const activeElement = document.activeElement;
+  const searchInput = document.getElementById('search-input') as HTMLInputElement | null;
+  const wasSearchFocused = activeElement === searchInput;
+  const cursorPosition = searchInput?.selectionStart ?? 0;
+  const cursorEnd = searchInput?.selectionEnd ?? 0;
 
   const filteredFiles = filterFiles();
   const counts = getFileCounts();
@@ -419,7 +387,7 @@ function renderFiles() {
     !f.mimeType?.includes('pdf')
   );
 
-  app.innerHTML = `
+  appEl.innerHTML = `
     <div class="drive-container">
       <div class="drive-header">
         <div class="drive-header-gradient"></div>
@@ -572,6 +540,15 @@ function renderFiles() {
 
   // Attach event listeners
   setupEventListeners();
+
+  // Restore search input focus and cursor position after re-render
+  if (wasSearchFocused) {
+    const newSearchInput = document.getElementById('search-input') as HTMLInputElement | null;
+    if (newSearchInput) {
+      newSearchInput.focus();
+      newSearchInput.setSelectionRange(cursorPosition, cursorEnd);
+    }
+  }
 }
 
 /**
@@ -619,13 +596,13 @@ function setupEventListeners() {
  */
 function renderFileCard(file: any, index: number = 0): string {
   const iconSVG = getFileIconSVG(file.mimeType || '');
-  const fileType = getFileType(file.mimeType || '');
   const fileColor = getFileColor(file.mimeType || '');
   const fileName = escapeHtml(file.name || 'Untitled');
   const fileId = escapeHtml(file.id || '');
+  const webViewLink = escapeHtml(file.webViewLink || '#');
 
   return `
-    <div class="file-card" data-file-id="${fileId}" style="--file-color: ${fileColor}; animation-delay: ${index * 0.03}s;">
+    <a href="${webViewLink}" target="_blank" rel="noopener noreferrer" class="file-card-link" data-file-id="${fileId}" style="--file-color: ${fileColor}; animation-delay: ${index * 0.03}s;">
       <div class="file-card-icon-wrapper">
         <div class="file-card-icon">
           ${iconSVG}
@@ -634,35 +611,11 @@ function renderFileCard(file: any, index: number = 0): string {
       </div>
       <div class="file-card-content">
         <h3 class="file-card-name" title="${fileName}">${fileName}</h3>
-        <div class="file-card-type-badge">
-          <span class="file-type-icon material-icons">${getFileTypeIcon(file.mimeType || '')}</span>
-          <span class="file-card-type">${fileType}</span>
-        </div>
       </div>
-      <div class="file-card-actions">
-        <button class="file-action-btn" title="Open file" aria-label="Open file">
-          <span class="material-icons">open_in_new</span>
-        </button>
-      </div>
-      <div class="file-card-hover-effect"></div>
-    </div>
+    </a>
   `;
 }
 
-/**
- * Get Material Icon for file type badge
- */
-function getFileTypeIcon(mimeType: string): string {
-  if (mimeType.includes('folder')) return 'folder';
-  if (mimeType.includes('spreadsheet')) return 'grid_on';
-  if (mimeType.includes('presentation')) return 'slideshow';
-  if (mimeType.includes('document')) return 'description';
-  if (mimeType.includes('pdf')) return 'picture_as_pdf';
-  if (mimeType.includes('image')) return 'image';
-  if (mimeType.includes('video')) return 'videocam';
-  if (mimeType.includes('audio')) return 'audiotrack';
-  return 'insert_drive_file';
-}
 
 /* ============================================
    HOST CONTEXT HANDLER

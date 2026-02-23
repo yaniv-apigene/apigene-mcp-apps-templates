@@ -403,11 +403,11 @@ function getFilterOptions(candidates: any[]): any {
  */
 function renderTable(candidates: any[]): string {
   if (candidates.length === 0) {
-    return `<tbody><tr><td colspan="9" class="empty-state">
+    return `<tr><td colspan="9" class="empty-state">
       <div class="empty-state-icon icon-inline">${iconUser()}</div>
       <div class="empty-state-title">No candidates found</div>
       <div class="empty-state-message">Try adjusting your filters or search query</div>
-    </td></tr></tbody>`;
+    </td></tr>`;
   }
 
   let html = '<tbody>';
@@ -430,7 +430,7 @@ function renderTable(candidates: any[]): string {
         </td>
         <td>
           <div class="candidate-name" onclick="event.stopPropagation(); showCandidateModal('${candidateId}')">${escapeHtml(candidate.name || '-')}</div>
-          ${tags.length > 0 ? `<div style="margin-top: 6px;">${tags.slice(0, 3).map((t: any) => `<span class="tag">${escapeHtml(t.title)}</span>`).join('')}${tags.length > 3 ? `<span class="tag">+${tags.length - 3}</span>` : ''}</div>` : ''}
+          ${tags.length > 0 ? `<div class="tags-list">${tags.slice(0, 3).map((t: any) => `<span class="tag">${escapeHtml(t.title)}</span>`).join('')}${tags.length > 3 ? `<span class="tag">+${tags.length - 3}</span>` : ''}</div>` : ''}
         </td>
         <td>${escapeHtml(candidate.position || '-')}</td>
         <td>${escapeHtml(candidate.company || '-')}</td>
@@ -441,9 +441,7 @@ function renderTable(candidates: any[]): string {
           ${location !== '-' ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><span class="icon-inline" style="width: 14px; height: 14px; opacity: 0.6;">${iconMapPin()}</span>${escapeHtml(location)}</span>` : '-'}
         </td>
         <td>
-          <span class="badge badge-info">${escapeHtml(experience)}</span>
-          ${needsVisa === true ? '<span class="badge badge-warning" title="Needs visa">Visa</span>' : ''}
-          ${willingToRelocate === true ? '<span class="badge badge-success" title="Willing to relocate">Relocate</span>' : ''}
+          <div class="badges-list"><span class="badge badge-info">${escapeHtml(experience)}</span>${needsVisa === true ? '<span class="badge badge-warning" title="Needs visa">Visa</span>' : ''}${willingToRelocate === true ? '<span class="badge badge-success" title="Willing to relocate">Relocate</span>' : ''}</div>
         </td>
         <td>
           ${preferredTeams && Array.isArray(preferredTeams) && preferredTeams.length > 0
@@ -484,10 +482,21 @@ function applyFiltersAndRender() {
 
   filteredCandidates = filtered;
 
-  // Update results count
+  // Update results count - hide if no results
   const countEl = document.getElementById('results-count');
   if (countEl) {
-    countEl.textContent = `Showing ${filtered.length} of ${allCandidates.length} candidates`;
+    if (filtered.length > 0) {
+      countEl.textContent = `Showing ${filtered.length} of ${allCandidates.length} candidates`;
+      countEl.style.display = '';
+    } else {
+      countEl.style.display = 'none';
+    }
+  }
+
+  // Show/hide table header based on results
+  const thead = tableContainer?.querySelector('thead');
+  if (thead) {
+    thead.style.display = filtered.length > 0 ? '' : 'none';
   }
 
   // Render table
@@ -558,15 +567,13 @@ function renderData(data: any) {
     const container = document.createElement('div');
     container.className = 'candidates-container';
 
-    // Ashby Header
-    const ashbyHeader = document.createElement('div');
-    ashbyHeader.className = 'ashby-header';
-    ashbyHeader.innerHTML = `
-      <div class="ashby-logo">
-        <div class="ashby-logo-icon">
-          <span class="icon-inline">${iconAshby()}</span>
-        </div>
-        <span class="ashby-logo-text">Ashby</span>
+    // Header
+    const header = document.createElement('div');
+    header.className = 'header';
+    header.innerHTML = `
+      <div class="header-left">
+        <h1>Ashby Candidates</h1>
+        <span class="header-count">${candidates.length} candidate${candidates.length !== 1 ? 's' : ''} found</span>
       </div>
       <div class="header-actions">
         <button class="action-btn" onclick="exportCandidates('csv')">
@@ -578,15 +585,6 @@ function renderData(data: any) {
           Export JSON
         </button>
       </div>
-    `;
-    container.appendChild(ashbyHeader);
-
-    // Header
-    const header = document.createElement('div');
-    header.className = 'header';
-    header.innerHTML = `
-      <h1>Candidates</h1>
-      <div class="meta">${candidates.length} candidate${candidates.length !== 1 ? 's' : ''} found</div>
     `;
     container.appendChild(header);
 
@@ -785,6 +783,17 @@ function setupEventListeners() {
   } else {
     selectedCandidates.delete(candidateId);
   }
+
+  // Update row style
+  const row = document.querySelector(`tr[data-candidate-id="${candidateId}"]`);
+  if (row) {
+    if (checked) {
+      row.classList.add('selected');
+    } else {
+      row.classList.remove('selected');
+    }
+  }
+
   updateSelectionUI();
 };
 

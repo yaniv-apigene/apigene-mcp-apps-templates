@@ -2,6 +2,14 @@
    Google Analytics Run Report — GA4 Style
    ============================================ */
 
+/* Google Brand Accent Override */
+:root {
+  --mcp-accent: #4285f4;
+  --mcp-accent-hover: #3367d6;
+  --mcp-accent-light: rgba(66, 133, 244, 0.1);
+  --mcp-accent-rgb: 66, 133, 244;
+}
+
 /* Container */
 .ga-container {
   max-width: 1200px;
@@ -40,7 +48,7 @@
 
 .ga-title {
   font-size: 1.125rem;
-  font-weight: 500;
+  font-weight: var(--mcp-font-semibold);
   color: #202124;
   letter-spacing: -0.01em;
 }
@@ -76,7 +84,7 @@ body.dark .ga-meta-sep {
 .ga-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--mcp-space-2);
   margin-bottom: 16px;
   flex-wrap: wrap;
 }
@@ -84,7 +92,7 @@ body.dark .ga-meta-sep {
 .ga-view-toggle {
   display: inline-flex;
   border: 1px solid #dadce0;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   overflow: hidden;
 }
 
@@ -93,14 +101,14 @@ body.dark .ga-view-toggle {
 }
 
 .ga-view-btn {
-  padding: 6px 14px;
+  padding: 6px var(--mcp-text-sm);
   font-size: 0.8125rem;
-  font-weight: 500;
+  font-weight: var(--mcp-font-semibold);
   border: none;
   background: transparent;
   color: #5f6368;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: var(--mcp-transition);
   font-family: inherit;
 }
 
@@ -127,10 +135,10 @@ body.dark .ga-view-btn.active {
 }
 
 .ga-chart-select {
-  padding: 6px 12px;
+  padding: 6px var(--mcp-space-3);
   font-size: 0.8125rem;
   border: 1px solid #dadce0;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   background: #fff;
   color: #202124;
   cursor: pointer;
@@ -146,15 +154,15 @@ body.dark .ga-chart-select {
 
 .ga-export-btn {
   margin-left: auto;
-  padding: 6px 14px;
+  padding: 6px var(--mcp-text-sm);
   font-size: 0.8125rem;
-  font-weight: 500;
+  font-weight: var(--mcp-font-semibold);
   border: 1px solid #dadce0;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   background: transparent;
   color: #5f6368;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: var(--mcp-transition);
   font-family: inherit;
 }
 
@@ -182,8 +190,8 @@ body.dark .ga-export-btn:hover {
 .ga-summary-card {
   background: #fff;
   border: 1px solid #dadce0;
-  border-radius: 12px;
-  padding: 16px 18px;
+  border-radius: var(--mcp-space-3);
+  padding: var(--mcp-space-4) 18px;
   transition: box-shadow 0.15s ease;
 }
 
@@ -202,7 +210,7 @@ body.dark .ga-summary-card:hover {
 
 .ga-card-label {
   font-size: 0.6875rem;
-  font-weight: 500;
+  font-weight: var(--mcp-font-semibold);
   color: #5f6368;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -215,7 +223,7 @@ body.dark .ga-card-label {
 
 .ga-card-value {
   font-size: 1.625rem;
-  font-weight: 500;
+  font-weight: var(--mcp-font-semibold);
   color: #202124;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
@@ -229,7 +237,7 @@ body.dark .ga-card-value {
 .ga-chart-container {
   background: #fff;
   border: 1px solid #dadce0;
-  border-radius: 12px;
+  border-radius: var(--mcp-space-3);
   padding: 20px;
   margin-bottom: 20px;
   overflow: hidden;
@@ -343,7 +351,7 @@ body.dark .ga-legend-item {
   background: #202124;
   color: #fff;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   font-size: 0.75rem;
   pointer-events: none;
   opacity: 0;
@@ -363,7 +371,7 @@ body.dark .ga-tooltip {
 }
 
 .ga-tooltip-label {
-  font-weight: 500;
+  font-weight: var(--mcp-font-semibold);
   margin-bottom: 4px;
 }
 
@@ -392,13 +400,13 @@ body.dark .ga-tooltip {
 .ga-pie-legend {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--mcp-space-2);
 }
 
 .ga-pie-legend-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--mcp-space-2);
   font-size: 0.8125rem;
   color: #202124;
 }
@@ -438,7 +446,7 @@ body.dark .ga-pie-legend-value {
 .ga-table-wrapper {
   background: #fff;
   border: 1px solid #dadce0;
-  border-radius: 12px;
+  border-radius: var(--mcp-space-3);
   overflow: hidden;
 }
 
@@ -464,9 +472,9 @@ body.dark .ga-table-wrapper {
 }
 
 .ga-table th {
-  padding: 12px 16px;
+  padding: var(--mcp-space-3) var(--mcp-space-4);
   text-align: left;
-  font-weight: 500;
+  font-weight: var(--mcp-font-semibold);
   font-size: 0.75rem;
   color: #5f6368;
   background: #f8f9fa;
@@ -543,7 +551,7 @@ body.dark .ga-table tbody tr:hover {
 
 /* Totals row */
 .ga-table tfoot td {
-  padding: 12px 16px;
+  padding: var(--mcp-space-3) var(--mcp-space-4);
   font-weight: 600;
   color: #202124;
   background: #f8f9fa;
@@ -620,7 +628,7 @@ body.dark .ga-page-btn:hover:not(:disabled) {
 .ga-page-btn.active {
   background: #e8f0fe;
   color: #1a73e8;
-  font-weight: 500;
+  font-weight: var(--mcp-font-semibold);
 }
 
 body.dark .ga-page-btn.active {

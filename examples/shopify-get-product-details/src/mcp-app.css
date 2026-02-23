@@ -4,6 +4,14 @@
    Detailed product information display
    ============================================ */
 
+/* Shopify Brand Accent Override */
+:root {
+  --mcp-accent: #96bf48;
+  --mcp-accent-hover: #7ab530;
+  --mcp-accent-light: rgba(150, 191, 72, 0.1);
+  --mcp-accent-rgb: 150, 191, 72;
+}
+
 body {
   background: #1a1a1a;
   padding: 0;
@@ -40,8 +48,8 @@ body.dark {
 .logo {
   width: 40px;
   height: 40px;
-  border-radius: 8px;
-  background: #96bf48;
+  border-radius: var(--mcp-radius-lg);
+  background: var(--mcp-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,7 +64,7 @@ body.dark {
 
 .header-title {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: #ffffff;
 }
 
@@ -87,7 +95,7 @@ body.dark {
   width: 100%;
   aspect-ratio: 1;
   background: #2a2a2a;
-  border-radius: 16px;
+  border-radius: var(--mcp-radius-xl);
   overflow: hidden;
   position: relative;
 }
@@ -102,7 +110,7 @@ body.dark {
 .product-header-info {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--mcp-space-4);
 }
 
 .product-title {
@@ -116,17 +124,17 @@ body.dark {
 .product-title a {
   color: #ffffff;
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: var(--mcp-transition);
 }
 
 .product-title a:hover {
-  color: #96bf48;
+  color: var(--mcp-accent);
 }
 
 .product-rating {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--mcp-space-2);
 }
 
 .rating-stars {
@@ -150,44 +158,44 @@ body.dark {
 .product-shop {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 8px;
+  gap: var(--mcp-space-2);
+  margin-top: var(--mcp-space-2);
 }
 
 .shop-link {
-  color: #96bf48;
+  color: var(--mcp-accent);
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.2s ease;
+  transition: var(--mcp-transition);
 }
 
 .shop-link:hover {
-  color: #b8d96a;
+  color: var(--mcp-accent-hover);
 }
 
 .shop-name {
-  color: #96bf48;
+  color: var(--mcp-accent);
   font-weight: 500;
 }
 
 .product-options {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 16px;
-  padding: 16px;
+  gap: var(--mcp-space-2);
+  margin-top: var(--mcp-space-4);
+  padding: var(--mcp-space-4);
   background: #2a2a2a;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
 }
 
 .option-item {
   display: flex;
-  gap: 8px;
-  font-size: 0.9375rem;
+  gap: var(--mcp-space-2);
+  font-size: var(--mcp-text-sm);
 }
 
 .option-name {
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: #ffffff;
 }
 
@@ -204,8 +212,8 @@ body.dark {
   font-size: 1.5rem;
   font-weight: 700;
   color: #ffffff;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
+  margin-bottom: var(--mcp-space-4);
+  padding-bottom: var(--mcp-space-2);
   border-bottom: 2px solid #2a2a2a;
 }
 
@@ -214,10 +222,10 @@ body.dark {
   line-height: 1.6;
   color: #cccccc;
   font-style: italic;
-  padding: 16px;
+  padding: var(--mcp-space-4);
   background: #2a2a2a;
-  border-radius: 8px;
-  border-left: 4px solid #96bf48;
+  border-radius: var(--mcp-radius-lg);
+  border-left: 4px solid var(--mcp-accent);
 }
 
 .features-list,
@@ -227,16 +235,16 @@ body.dark {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--mcp-space-3);
 }
 
 .features-list li,
 .specs-list li {
-  padding: 12px 16px;
+  padding: var(--mcp-space-3) var(--mcp-space-4);
   background: #2a2a2a;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   color: #cccccc;
-  font-size: 0.9375rem;
+  font-size: var(--mcp-text-sm);
   line-height: 1.5;
   position: relative;
   padding-left: 32px;
@@ -245,36 +253,36 @@ body.dark {
 .features-list li::before {
   content: '✓';
   position: absolute;
-  left: 12px;
-  color: #96bf48;
+  left: var(--mcp-space-3);
+  color: var(--mcp-accent);
   font-weight: 700;
 }
 
 .specs-list li::before {
   content: '•';
   position: absolute;
-  left: 12px;
-  color: #96bf48;
+  left: var(--mcp-space-3);
+  color: var(--mcp-accent);
   font-weight: 700;
 }
 
 .attributes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 12px;
+  gap: var(--mcp-space-3);
 }
 
 .attribute-item {
-  padding: 12px 16px;
+  padding: var(--mcp-space-3) var(--mcp-space-4);
   background: #2a2a2a;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
 .attribute-name {
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: #ffffff;
   font-size: 0.875rem;
 }
@@ -293,11 +301,11 @@ body.dark {
 
 .variant-card {
   background: #2a2a2a;
-  border-radius: 16px;
+  border-radius: var(--mcp-radius-xl);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: var(--mcp-transition);
 }
 
 .variant-card:hover {
@@ -327,13 +335,13 @@ body.dark {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--mcp-space-3);
   flex: 1;
 }
 
 .variant-title {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: #ffffff;
   margin: 0;
   line-height: 1.3;
@@ -353,7 +361,7 @@ body.dark {
 .variant-price {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #96bf48;
+  color: var(--mcp-accent);
   margin-top: 4px;
 }
 
@@ -363,31 +371,31 @@ body.dark {
 
 .variant-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--mcp-space-3);
   margin-top: auto;
-  padding-top: 16px;
+  padding-top: var(--mcp-space-4);
 }
 
 .btn {
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 0.9375rem;
-  font-weight: 600;
+  padding: var(--mcp-space-3) 24px;
+  border-radius: var(--mcp-radius-lg);
+  font-size: var(--mcp-text-sm);
+  font-weight: var(--mcp-font-semibold);
   text-decoration: none;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--mcp-transition);
   border: none;
   flex: 1;
 }
 
 .btn-primary {
-  background: #96bf48;
+  background: var(--mcp-accent);
   color: #1a1a1a;
 }
 
 .btn-primary:hover {
-  background: #b8d96a;
+  background: var(--mcp-accent-hover);
   transform: translateY(-2px);
 }
 
@@ -403,12 +411,12 @@ body.dark {
 }
 
 .unavailable-badge {
-  padding: 12px 24px;
+  padding: var(--mcp-space-3) 24px;
   background: #3a3a3a;
   color: #999999;
-  border-radius: 8px;
-  font-size: 0.9375rem;
-  font-weight: 600;
+  border-radius: var(--mcp-radius-lg);
+  font-size: var(--mcp-text-sm);
+  font-weight: var(--mcp-font-semibold);
   text-align: center;
   flex: 1;
 }

@@ -4,6 +4,14 @@
    Simple horizontal scrollable layout
    ============================================ */
 
+/* Shopify Brand Accent Override */
+:root {
+  --mcp-accent: #96bf48;
+  --mcp-accent-hover: #7ab530;
+  --mcp-accent-light: rgba(150, 191, 72, 0.1);
+  --mcp-accent-rgb: 150, 191, 72;
+}
+
 body {
   background: #1a1a1a;
   padding: 0;
@@ -34,14 +42,14 @@ body.dark {
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--mcp-space-3);
 }
 
 .logo {
   width: 40px;
   height: 40px;
-  border-radius: 8px;
-  background: #96bf48;
+  border-radius: var(--mcp-radius-lg);
+  background: var(--mcp-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,13 +64,13 @@ body.dark {
 
 .header-title {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: #ffffff;
 }
 
 .header-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--mcp-space-3);
 }
 
 .action-btn {
@@ -76,7 +84,7 @@ body.dark {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease;
+  transition: var(--mcp-transition);
 }
 
 .action-btn:hover {
@@ -124,7 +132,7 @@ body.dark {
   align-items: center;
   justify-content: center;
   z-index: 10;
-  transition: background 0.2s ease;
+  transition: var(--mcp-transition);
   backdrop-filter: blur(10px);
 }
 
@@ -155,12 +163,12 @@ body.dark {
   flex: 0 0 300px;
   width: 300px;
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: var(--mcp-radius-xl);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: var(--mcp-transition);
 }
 
 .product-card:hover {
@@ -184,7 +192,7 @@ body.dark {
 }
 
 .product-info {
-  padding: 16px;
+  padding: var(--mcp-space-4);
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -192,9 +200,9 @@ body.dark {
 
 .product-title {
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: #1a1a1a;
-  margin-bottom: 8px;
+  margin-bottom: var(--mcp-space-2);
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -206,14 +214,14 @@ body.dark {
   font-size: 1.5rem;
   font-weight: 700;
   color: #1a1a1a;
-  margin-bottom: 8px;
+  margin-bottom: var(--mcp-space-2);
 }
 
 .product-rating {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: var(--mcp-space-1-5);
+  margin-bottom: var(--mcp-space-2);
 }
 
 .rating-stars {
@@ -230,8 +238,8 @@ body.dark {
 .product-shop {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 16px;
+  gap: var(--mcp-space-1-5);
+  margin-bottom: var(--mcp-space-4);
   font-size: 0.75rem;
   color: #666666;
 }
@@ -281,11 +289,11 @@ body.dark {
   background: #1a1a1a;
   color: #ffffff;
   border: none;
-  border-radius: 12px;
-  font-size: 0.9375rem;
-  font-weight: 600;
+  border-radius: var(--mcp-radius-lg);
+  font-size: var(--mcp-text-sm);
+  font-weight: var(--mcp-font-semibold);
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+  transition: var(--mcp-transition);
   text-align: center;
   text-decoration: none;
   margin-top: auto;

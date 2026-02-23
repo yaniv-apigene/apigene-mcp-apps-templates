@@ -17,7 +17,7 @@
 
 .ontopo-title {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: #1a1a1a;
   margin: 0 0 6px 0;
   line-height: 1.35;
@@ -28,7 +28,7 @@ body.dark .ontopo-title {
 }
 
 .ontopo-subtitle {
-  font-size: 0.875rem;
+  font-size: var(--mcp-text-sm);
   color: #5f6368;
   margin: 0 0 14px 0;
 }
@@ -41,7 +41,7 @@ body.dark .ontopo-subtitle {
 .segmented {
   display: inline-flex;
   border: 1px solid #dadce0;
-  border-radius: 10px;
+  border-radius: var(--mcp-radius-lg);
   overflow: hidden;
   background: #fff;
 }
@@ -52,7 +52,7 @@ body.dark .segmented {
 }
 
 .segmented-item {
-  padding: 8px 14px;
+  padding: var(--mcp-space-2) 14px;
   font-size: 0.8125rem;
   color: #5f6368;
   border-left: 1px solid #dadce0;
@@ -83,7 +83,7 @@ body.dark [dir="rtl"] .segmented-item {
 .segmented-item.active {
   background: #e8eaed;
   color: #1a1a1a;
-  font-weight: 500;
+  font-weight: var(--mcp-font-medium);
 }
 
 body.dark .segmented-item.active {
@@ -95,15 +95,15 @@ body.dark .segmented-item.active {
 .venue-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--mcp-space-3);
 }
 
 /* Venue card – white rounded block */
 .venue-card {
   background: #fff;
   border: 1px solid #e8eaed;
-  border-radius: 12px;
-  padding: 14px 16px;
+  border-radius: var(--mcp-radius-lg);
+  padding: 14px var(--mcp-space-4);
   list-style: none;
 }
 
@@ -113,8 +113,8 @@ body.dark .venue-card {
 }
 
 .venue-name {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--mcp-text-base);
+  font-weight: var(--mcp-font-semibold);
   color: #1a1a1a;
   margin: 0 0 10px 0;
 }
@@ -128,16 +128,16 @@ body.dark .venue-name {
 .areas {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--mcp-space-2);
   margin-top: 6px;
 }
 
 .chip,
 .area-chip {
   display: inline-block;
-  font-size: 0.75rem;
+  font-size: var(--mcp-text-xs);
   padding: 5px 10px;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   background: #f1f3f4;
   color: #3c4043;
   border: 1px solid #e8eaed;
@@ -162,15 +162,15 @@ body.dark .area-chip {
 
 /* Details toggle button */
 .details-toggle {
-  margin-top: 12px;
-  padding: 6px 12px;
+  margin-top: var(--mcp-space-3);
+  padding: 6px var(--mcp-space-3);
   font-size: 0.8125rem;
   color: #1a73e8;
   background: transparent;
   border: 1px solid #dadce0;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   cursor: pointer;
-  font-weight: 500;
+  font-weight: var(--mcp-font-medium);
 }
 
 body.dark .details-toggle {
@@ -188,8 +188,8 @@ body.dark .details-toggle:hover {
 
 /* Details panel (all areas + time slots) */
 .venue-details {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: var(--mcp-space-3);
+  padding-top: var(--mcp-space-3);
   border-top: 1px solid #e8eaed;
 }
 
@@ -202,7 +202,7 @@ body.dark .venue-details {
 }
 
 .detail-area-block {
-  margin-bottom: 12px;
+  margin-bottom: var(--mcp-space-3);
 }
 
 .detail-area-block:last-child {
@@ -210,8 +210,8 @@ body.dark .venue-details {
 }
 
 .detail-area-name {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: var(--mcp-text-sm);
+  font-weight: var(--mcp-font-semibold);
   color: #3c4043;
   margin-bottom: 6px;
 }
@@ -237,7 +237,7 @@ body.dark .area-desc {
 }
 
 .detail-table td {
-  padding: 4px 8px 4px 0;
+  padding: 4px var(--mcp-space-2) 4px 0;
   color: #5f6368;
 }
 
@@ -246,7 +246,7 @@ body.dark .detail-table td {
 }
 
 .detail-time {
-  font-weight: 500;
+  font-weight: var(--mcp-font-medium);
   color: #1a1a1a;
 }
 

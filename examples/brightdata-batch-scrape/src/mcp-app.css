@@ -2,6 +2,18 @@
    TEMPLATE-SPECIFIC STYLES (BrightData Batch Scrape)
    ============================================ */
 
+/* Brightdata Brand Accent Override */
+:root {
+  --mcp-accent: #00d4aa;
+  --mcp-accent-hover: #00b894;
+  --mcp-accent-light: rgba(0, 212, 170, 0.1);
+  --mcp-accent-rgb: 0, 212, 170;
+}
+
+body {
+  padding: 20px;
+}
+
 .batch-scrape-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -12,7 +24,7 @@
   margin-bottom: 24px;
   padding: 24px 32px;
   background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-md);
   box-shadow: 0 4px 16px rgba(255, 107, 53, 0.3);
   color: #fff;
   position: relative;
@@ -56,7 +68,7 @@ body.dark .header {
   width: 48px;
   height: 48px;
   background: rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
+  border-radius: var(--mcp-radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,7 +103,7 @@ body.dark .header {
 /* Tabs Container */
 .tabs-container {
   background: #fff;
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-md);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
@@ -177,7 +189,7 @@ body.dark .tab-button:hover {
 .tab-button.active {
   background: #fff;
   color: #ff6b35;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -305,7 +317,7 @@ body.dark .panel-header {
   font-size: 1rem;
   font-weight: 500;
   word-break: break-all;
-  transition: color 0.2s;
+  transition: var(--mcp-transition);
 }
 
 body.dark .url-link {
@@ -348,7 +360,7 @@ body.dark .panel-content {
   word-wrap: break-word;
   background: #f8f9fa;
   padding: 24px;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   border: 1px solid #e0e0e0;
   max-height: 600px;
   overflow-y: auto;
@@ -374,7 +386,7 @@ body.dark .scrape-content {
 .scrape-content.markdown-body h6 {
   margin-top: 24px;
   margin-bottom: 16px;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   line-height: 1.25;
   color: #1a1a1a;
 }
@@ -452,7 +464,7 @@ body.dark .scrape-content.markdown-body h2 {
   color: #0066c0;
   text-decoration: none;
   border-bottom: 1px solid transparent;
-  transition: all 0.2s;
+  transition: var(--mcp-transition);
 }
 
 body.dark .scrape-content.markdown-body a {
@@ -470,7 +482,7 @@ body.dark .scrape-content.markdown-body a:hover {
 }
 
 .scrape-content.markdown-body strong {
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: #1a1a1a;
 }
 
@@ -497,7 +509,7 @@ body.dark .scrape-content.markdown-body code {
 .scrape-content.markdown-body pre {
   background: rgba(0, 0, 0, 0.05);
   padding: 16px;
-  border-radius: 6px;
+  border-radius: var(--mcp-radius-md);
   overflow-x: auto;
   margin: 16px 0;
 }
@@ -554,7 +566,7 @@ body.dark .scrape-content.markdown-body table td {
 
 .scrape-content.markdown-body table th {
   background: #f8f9fa;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
 }
 
 body.dark .scrape-content.markdown-body table th {
@@ -564,7 +576,7 @@ body.dark .scrape-content.markdown-body table th {
 .scrape-content.markdown-body img {
   max-width: 100%;
   height: auto;
-  border-radius: 6px;
+  border-radius: var(--mcp-radius-md);
   margin: 16px 0;
 }
 
@@ -592,7 +604,7 @@ body.dark .scrape-content .content-h1 {
 
 .scrape-content .content-h2 {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   margin: 20px 0 12px 0;
   color: #1a1a1a;
   line-height: 1.4;
@@ -604,7 +616,7 @@ body.dark .scrape-content .content-h2 {
 
 .scrape-content .content-h3 {
   font-size: 1.125rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   margin: 16px 0 10px 0;
   color: #1a1a1a;
   line-height: 1.4;
@@ -642,7 +654,7 @@ body.dark .scrape-content .content-li::before {
   color: #0066c0;
   text-decoration: none;
   border-bottom: 1px solid transparent;
-  transition: all 0.2s;
+  transition: var(--mcp-transition);
 }
 
 body.dark .scrape-content .content-link {
@@ -660,7 +672,7 @@ body.dark .scrape-content .content-link:hover {
 }
 
 .scrape-content strong {
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: #1a1a1a;
 }
 

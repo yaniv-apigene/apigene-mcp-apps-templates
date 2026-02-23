@@ -1,11 +1,19 @@
 /* Ahrefs Backlinks – template styles (Ahrefs-inspired) */
 
+/* Ahrefs Brand Accent Override */
 :root {
+  --mcp-accent: #ff6600;
+  --mcp-accent-hover: #ff7722;
+  --mcp-accent-light: rgba(255, 102, 0, 0.1);
+  --mcp-accent-rgb: 255, 102, 0;
+
+  /* Ahrefs-specific colors */
   --ahrefs-orange: #e85d04;
   --ahrefs-orange-hover: #d54d02;
-  --ahrefs-orange-light: rgba(232, 93, 4, 0.12);
+  --ahrefs-orange-light: rgba(232, 93, 4, 0.08);
   --ahrefs-bg: #ffffff;
-  --ahrefs-bg-secondary: #f8f9fa;
+  --ahrefs-header-bg: #1a1f36;
+  --ahrefs-thead-bg: #f8f9fa;
   --ahrefs-border: #e9ecef;
   --ahrefs-text: #212529;
   --ahrefs-text-muted: #6c757d;
@@ -17,7 +25,8 @@
 
 body.dark {
   --ahrefs-bg: #1a1d21;
-  --ahrefs-bg-secondary: #25282c;
+  --ahrefs-header-bg: #0f1218;
+  --ahrefs-thead-bg: #252a30;
   --ahrefs-border: #3a3f45;
   --ahrefs-text: #e8eaed;
   --ahrefs-text-muted: #9aa0a6;
@@ -32,17 +41,8 @@ body.dark {
 
 /* Container */
 .ahrefs-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 4px;
+  width: 100%;
   background: var(--ahrefs-bg);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-}
-
-body.dark .ahrefs-container {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Header */
@@ -53,8 +53,8 @@ body.dark .ahrefs-container {
   flex-wrap: wrap;
   gap: 12px;
   padding: 16px 20px;
-  background: var(--ahrefs-bg-secondary);
-  border-bottom: 1px solid var(--ahrefs-border);
+  background: var(--ahrefs-header-bg);
+  border-bottom: none;
 }
 
 .ahrefs-brand {
@@ -72,14 +72,14 @@ body.dark .ahrefs-container {
 
 .ahrefs-title {
   font-size: 1rem;
-  font-weight: 600;
-  color: var(--ahrefs-text-muted);
+  font-weight: var(--mcp-font-semibold);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .ahrefs-summary {
-  font-size: 0.875rem;
+  font-size: var(--mcp-text-sm);
   font-weight: 500;
-  color: var(--ahrefs-text-muted);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Toolbar */
@@ -116,10 +116,10 @@ body.dark .ahrefs-container {
 .search-input {
   width: 100%;
   padding: 10px 12px 10px 38px;
-  font-size: 0.875rem;
+  font-size: var(--mcp-text-sm);
   border: 1px solid var(--ahrefs-border);
-  border-radius: 8px;
-  background: var(--ahrefs-bg-secondary);
+  border-radius: var(--mcp-radius-lg);
+  background: var(--ahrefs-bg);
   color: var(--ahrefs-text);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -148,10 +148,10 @@ body.dark .ahrefs-container {
 
 .sort-select {
   padding: 8px 32px 8px 12px;
-  font-size: 0.875rem;
+  font-size: var(--mcp-text-sm);
   border: 1px solid var(--ahrefs-border);
-  border-radius: 8px;
-  background: var(--ahrefs-bg-secondary);
+  border-radius: var(--mcp-radius-lg);
+  background-color: var(--ahrefs-bg);
   color: var(--ahrefs-text);
   cursor: pointer;
   outline: none;
@@ -181,7 +181,7 @@ body.dark .sort-select {
 }
 
 .ahrefs-table thead {
-  background: var(--ahrefs-bg-secondary);
+  background: var(--ahrefs-thead-bg);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -190,7 +190,7 @@ body.dark .sort-select {
 .ahrefs-table th {
   padding: 12px 14px;
   text-align: left;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: var(--ahrefs-text-muted);
   border-bottom: 2px solid var(--ahrefs-border);
   white-space: nowrap;
@@ -243,20 +243,12 @@ body.dark .sort-select {
   vertical-align: middle;
 }
 
+.ahrefs-table tbody tr {
+  background: var(--ahrefs-bg);
+}
+
 .ahrefs-table tbody tr:hover {
   background: var(--ahrefs-orange-light);
-}
-
-.ahrefs-table tbody tr:nth-child(even) {
-  background: var(--ahrefs-bg-secondary);
-}
-
-.ahrefs-table tbody tr:nth-child(even):hover {
-  background: var(--ahrefs-orange-light);
-}
-
-body.dark .ahrefs-table tbody tr:nth-child(even) {
-  background: rgba(255, 255, 255, 0.03);
 }
 
 /* Cells */
@@ -322,8 +314,8 @@ body.dark .ahrefs-table tbody tr:nth-child(even) {
   display: inline-block;
   min-width: 36px;
   padding: 4px 8px;
-  border-radius: 6px;
-  font-weight: 600;
+  border-radius: var(--mcp-radius-md);
+  font-weight: var(--mcp-font-semibold);
   font-size: 0.8125rem;
   text-align: center;
 }
@@ -349,7 +341,7 @@ body.dark .ahrefs-table tbody tr:nth-child(even) {
 }
 
 .dr-none {
-  background: var(--ahrefs-bg-secondary);
+  background: var(--ahrefs-thead-bg);
   color: var(--ahrefs-text-muted);
 }
 
@@ -358,15 +350,10 @@ body.dark .ahrefs-table tbody tr:nth-child(even) {
   padding: 32px 20px;
   text-align: center;
   color: var(--ahrefs-text-muted);
-  font-size: 0.875rem;
+  font-size: var(--mcp-text-sm);
 }
 
 /* Fullscreen */
-body.fullscreen-mode .ahrefs-container {
-  max-width: 100%;
-  border-radius: 0;
-}
-
 body.fullscreen-mode .table-wrap {
   max-height: calc(100vh - 160px);
   overflow: auto;

@@ -177,6 +177,20 @@ function getInitials(firstName: string | null | undefined, lastName: string | nu
 }
 
 /**
+ * Get avatar URL - uses photo_url if available, otherwise generates a placeholder
+ */
+function getAvatarUrl(person: any, size: number = 56): string | null {
+  // Check for existing photo URL from Apollo
+  if (person.photo_url) {
+    return person.photo_url;
+  }
+
+  // Generate a consistent placeholder based on person ID or name
+  const uniqueId = person.id || `${person.first_name}-${person.last_name_obfuscated}`;
+  return `https://i.pravatar.cc/${size}?u=${encodeURIComponent(uniqueId)}`;
+}
+
+/**
  * Format date
  */
 function formatDate(dateStr: string | null | undefined): string {
@@ -225,6 +239,7 @@ function renderPersonCard(person: any, index: number): string {
   const title = person.title || '';
   const company = person.organization?.name || '';
   const initials = getInitials(firstName, lastName);
+  const avatarUrl = getAvatarUrl(person, 56);
 
   const hasEmail = person.has_email === true;
   const hasPhone = person.has_direct_phone === 'Yes';
@@ -233,7 +248,7 @@ function renderPersonCard(person: any, index: number): string {
   return `
     <div class="person-card" data-person-index="${index}" style="cursor: pointer;">
       <div class="person-avatar">
-        ${initials}
+        ${avatarUrl ? `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(fullName)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><span class="avatar-fallback" style="display:none">${initials}</span>` : initials}
       </div>
       <div class="person-info">
         <div class="person-name">${escapeHtml(fullName)}</div>
@@ -261,6 +276,7 @@ function renderPersonDetail(person: any): string {
   const title = person.title || null;
   const company = person.organization?.name || null;
   const initials = getInitials(firstName, lastName);
+  const avatarUrl = getAvatarUrl(person, 80);
 
   const email = person.email || null;
   const phone = person.phone_numbers?.[0]?.raw_number || person.phone || null;
@@ -296,7 +312,7 @@ function renderPersonDetail(person: any): string {
         <div class="modal-header">
           <div class="modal-header-content">
             <div class="person-avatar-large">
-              ${initials}
+              ${avatarUrl ? `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(fullName)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><span class="avatar-fallback" style="display:none">${initials}</span>` : initials}
             </div>
             <div class="modal-title-section">
               <div class="modal-title">${escapeHtml(fullName)}</div>
@@ -498,17 +514,7 @@ function renderData(data: any) {
     // Header
     const header = document.createElement('div');
     header.className = 'header';
-    header.innerHTML = `
-      <h1>Apollo People Search</h1>
-      <div class="meta">
-        <div class="meta-item">
-          <span>${people.length} person${people.length !== 1 ? 's' : ''} found</span>
-        </div>
-        ${totalEntries ? `<div class="meta-item">
-          <span>Total: ${formatNumber(totalEntries)}</span>
-        </div>` : ''}
-      </div>
-    `;
+    header.innerHTML = `<h1>Apollo People Search</h1>`;
     container.appendChild(header);
 
     // Controls
@@ -530,22 +536,6 @@ function renderData(data: any) {
     grid.className = 'people-grid';
     grid.id = 'people-grid';
     container.appendChild(grid);
-
-    // Pagination
-    if (pagination || totalEntries) {
-      const paginationEl = document.createElement('div');
-      const current = pagination?.page || pagination?.current_page || 1;
-      const perPage = pagination?.per_page || pagination?.page_size || people.length;
-      const total = totalEntries || people.length;
-      paginationEl.innerHTML = `
-        <div class="pagination">
-          <div class="pagination-info">
-            Showing ${((current - 1) * perPage) + 1}-${Math.min(current * perPage, total)} of ${formatNumber(total)} people
-          </div>
-        </div>
-      `;
-      container.appendChild(paginationEl);
-    }
 
     app.innerHTML = '';
     app.appendChild(container);

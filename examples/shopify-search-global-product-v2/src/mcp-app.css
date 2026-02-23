@@ -2,6 +2,14 @@
    SHOPIFY CATALOG ADVANCED STYLES
    ============================================ */
 
+/* Shopify Brand Accent Override */
+:root {
+  --mcp-accent: #96bf48;
+  --mcp-accent-hover: #7ab530;
+  --mcp-accent-light: rgba(150, 191, 72, 0.1);
+  --mcp-accent-rgb: 150, 191, 72;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -39,7 +47,7 @@ body.fullscreen-mode .container {
   margin-bottom: 24px;
   padding: 24px;
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-lg);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -52,12 +60,12 @@ body.dark .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: var(--mcp-space-4);
 }
 
 .header h1 {
   font-size: 1.75rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   margin: 0;
   color: #1a1a1a;
 }
@@ -68,18 +76,18 @@ body.dark .header h1 {
 
 .header-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--mcp-space-3);
   align-items: center;
 }
 
 .view-toggle {
   background: transparent;
   border: 2px solid #e8eaed;
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: var(--mcp-radius-lg);
+  padding: var(--mcp-space-2);
   cursor: pointer;
   color: #5f6368;
-  transition: all 0.2s ease;
+  transition: var(--mcp-transition);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -116,11 +124,11 @@ body.dark .view-toggle.active {
   background: #1a73e8;
   color: #ffffff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   padding: 10px 20px;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: var(--mcp-transition);
 }
 
 body.dark .compare-btn {
@@ -141,12 +149,12 @@ body.dark .compare-btn:hover {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: var(--mcp-space-4);
 }
 
 .product-count {
   color: #5f6368;
-  font-size: 0.9375rem;
+  font-size: var(--mcp-text-sm);
 }
 
 body.dark .product-count {
@@ -156,7 +164,7 @@ body.dark .product-count {
 .sort-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--mcp-space-2);
 }
 
 .sort-controls label {
@@ -169,9 +177,9 @@ body.dark .sort-controls label {
 }
 
 .sort-controls select {
-  padding: 8px 12px;
+  padding: var(--mcp-space-2) var(--mcp-space-3);
   border: 1px solid #e8eaed;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   background: #ffffff;
   color: #1a1a1a;
   font-size: 0.875rem;
@@ -196,7 +204,7 @@ body.dark .sort-controls select {
   width: 280px;
   flex-shrink: 0;
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-lg);
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
@@ -215,7 +223,7 @@ body.dark .filters-sidebar {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
-  padding-bottom: 16px;
+  padding-bottom: var(--mcp-space-4);
   border-bottom: 1px solid #e8eaed;
 }
 
@@ -225,7 +233,7 @@ body.dark .filters-header {
 
 .filters-header h3 {
   font-size: 1.125rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   margin: 0;
   color: #1a1a1a;
 }
@@ -240,9 +248,9 @@ body.dark .filters-header h3 {
   color: #1a73e8;
   font-size: 0.875rem;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background 0.2s ease;
+  padding: 4px var(--mcp-space-2);
+  border-radius: var(--mcp-radius-md);
+  transition: var(--mcp-transition);
 }
 
 body.dark .clear-filters {
@@ -263,10 +271,10 @@ body.dark .clear-filters:hover {
 
 .filter-label {
   display: block;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   font-size: 0.875rem;
   color: #1a1a1a;
-  margin-bottom: 12px;
+  margin-bottom: var(--mcp-space-3);
 }
 
 body.dark .filter-label {
@@ -275,9 +283,9 @@ body.dark .filter-label {
 
 #search-input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 10px var(--mcp-space-3);
   border: 1px solid #e8eaed;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   font-size: 0.875rem;
   background: #ffffff;
   color: #1a1a1a;
@@ -292,15 +300,15 @@ body.dark #search-input {
 .price-range-inputs {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: var(--mcp-space-2);
+  margin-bottom: var(--mcp-space-2);
 }
 
 .price-range-inputs input {
   flex: 1;
-  padding: 8px;
+  padding: var(--mcp-space-2);
   border: 1px solid #e8eaed;
-  border-radius: 6px;
+  border-radius: var(--mcp-radius-md);
   font-size: 0.875rem;
   background: #ffffff;
   color: #1a1a1a;
@@ -334,17 +342,17 @@ body.dark .price-display {
 .rating-filter {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--mcp-space-2);
 }
 
 .rating-option {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--mcp-space-2);
   cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
-  transition: background 0.2s ease;
+  padding: var(--mcp-space-1-5);
+  border-radius: var(--mcp-radius-md);
+  transition: var(--mcp-transition);
 }
 
 .rating-option:hover {
@@ -371,7 +379,7 @@ body.dark .rating-text {
 .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--mcp-space-2);
   max-height: 200px;
   overflow-y: auto;
 }
@@ -379,11 +387,11 @@ body.dark .rating-text {
 .checkbox-option {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--mcp-space-2);
   cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
-  transition: background 0.2s ease;
+  padding: var(--mcp-space-1-5);
+  border-radius: var(--mcp-radius-md);
+  transition: var(--mcp-transition);
   font-size: 0.875rem;
 }
 
@@ -420,10 +428,10 @@ body.dark .checkbox-option:hover {
 /* Product Card */
 .product-card {
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: var(--mcp-radius-lg);
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: var(--mcp-transition);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -445,22 +453,22 @@ body.dark .product-card:hover {
 
 .product-card-header {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: var(--mcp-space-3);
+  right: var(--mcp-space-3);
   display: flex;
-  gap: 8px;
+  gap: var(--mcp-space-2);
   z-index: 10;
 }
 
 .compare-checkbox {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--mcp-space-1-5);
   background: rgba(255, 255, 255, 0.95);
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: var(--mcp-space-1-5) 10px;
+  border-radius: var(--mcp-radius-md);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   cursor: pointer;
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -474,8 +482,8 @@ body.dark .compare-checkbox {
 .view-details-btn {
   background: rgba(255, 255, 255, 0.95);
   border: none;
-  border-radius: 6px;
-  padding: 6px;
+  border-radius: var(--mcp-radius-md);
+  padding: var(--mcp-space-1-5);
   cursor: pointer;
   color: #1a73e8;
   display: flex;
@@ -483,7 +491,7 @@ body.dark .compare-checkbox {
   justify-content: center;
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background 0.2s ease;
+  transition: var(--mcp-transition);
 }
 
 body.dark .view-details-btn {
@@ -524,15 +532,15 @@ body.dark .product-image {
 
 .product-title {
   font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 8px;
+  font-weight: var(--mcp-font-semibold);
+  margin-bottom: var(--mcp-space-2);
   line-height: 1.4;
 }
 
 .product-title a {
   color: #1a73e8;
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: var(--mcp-transition);
 }
 
 body.dark .product-title a {
@@ -551,7 +559,7 @@ body.dark .product-title a:hover {
 .product-description {
   font-size: 0.875rem;
   color: #5f6368;
-  margin-bottom: 12px;
+  margin-bottom: var(--mcp-space-3);
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -565,9 +573,9 @@ body.dark .product-description {
 
 .product-price {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: #1a1a1a;
-  margin-bottom: 8px;
+  margin-bottom: var(--mcp-space-2);
 }
 
 body.dark .product-price {
@@ -577,14 +585,14 @@ body.dark .product-price {
 .product-rating {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: var(--mcp-space-2);
+  margin-bottom: var(--mcp-space-3);
   font-size: 0.875rem;
 }
 
 .rating-stars {
   color: #fbbc04;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
 }
 
 .rating-count {

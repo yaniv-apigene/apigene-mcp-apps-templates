@@ -2,11 +2,19 @@
    Notion Search – Notion-style widget
    ============================================ */
 
+/* Notion Brand Accent Override */
+:root {
+  --mcp-accent: #000000;
+  --mcp-accent-hover: #191919;
+  --mcp-accent-light: rgba(0, 0, 0, 0.05);
+  --mcp-accent-rgb: 0, 0, 0;
+}
+
 .notion-widget {
   max-width: 640px;
   margin: 0 auto;
   background: #fff;
-  border-radius: 6px;
+  border-radius: var(--mcp-radius-md);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
   overflow: hidden;
   border: 1px solid rgba(55, 53, 47, 0.09);
@@ -23,7 +31,7 @@ body.dark .notion-widget {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 16px;
+  padding: var(--mcp-space-3) var(--mcp-space-4);
   min-height: 48px;
   background: #37352f;
   color: rgba(255, 255, 255, 0.9);
@@ -48,12 +56,12 @@ body.dark .notion-header {
 
 .notion-brand {
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   letter-spacing: -0.02em;
 }
 
 .notion-subtitle {
-  font-size: 0.8125rem;
+  font-size: var(--mcp-text-sm);
   font-weight: 400;
   opacity: 0.85;
   margin-left: 2px;
@@ -65,7 +73,7 @@ body.dark .notion-header {
   min-height: 36px;
   background: #f7f6f3;
   border-bottom: 1px solid rgba(55, 53, 47, 0.09);
-  font-size: 0.8125rem;
+  font-size: var(--mcp-text-sm);
   color: rgba(55, 53, 47, 0.65);
 }
 
@@ -90,7 +98,7 @@ body.dark .notion-list {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  padding: 10px 16px;
+  padding: var(--mcp-space-2) var(--mcp-space-4);
   border-bottom: 1px solid rgba(55, 53, 47, 0.06);
   transition: background 0.12s ease;
 }
@@ -163,7 +171,7 @@ body.dark .notion-result-type {
 }
 
 .notion-result-highlight {
-  font-size: 0.8125rem;
+  font-size: var(--mcp-text-sm);
   color: rgba(55, 53, 47, 0.65);
   line-height: 1.45;
   margin: 4px 0 2px;
@@ -193,7 +201,7 @@ body.dark .notion-result-time {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: var(--mcp-radius-sm);
   color: rgba(55, 53, 47, 0.45);
   text-decoration: none;
   transition: background 0.12s ease, color 0.12s ease;
@@ -220,7 +228,7 @@ body.dark .notion-result-open:hover {
 
 /* Footer */
 .notion-footer {
-  padding: 10px 16px;
+  padding: var(--mcp-space-2) var(--mcp-space-4);
   background: #f7f6f3;
   border-top: 1px solid rgba(55, 53, 47, 0.09);
   font-size: 0.75rem;

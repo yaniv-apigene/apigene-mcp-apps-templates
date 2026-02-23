@@ -1,9 +1,17 @@
 /* ============================================
    GOOGLE SHEET APP STYLES
    ============================================
-   
+
    Styles for displaying Google Sheets in an iframe.
    ============================================ */
+
+/* Google Brand Accent Override */
+:root {
+  --mcp-accent: #4285f4;
+  --mcp-accent-hover: #3367d6;
+  --mcp-accent-light: rgba(66, 133, 244, 0.1);
+  --mcp-accent-rgb: 66, 133, 244;
+}
 
 .container {
   max-width: 100%;
@@ -15,10 +23,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: var(--mcp-space-4) 20px;
   background: #ffffff;
   border-bottom: 1px solid #e0e0e0;
-  gap: 16px;
+  gap: var(--mcp-space-4);
 }
 
 body.dark .sheet-header {
@@ -29,14 +37,14 @@ body.dark .sheet-header {
 .sheet-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--mcp-space-3);
   flex: 1;
   min-width: 0;
 }
 
 .sheet-title {
   font-size: 18px;
-  font-weight: 500;
+  font-weight: var(--mcp-font-semibold);
   margin: 0;
   color: #202124;
 }
@@ -49,7 +57,7 @@ body.dark .sheet-title {
 .sheet-rows {
   font-size: 13px;
   color: #5f6368;
-  padding: 4px 8px;
+  padding: 4px var(--mcp-space-2);
   background: #f1f3f4;
   border-radius: 4px;
 }
@@ -64,15 +72,15 @@ body.dark .sheet-rows {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: var(--mcp-space-2) var(--mcp-space-4);
   background: #1a73e8;
   color: #ffffff;
   text-decoration: none;
   border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--mcp-text-sm);
+  font-weight: var(--mcp-font-semibold);
   white-space: nowrap;
-  transition: background 0.2s ease;
+  transition: var(--mcp-transition);
 }
 
 body.dark .open-sheet-btn {
@@ -112,7 +120,7 @@ body.dark .sheet-container {
   padding: 6px 10px;
   background: #fff3e0;
   border-radius: 4px;
-  margin-top: 8px;
+  margin-top: var(--mcp-space-2);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -164,9 +172,9 @@ body.dark .sheet-table thead {
 }
 
 .sheet-table th {
-  padding: 8px 10px;
+  padding: var(--mcp-space-2) 10px;
   text-align: left;
-  font-weight: 500;
+  font-weight: var(--mcp-font-semibold);
   color: #5f6368;
   border-right: 1px solid #dadce0;
   border-bottom: 1px solid #dadce0;
@@ -264,7 +272,7 @@ body.dark .sheet-table tbody tr:last-child td {
   width: 4px;
   cursor: col-resize;
   background: transparent;
-  transition: background 0.2s ease;
+  transition: var(--mcp-transition);
 }
 
 .sheet-table th:hover::after {
@@ -307,7 +315,7 @@ body.dark .table-container::-webkit-scrollbar-track {
 
 .table-container::-webkit-scrollbar-thumb {
   background: #dadce0;
-  border-radius: 8px;
+  border-radius: var(--mcp-radius-lg);
   border: 3px solid #f1f1f1;
 }
 
@@ -348,13 +356,13 @@ body.dark .sheet-table td:first-child {
   .sheet-header {
     flex-direction: column;
     align-items: flex-start;
-    padding: 12px 16px;
+    padding: var(--mcp-space-3) var(--mcp-space-4);
   }
   
   .sheet-info {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: var(--mcp-space-2);
     width: 100%;
   }
   
@@ -410,7 +418,7 @@ body.fullscreen-mode .table-container {
   
   .sheet-table th,
   .sheet-table td {
-    padding: 6px 8px;
+    padding: 6px var(--mcp-space-2);
     min-width: 80px;
   }
 }

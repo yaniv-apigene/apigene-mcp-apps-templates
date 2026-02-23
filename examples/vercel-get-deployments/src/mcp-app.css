@@ -2,6 +2,14 @@
    Vercel Deployments - Minimalistic Dark Theme
    ============================================ */
 
+/* Vercel Brand Accent Override */
+:root {
+  --mcp-accent: #000000;
+  --mcp-accent-hover: #333333;
+  --mcp-accent-light: rgba(0, 0, 0, 0.05);
+  --mcp-accent-rgb: 0, 0, 0;
+}
+
 /* Container */
 .deployments-container {
   max-width: 1200px;
@@ -28,7 +36,7 @@
 .header-title {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--mcp-space-3);
 }
 
 .vercel-icon {
@@ -39,7 +47,7 @@
 
 .header-title h1 {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
   color: #ffffff;
   margin: 0;
 }
@@ -61,7 +69,7 @@
   background: #0a0a0a;
   border-bottom: 1px solid #1a1a1a;
   padding: 20px 24px;
-  transition: background-color 0.15s ease;
+  transition: var(--mcp-transition);
 }
 
 .deployment-card:hover {
@@ -75,21 +83,21 @@
 /* Deployment Main Section */
 .deployment-main {
   display: flex;
-  gap: 16px;
-  margin-bottom: 12px;
+  gap: var(--mcp-space-4);
+  margin-bottom: var(--mcp-space-3);
 }
 
 /* Status Indicator */
 .deployment-status {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--mcp-space-2);
   min-width: 100px;
 }
 
 .status-icon {
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: var(--mcp-font-semibold);
 }
 
 .status-label {
@@ -105,10 +113,10 @@
 }
 
 .deployment-name {
-  font-size: 0.9375rem;
+  font-size: var(--mcp-text-sm);
   font-weight: 500;
   color: #e5e5e5;
-  margin-bottom: 6px;
+  margin-bottom: var(--mcp-space-1-5);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -117,7 +125,7 @@
 .deployment-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--mcp-space-3);
   flex-wrap: wrap;
 }
 
@@ -130,8 +138,8 @@
 .deployment-source,
 .deployment-duration {
   font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 2px var(--mcp-space-2);
+  border-radius: var(--mcp-radius-md);
   font-weight: 500;
   color: #ffffff;
 }
@@ -154,8 +162,8 @@
 .deployment-commit {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 0;
+  gap: var(--mcp-space-2);
+  padding: var(--mcp-space-2) 0;
   color: #999999;
   font-size: 0.8125rem;
 }
@@ -177,8 +185,8 @@
   font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace;
   font-size: 0.75rem;
   background: #1a1a1a;
-  padding: 2px 6px;
-  border-radius: 3px;
+  padding: 2px var(--mcp-space-1-5);
+  border-radius: var(--mcp-radius-sm);
   color: #999999;
 }
 
@@ -186,8 +194,8 @@
 .deployment-creator {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 0;
+  gap: var(--mcp-space-2);
+  padding: var(--mcp-space-1-5) 0;
   font-size: 0.8125rem;
 }
 
@@ -204,12 +212,12 @@
 .deployment-error {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: var(--mcp-space-2);
+  padding: var(--mcp-space-2) var(--mcp-space-3);
   background: #1a0f0f;
   border-left: 2px solid #f44336;
-  border-radius: 4px;
-  margin: 8px 0;
+  border-radius: var(--mcp-radius-md);
+  margin: var(--mcp-space-2) 0;
   font-size: 0.8125rem;
   color: #ff8a80;
 }
@@ -223,24 +231,24 @@
 /* Actions */
 .deployment-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 12px;
+  gap: var(--mcp-space-3);
+  margin-top: var(--mcp-space-3);
 }
 
 .deployment-link,
 .deployment-inspector {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: var(--mcp-space-1-5);
+  padding: var(--mcp-space-1-5) var(--mcp-space-3);
   background: #1a1a1a;
   border: 1px solid #2a2a2a;
-  border-radius: 6px;
+  border-radius: var(--mcp-radius-md);
   color: #e5e5e5;
   font-size: 0.8125rem;
   font-weight: 500;
   text-decoration: none;
-  transition: all 0.15s ease;
+  transition: var(--mcp-transition);
 }
 
 .deployment-link:hover,
@@ -277,7 +285,7 @@ body.dark .deployment-card:hover {
 /* Responsive Design */
 @media (max-width: 768px) {
   .deployments-header {
-    padding: 16px;
+    padding: var(--mcp-space-4);
   }
 
   .header-title h1 {
@@ -289,12 +297,12 @@ body.dark .deployment-card:hover {
   }
 
   .deployment-card {
-    padding: 16px;
+    padding: var(--mcp-space-4);
   }
 
   .deployment-main {
     flex-direction: column;
-    gap: 12px;
+    gap: var(--mcp-space-3);
   }
 
   .deployment-status {
@@ -314,21 +322,21 @@ body.dark .deployment-card:hover {
 
 @media (max-width: 480px) {
   .deployments-header {
-    padding: 12px;
+    padding: var(--mcp-space-3);
   }
 
   .header-content {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: var(--mcp-space-2);
   }
 
   .deployment-card {
-    padding: 12px;
+    padding: var(--mcp-space-3);
   }
 
   .deployment-meta {
-    gap: 8px;
+    gap: var(--mcp-space-2);
   }
 
   .deployment-name {

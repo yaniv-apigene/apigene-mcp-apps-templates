@@ -150,13 +150,59 @@ function getPagination(data: any): any {
 }
 
 /**
- * Get breadcrumbs
+ * Get breadcrumbs (search filters)
  */
 function getBreadcrumbs(data: any): any[] {
   const unwrapped = unwrapData(data);
   if (!unwrapped) return [];
 
   return unwrapped.body?.breadcrumbs || unwrapped.breadcrumbs || [];
+}
+
+/**
+ * Render breadcrumbs as filter tags
+ */
+function renderBreadcrumbs(breadcrumbs: any[]): string {
+  if (!breadcrumbs || breadcrumbs.length === 0) return '';
+
+  // Group by label
+  const grouped: Record<string, string[]> = {};
+  breadcrumbs.forEach((crumb: any) => {
+    const label = crumb.label || 'Filter';
+    const value = crumb.display_name || crumb.value || '';
+    if (value) {
+      if (!grouped[label]) grouped[label] = [];
+      grouped[label].push(value);
+    }
+  });
+
+  const filters = Object.entries(grouped).map(([label, values]) =>
+    `<span class="filter-tag"><span class="filter-label">${escapeHtml(label)}:</span> ${values.map(v => escapeHtml(v)).join(', ')}</span>`
+  );
+
+  return `<div class="filters-bar">${filters.join('')}</div>`;
+}
+
+/**
+ * Render pagination info
+ */
+function renderPagination(pagination: any, displayedCount: number): string {
+  if (!pagination) return '';
+
+  const page = pagination.page || 1;
+  const totalEntries = pagination.total_entries || displayedCount;
+  const totalPages = pagination.total_pages || 1;
+
+  // Don't show if only one page
+  if (totalPages <= 1) return '';
+
+  return `
+    <div class="pagination">
+      <div class="pagination-info">
+        Page ${page} of ${totalPages} (${formatNumber(totalEntries)} total)
+      </div>
+    </div>
+  `;
 }
 
 /**
@@ -537,43 +583,6 @@ function showCompanyDetail(org: any) {
 };
 
 /**
- * Render breadcrumbs
- */
-function renderBreadcrumbs(breadcrumbs: any[]): string {
-  if (!breadcrumbs || breadcrumbs.length === 0) return '';
-
-  return `
-    <div class="breadcrumbs">
-      ${breadcrumbs.map((crumb: any, index: number) => `
-        ${index > 0 ? '<span class="breadcrumb-separator">›</span>' : ''}
-        <span class="breadcrumb-item">${escapeHtml(crumb.label || crumb.name || String(crumb))}</span>
-      `).join('')}
-    </div>
-  `;
-}
-
-/**
- * Render pagination
- */
-function renderPagination(pagination: any): string {
-  if (!pagination) return '';
-
-  const current = pagination.page || pagination.current_page || 1;
-  const total = pagination.total_pages || pagination.pages || 1;
-  const perPage = pagination.per_page || pagination.page_size || 10;
-  const totalItems = pagination.total || pagination.total_count || 0;
-
-  return `
-    <div class="pagination">
-      <div class="pagination-info">
-        Showing ${((current - 1) * perPage) + 1}-${Math.min(current * perPage, totalItems)} of ${formatNumber(totalItems)} companies
-        ${total > 1 ? `(Page ${current} of ${total})` : ''}
-      </div>
-    </div>
-  `;
-}
-
-/**
  * Main render function
  */
 function renderData(data: any) {
@@ -605,24 +614,14 @@ function renderData(data: any) {
     // Header
     const header = document.createElement('div');
     header.className = 'header';
-    header.innerHTML = `
-      <h1>Apollo Company Search</h1>
-      <div class="meta">
-        <div class="meta-item">
-          <span>${organizations.length} compan${organizations.length !== 1 ? 'ies' : 'y'} found</span>
-        </div>
-        ${pagination?.total ? `<div class="meta-item">
-          <span>Total: ${formatNumber(pagination.total)}</span>
-        </div>` : ''}
-      </div>
-    `;
+    header.innerHTML = `<h1>Apollo Company Search</h1>`;
     container.appendChild(header);
 
-    // Breadcrumbs
+    // Filters (breadcrumbs)
     if (breadcrumbs.length > 0) {
-      const breadcrumbEl = document.createElement('div');
-      breadcrumbEl.innerHTML = renderBreadcrumbs(breadcrumbs);
-      container.appendChild(breadcrumbEl);
+      const filtersEl = document.createElement('div');
+      filtersEl.innerHTML = renderBreadcrumbs(breadcrumbs);
+      container.appendChild(filtersEl);
     }
 
     // Controls
@@ -645,12 +644,6 @@ function renderData(data: any) {
     grid.id = 'companies-grid';
     container.appendChild(grid);
 
-    // Pagination
-    if (pagination) {
-      const paginationEl = document.createElement('div');
-      paginationEl.innerHTML = renderPagination(pagination);
-      container.appendChild(paginationEl);
-    }
 
     app.innerHTML = '';
     app.appendChild(container);
