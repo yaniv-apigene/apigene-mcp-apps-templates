@@ -1,0 +1,50 @@
+/* ============================================
+   TEMPLATE-SPECIFIC STYLES
+   ============================================
+   
+   Add your template-specific styles here.
+   This file is for styles unique to your app.
+   Common/base styles are in global.css
+   
+   Guidelines:
+   - Use semantic class names (e.g., .result-card, .dashboard-header)
+   - Support dark mode with body.dark selectors
+   - Use consistent spacing (multiples of 4px or 8px)
+   - Make styles responsive with @media queries
+   - Use CSS variables for colors if you have a color scheme
+   
+   Example structure:
+   .container { ... }
+   .header { ... }
+   body.dark .header { ... }
+   @media (max-width: 768px) { ... }
+   ============================================ */
+
+/* TODO: Add your template-specific styles here */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Example: Add your custom styles below */
+/*
+.header {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.dark .header {
+  background: #1a1d24;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+}
+*/

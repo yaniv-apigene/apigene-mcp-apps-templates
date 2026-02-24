@@ -1,0 +1,51 @@
+{
+  "body": {
+    "backlinks": [
+      {
+        "url_from": "https://example.com/blog/post-1",
+        "url_to": "https://yoursite.com/features",
+        "domain_rating_source": 42,
+        "traffic_domain": 15000,
+        "anchor": "Feature overview",
+        "first_seen": "2024-06-15T10:00:00Z",
+        "last_visited": "2025-01-20T14:30:00Z"
+      },
+      {
+        "url_from": "https://demo-site.org/resources",
+        "url_to": "https://yoursite.com/",
+        "domain_rating_source": 58,
+        "traffic_domain": 8200,
+        "anchor": "YourSite homepage",
+        "first_seen": "2024-08-01T09:15:00Z",
+        "last_visited": "2025-02-01T11:00:00Z"
+      },
+      {
+        "url_from": "https://blog.fake-news.io/articles/roundup",
+        "url_to": "https://yoursite.com/docs/guide",
+        "domain_rating_source": 71,
+        "traffic_domain": 45000,
+        "anchor": "Getting started guide",
+        "first_seen": "2024-09-12T16:45:00Z",
+        "last_visited": "2025-01-28T09:22:00Z"
+      },
+      {
+        "url_from": "https://directory.example.net/tools",
+        "url_to": "https://yoursite.com/",
+        "domain_rating_source": 35,
+        "traffic_domain": 2100,
+        "anchor": "yoursite.com",
+        "first_seen": "2024-11-05T08:00:00Z",
+        "last_visited": "2025-02-10T17:15:00Z"
+      },
+      {
+        "url_from": "https://aggregator.test/list/best-tools",
+        "url_to": "https://yoursite.com/pricing",
+        "domain_rating_source": 64,
+        "traffic_domain": 12300,
+        "anchor": "Pricing page",
+        "first_seen": "2024-12-20T12:30:00Z",
+        "last_visited": "2025-02-14T10:45:00Z"
+      }
+    ]
+  }
+}

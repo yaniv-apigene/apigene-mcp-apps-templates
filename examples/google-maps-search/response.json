@@ -1,0 +1,976 @@
+{
+  "status_code": 200,
+  "headers": {
+    "Content-Type": "application/json; charset=UTF-8",
+    "Date": "Sat, 07 Feb 2026 16:43:59 GMT",
+    "Expires": "Sat, 07 Feb 2026 16:48:59 GMT",
+    "Cache-Control": "public, max-age=300",
+    "Content-Security-Policy-Report-Only": "script-src 'none'; form-action 'none'; frame-src 'none'; report-uri https://csp.withgoogle.com/csp/scaffolding/msaipomnpc:993:0",
+    "Cross-Origin-Opener-Policy-Report-Only": "same-origin; report-to=msaipomnpc:993:0",
+    "Report-To": "{\"group\":\"msaipomnpc:993:0\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/scaffolding/msaipomnpc:993:0\"}],}",
+    "Server": "scaffolding on HTTPServer2",
+    "Content-Length": "44372",
+    "X-XSS-Protection": "0",
+    "X-Frame-Options": "SAMEORIGIN",
+    "Server-Timing": "gfet4t7; dur=551",
+    "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+  },
+  "body": {
+    "html_attributions": [],
+    "next_page_token": "AcnlKN3ZdsxW9kR6rzymIFQQxm8o9AbJjSIKjbyK973r8hRUSioWbSTz_J0AxkDYpDYhAXkTiuIhR1Tu4KCk47tJ6WQo_wJD0Y8Ux_BRti8wB3Wfi6ZNkdj_NpF97VjskJScQsEi5t5tF7qBiW1j3ahbLxJh2EwIbGHOVzeL6NBLnTHHGJUMOzqnjmWJvqbAA4S-8f-a4nKntIqCqvDlrwQoXc2CePs25O6Wzn6XoV7ge1V0pa3iBhLHBa0_AeHgwD3IgHEcJXw0Rt1mzLZDuqXT9c-i5qAEnUiItD16U4WJlftTFKlOsHHNAx5PuEPEhmE9dpSEHxcg0pZAw8nNYWx1FBvfKJHFEdCogE4KqSOxK2J02KD3dUlAWpWehRW66kRLvt-Z2K4w4MzegzVfNQ",
+    "results": [
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "מלון, Berdyczewski St 14, Tel Aviv-Yafo, 6425813, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0709568,
+            "lng": 34.7803456
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.07229737989272,
+              "lng": 34.78169057989272
+            },
+            "southwest": {
+              "lat": 32.06959772010728,
+              "lng": 34.77899092010728
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Bellboy",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 4611,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/117639608407673394005\">Bellboy</a>"
+            ],
+            "photo_reference": "AcnlKN3RW0B9FFZKTxFUCh7kwh9RtaWberjPXzjclhcBwUCuaQdiYReg6fNZNGD7TsZ-GT4NSFaOdKYhB-41-QiVyJykJt-TbQcpIzfujGQrqleRjpPRncxh74aBBrEUVvxG4MfWaYpcofN8vvFr_AL15KUPz5ajqRIRxKS09aihf9Tk9rNQwOsLOOTRnzO34Dj5RX8I5oWp2EzQDXstpcCbgLrTzSvx4JIbxNYl_6OkqwbiLcjJEgga2_ncW6DNkNc4sPhGnS2KDWF9KvJJgyO_knKx1_eCiuLs1c3S_SOreFXqOhr4Pns",
+            "width": 6898
+          }
+        ],
+        "place_id": "ChIJoYjppXhLHRUR5-pW9WuiRaE",
+        "price_level": 3,
+        "rating": 4.6,
+        "reference": "ChIJoYjppXhLHRUR5-pW9WuiRaE",
+        "types": [
+          "bar",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 3076
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Florentin St 19, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0563065,
+            "lng": 34.76898
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.05761352989273,
+              "lng": 34.77030827989272
+            },
+            "southwest": {
+              "lat": 32.05491387010728,
+              "lng": 34.76760862010727
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Shuffle Bar",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 2988,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/105939248919870779368\">Shlomo Harel</a>"
+            ],
+            "photo_reference": "AcnlKN1jAEkdJOe3usnFItH9IoP3XOhI_hQj7pY33J3MyMODTlf6SsJ2YjX_0ewJL5Ri6nIEfr5qUKL5Ed00ZL9wFpKPFJYCrIjiYaskVaNC84eNzB65s1OFIv8Uqpt8ckIEuBcKsevxImPkq5D23dtfAUEY2HwHTwq4ri7dHx6gITs6sWdIbBX7A_pkqe6KAvJncSn6j9pUeUlvVKRkB71hWvZpwOP9LBGG2XMKNS1H965DQCqcz8Fn14td6-0ll_Xn_16yAQgU_ZrUgPDxuqO7gRZw5qu8sdnZVCFBKXcKW0ewOUEXNNpnEBALjVG7IbMDGB851eb5ggSyfoDh2aIt-41UFqhzctVHauj4SlzQ9tpwDYqG4fmmJOifrOLNnxOIToFiDAvGrc6t6MBeHYuEkBlJRjXwRDU7zvpJ-yJ16TMNT-G4nzkbAUQIrISzZ1henVqEZbhXIoF_gwV2TWQxMAttyW64MM_9L8uWui_PxQRIcJtZB2KnVX-DVfQbopDPTmvd9JNVe8V6Tdls74OR4ZU82_pQuUOHd0OUTt5bp2_odTt-Hm8otECV_hCycUnY3ClQB8EkQqA3WA",
+            "width": 5312
+          }
+        ],
+        "place_id": "ChIJlzvtN59MHRURYqWTEZcthow",
+        "price_level": 2,
+        "rating": 4.6,
+        "reference": "ChIJlzvtN59MHRURYqWTEZcthow",
+        "types": [
+          "bar",
+          "restaurant",
+          "food",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 2780
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Nahalat Binyamin St 29, Tel Aviv-Yafo, 6516206, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0664831,
+            "lng": 34.7704319
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.06782487989273,
+              "lng": 34.77175537989272
+            },
+            "southwest": {
+              "lat": 32.06512522010728,
+              "lng": 34.76905572010728
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Mozambique bar",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 3024,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/105540948888835819987\">Amir Tal</a>"
+            ],
+            "photo_reference": "AcnlKN3ceJXDVvDcaZq_Mv6XO9RzlIrXaIil4EpfN_nPEz8dwz-iz6h80TXStXdP6g_S7-yi-yyQygmjRAD3eRLpX6kSkp7Phzet3PQ3GS1HTFNkc2gtUy-cKI-T4_XwfFvA641HGftmembcyu-PznSdA1Z-RPjLyRyKDRfG0EYySxd1s-zuVImiKQDPuYj7yLzSwLbGx0eWWawuPkPBg0E5ORGTXUxVYU1NLCXN4Agi_WxHAhO1A01e84YGqIdp5Mx4L-Jsyz0G3vDbyKG1G3vSH3gjnw-4B_JEBPA8bFltjSLc6CSIoZc7ZVfkvK8CxThKtaR5tGr74cLFCmnGXcPQmsWIM-THFF71pujMU--F_Fexu_L49zorZ-gP3YwZNnfX8u61VFiDssphl4hnH7sy5Nw5fjhAtvwaiWTeEIcgfq4234-HowB3bkGAlLHvNqDZFuEcDwC2kLuvjT2QBq75NWMjI8IPuymI4rF75OQ67XTvXzaewzf21965DxcRFqYJdkCB5iorU-R2bR-AzVv-0pIhZXaq1Q9iKhz5GahDHjjduACuzMXQfQR1wKUnYjbtpR90I2RSliK2lg",
+            "width": 4032
+          }
+        ],
+        "place_id": "ChIJGa44OPZNHRURL7S06xCOE8g",
+        "rating": 4.8,
+        "reference": "ChIJGa44OPZNHRURL7S06xCOE8g",
+        "types": [
+          "bar",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 221
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Romano, Derech Jaffa 9, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0606806,
+            "lng": 34.76945
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.06183092989272,
+              "lng": 34.77086692989273
+            },
+            "southwest": {
+              "lat": 32.05913127010728,
+              "lng": 34.76816727010728
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Teder.fm",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 1365,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/114612346593774543302\">Teder.fm</a>"
+            ],
+            "photo_reference": "AcnlKN1dAZwg6NuNyIRxIPb0R6juUuVdztICh48vsQkEdhA6a9ybJmoVKrng_wf2zjoigThTkEvNw425eCTgias3NFSxBLyZH958waJmnSuT4oeM_pgxPA6lJmmvqJbe03wyXTEcIJM143hzk9GSUwbbOylPMzCzAKMpv7uS0jAejH1xoe7TzBxpRD62nDFmY-CisYg1BBs3k822Wl6xm2YFJ1sSODXMhuFvLXjJZ4u7G7L1R5o6bSnvkxoFA4M8jO8rol6fkouwZ_K8xiqt_OmHg1iKwGpQ5PwKeftob0ivIjyev-ZZgt4",
+            "width": 2048
+          }
+        ],
+        "place_id": "ChIJq1WmG5xMHRURoB3tLg29xYk",
+        "price_level": 2,
+        "rating": 4.4,
+        "reference": "ChIJq1WmG5xMHRURoB3tLg29xYk",
+        "types": [
+          "art_gallery",
+          "bar",
+          "store",
+          "restaurant",
+          "food",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 6376
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Dizengoff St 223, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0902996,
+            "lng": 34.7755464
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.09162802989272,
+              "lng": 34.77700547989271
+            },
+            "southwest": {
+              "lat": 32.08892837010728,
+              "lng": 34.77430582010727
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "223 Bar",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 2467,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/116490151746544000133\">223 Bar</a>"
+            ],
+            "photo_reference": "AcnlKN28vPydNNY2VqiQ-Xo00pootWqGTKcdc9-CqS-4SKY-ri1ySK_5bl7Mbr1lg-ME60buPdnZWdRcw4-ehDAq5KZ5LFHFNs6N4YvA4DVUx4FAaZ2LQCSKSmLATpNs-nnt-s1agWjzI-D8GYV4Np3J-DbklGaLFIZoRml3W_yPeJWdwWqNyrmLgofOjWnS8myCBi2SG-fP20GUJbCzcs8RXXHNtf9FRF69__4ILdtDzvO3dIW76sC-5YgVLMC6Nz98eg2USD0ii3abTV9WdJnzjCbfOBGxrVETJ0GHOt0ism8ijUrgUKk",
+            "width": 3700
+          }
+        ],
+        "place_id": "ChIJeRc-X4pLHRURx5U2eTUlI08",
+        "price_level": 2,
+        "rating": 4.5,
+        "reference": "ChIJeRc-X4pLHRURx5U2eTUlI08",
+        "types": [
+          "bar",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 1646
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Rothschild Blvd 33, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0638422,
+            "lng": 34.7734054
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.06515082989272,
+              "lng": 34.77477242989272
+            },
+            "southwest": {
+              "lat": 32.06245117010728,
+              "lng": 34.77207277010728
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "HIVE",
+        "opening_hours": {
+          "open_now": false
+        },
+        "photos": [
+          {
+            "height": 4512,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/115540313373145787377\">pavel korolin</a>"
+            ],
+            "photo_reference": "AcnlKN2psWAxo27kwmVa9pJk09dw3maBplnhdx_39qTHFkqYz23TLmW70famJnyVwDMcVJGUQFWu5m4XIJdwyBT_ZPMdre95_G5l-bPYvKr44tHpUYn2ZN9aIzsIRm_1lWBk3QABh5pkuOvi1llvIqT5w-dd2wbDHuvPxht2xbdQ4uaLJHycYbaqhO5VyFdXYxg_yGpKXMtutpkxkI_-BTSkLAnznxzBU6CaCBBbrm159JOJFPsnDd5g8zyCYgXH2sA5ZQ_rgI0l-1drsmsMBbobn_kfXmk0Y85uFtes4w4Q32_RERE98tM17Ydu6BcEdRsoW79LiA7QC1p4X3QyuodEhff_L1D3UAJYTeGa8oZFsaVMauAWnpeUOI8E80U4vYtHaCKgm2OF3DwemJ_k761L0uV5-9NaZPiOL5avA5nW_zO6BizK-vUXCiC4pnsBwN982Rl-hDf0QS9WWxLIZ9RI3FFQVPkKIKEBvD8vvVVEIgDKcc64lKOZBHY2Uk0B-phtb4_zk4qheUeQhYhQrC6OeMWbMEghuKoeJZPYVqy12p48t0J9RQ58N9-Z6rRsEmAw1db-7BsN",
+            "width": 6016
+          }
+        ],
+        "place_id": "ChIJL7OWG81NHRURpWz7xXvVedM",
+        "rating": 4.1,
+        "reference": "ChIJL7OWG81NHRURpWz7xXvVedM",
+        "types": [
+          "night_club",
+          "bar",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 521
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Shalma Rd 28, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0543288,
+            "lng": 34.7636176
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.05575557989273,
+              "lng": 34.76496442989272
+            },
+            "southwest": {
+              "lat": 32.05305592010728,
+              "lng": 34.76226477010727
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "The Alchemist",
+        "photos": [
+          {
+            "height": 3468,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/100953514165656464079\">Adam&#39;s Uncle</a>"
+            ],
+            "photo_reference": "AcnlKN2Mt8Xn_wPQiEgjDIHs9Aq0-1Ut9l7m6wThtTH-KVmNXzUd3PJlC6QhQSAVfQ45006GnW1-s4QBw49pK1kcFISAUejmZM0oImqN6b-J64V8BEUj8FmAK16XjLFBN5p4xaqrT6aTXFqyHZJvOID6ccbr4LRJm4QYsio1dzqSdmoWY7w8klpbj10wmGb8GkteYWaoavRrHHZEyeEDVHK4RxQK6eWXQQ60Sb-gpmusQMbwprr_w31_1LmpzLoTCusjKvD51RTB8LE9VbY9P-yy5IxX3d4gWqC_CG9m8Z14qcUZJcIYGHVUEsUPo07Pbo8UtLokziIC8ZQByeMtuRhaT7G4jLXAfkNTIzgUqydv8fUt9XAcwDIk_-Z71oxD-1SNTSIOmyzhCYY6kKMfIlH2lrqCXRwh6SEW0HMFkCTbs-p5ClhkKDpWfK5TYGzKxlNHjmRQoigU-VNaAHZtJqnAMOdGcUev8vpfpvpA5G2-Esz0BFv93iumAkGYRVwLXDmJADQjoiaHjFnq-3uOhyzEEYTP5we8r66KRAhJIJ7PXu8XLoze-4YS5sIy1UqOuDHo3G4VZRPexa2vqg",
+            "width": 4624
+          }
+        ],
+        "place_id": "ChIJuUjff75LHRURvHITzd9YkXw",
+        "rating": 4.6,
+        "reference": "ChIJuUjff75LHRURvHITzd9YkXw",
+        "types": [
+          "bar",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 273
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Nahalat Binyamin St 28, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0657571,
+            "lng": 34.7705777
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.06711982989273,
+              "lng": 34.77196957989272
+            },
+            "southwest": {
+              "lat": 32.06442017010728,
+              "lng": 34.76926992010727
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Bushwick",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 3024,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/116156325434302303721\">Regina Stambula</a>"
+            ],
+            "photo_reference": "AcnlKN0OzYoUnioPXBwcittw2vRU65MqKxOJgm1LI6kEa8A7vuYGNbrvLQA5lui9pW3n4B1pZvNa_iSa_PrNnm05DU73ouI8ijH4YfddWnhzOARRwBH2r-MKp1aVYB1353xccHg65zqD1mGLe8fqq3O-Ut2tzAzNcVuxdQEJafHCkBSKcVB2XGj18Ky_Z0xuICOc_4SNQE-2j1oivJ3BS034spN72A2EVlqFbR5a_4ZgZ4Mc0-2W63cMl_AueRtSPVlrHZhzTa-A_fWJwY7Q5m9Y2BE_-607EA73K9pprnJ0x8u-604O33L7n3GCeeaDNuXsDTPsX7AN9BX6J3NvBLNUk9MkcZJP9ZA0ax3NMnxZiGoTNdRXa_jJkbukwCqWUx5hukUxeaRVcMqOYWWj3RI39SNbdmZKZie0N4PJYsu_Qml_zqTJktd14hxGU0PKe4_Cjo0Y4fYJsKANJXlWN2rsltjyEEHUgx-r-kGB-i7kNxE-hRMYFI9jc-ddVlAtCiF0flIN5YpvfKM5u5Jck0h77AkFrezFO89yFCNwdqnVlGyjnEx-ejU3AFt7Z0mYc2foKhp8ZB-w5-T2hg",
+            "width": 4032
+          }
+        ],
+        "place_id": "ChIJ44rvF4NMHRURdHUprBJbSog",
+        "price_level": 2,
+        "rating": 4.3,
+        "reference": "ChIJ44rvF4NMHRURdHUprBJbSog",
+        "types": [
+          "bar",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 1897
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Dizengoff St 95, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0789556,
+            "lng": 34.773871
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.08031057989272,
+              "lng": 34.77526882989272
+            },
+            "southwest": {
+              "lat": 32.07761092010728,
+              "lng": 34.77256917010727
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Concierge",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 2902,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/102065107743279746582\">Ofri Wolfus</a>"
+            ],
+            "photo_reference": "AcnlKN2bbCDJi-pbx0ZpSOkDyu1B-G0yQprywFZkBBjASQW-20BJ6BCF26YJGhXj_gA2x_bgg-rr8OwpeLoxB8aiq9D1l4hqCo-pCeZckNpPXsRUAhxk7o1lysJ6DDnnD_lM0ohfn1o9eoAOfRZsWKwmcrwD1l6Boy497W4Wc7mIcwJtf4cTusVGWdj3Tz2miukVAivcZ_QicBBtjPSdS3G6NUmJ-mEnp0y3yKa2NY2WAZGZqS89LE9kIhxQo5SCBhnZcIcNosJUSKY75uqEjM8j5nc7mnljWZ13KVTKFVseIYUGKVywNUYpYVEK43Vx5FR6Tyxw2aTCFT588ebUD6oGOynzNIq8h4OxbYFg019f3uIM_iJKkoVOgrpKMejLPnbT10vYc1lZJWkPdZV3QPZeG4ikkAxnrdhMqFCIlQdc3C15waKXPYdLoRRPXmKXjh-j0yV3nPhR28eJ-0bKLGveYiRA6lQYfDYku8losCUj-adGpnYrsTkn2Z8bjjQABPFrb4BF2KoWc4oG6NosnUu950iR8MbRZT9yOOCWvIfWW8HglqwhddZynz9IRJfCb8cGZgMw_b6B",
+            "width": 3869
+          }
+        ],
+        "place_id": "ChIJMSvYp3hMHRUR8fpSwMPLcoA",
+        "price_level": 3,
+        "rating": 4.3,
+        "reference": "ChIJMSvYp3hMHRUR8fpSwMPLcoA",
+        "types": [
+          "bar",
+          "restaurant",
+          "food",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 2852
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Dizengoff St 121, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0811403,
+            "lng": 34.7736539
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.08249322989272,
+              "lng": 34.77508657989272
+            },
+            "southwest": {
+              "lat": 32.07979357010728,
+              "lng": 34.77238692010727
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Dizzy Frishdon",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 1367,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/111898637348441709842\">Dizzy Frishdon</a>"
+            ],
+            "photo_reference": "AcnlKN0aFXBn_A_QqYZlX6byBREYzNCr630mWo5E9i6UZ2EFoFlJIYl2aNTEpqL8uEwa_lhT4d-0Gemx_R2pMxsUrqSiJvGOqjO8itn_E_p4xUcamgMgPeWRreMAgjcc1C1-C548bIl2p-_1FpP24cwx2RZYR0gCvvDizRpcTaCEP26KDTutiGg0MjmR5xZeo-tX2XjVLQi3IRqvf2gTnG_3qGIGyF46N0_9mfHYZhTZOlRjFP-0s8S1-_bj0L1Cb1_CW2oDtmXEjuUfD0J81ssfIivRvaB8tTf9quayi13rVJc5yTfsgZ4",
+            "width": 2048
+          }
+        ],
+        "place_id": "ChIJhUqKfnhMHRURu3eCgSrVQ0g",
+        "price_level": 2,
+        "rating": 4.2,
+        "reference": "ChIJhUqKfnhMHRURu3eCgSrVQ0g",
+        "types": [
+          "bar",
+          "restaurant",
+          "food",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 1767
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Nahalat Binyamin St 18, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0672947,
+            "lng": 34.7701564
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.06864317989272,
+              "lng": 34.77149442989273
+            },
+            "southwest": {
+              "lat": 32.06594352010728,
+              "lng": 34.76879477010728
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "The Prince",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 3024,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/114090241795164652750\">Opal Bechar</a>"
+            ],
+            "photo_reference": "AcnlKN0JQ9qUm5i1msx5ZHXLSJFKysAlqliuqk1DTPs9xBkKGg25TA01WnU8PQNiK8HNRlRjGOyf1kZpe6SsUBNcVwRpu3DrT7RfPU-NYrQc6adxcAWvd1yNfSM_-KUllOgvX7Oachd-ZuMxrVouvuMhnZackopF5TvI__8Rky5slD3ISOO-IjikyDVgyRQtmwa_UJOFDG51IS-mkRWyfzh96t6i7_L64wwXbW3I6KJ8G7-Ez1pBoF1JzZ5LFORU8cqaeV08NIwpPsVjfucdzOWhlxGTXsiy3JVO6i521vO02wBHRr5PRE8fJ4zm81tMfL1WKW0OrdqLWwqune-PeZrpxtuWHKaFTELWuwS5GaBCx_lAgbXtmGzlX821lhyZPb6tE3jrdUmV2m303jFx3Ygml5AEEuD-I2epy5u5ir6xFdlr8LeIbUvV914G2_80tW0e6qTFgMo5XZZmBrZJDgRgFv0Dhvd3xupfCbrmEF6Wxl63JnF0s8buS_tjDyv0rUORM_i4l8_SwzffcAue0m9fiuNLHkj0dX7tF3Nb4v9-IgZXbE4oL1MHNWVgoqr1dqO7uTJobQ",
+            "width": 4032
+          }
+        ],
+        "place_id": "ChIJtwfRo4NMHRUR6lN4STorDP4",
+        "price_level": 2,
+        "rating": 4.3,
+        "reference": "ChIJtwfRo4NMHRUR6lN4STorDP4",
+        "types": [
+          "bar",
+          "restaurant",
+          "food",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 3081
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Zevulun St 5, Tel Aviv-Yafo, 6652405, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0602473,
+            "lng": 34.7731132
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.06160252989272,
+              "lng": 34.77443982989272
+            },
+            "southwest": {
+              "lat": 32.05890287010727,
+              "lng": 34.77174017010728
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Bitter",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 765,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/107734730282700935408\">ביטר</a>"
+            ],
+            "photo_reference": "AcnlKN0qkeBtfVt6Wvj2xfctxCgPf_BB_Cf71n1Z0jJ8xUvseJtPkPc1F9iZmA3cAvobx8PVCiZnrcVBUjPX4Lul05BWCTjDbJBy3J9xfZESphM1lDF9fsVw_OK2SaXvwKLAdwMbMyKDr6wtfcbEP7VkPzANwi7KEhbpQTMSbYx_NAv0tWhciJBQEU0uxzDCKDqGBPVqRtQLBRIMQyIu_kZF3sYZDc3YCZPYpoaQMYAcMU2hg6TuFrhWvAUEibNI3ctohixJUxnYPlSjeN-c5pc3QPLjKTHwnQ6yis_1JtykWA_fLc13Je4",
+            "width": 1360
+          }
+        ],
+        "place_id": "ChIJ9eLHUedNHRURLM_LqQGkz-c",
+        "rating": 4.9,
+        "reference": "ChIJ9eLHUedNHRURLM_LqQGkz-c",
+        "types": [
+          "bar",
+          "restaurant",
+          "food",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 73
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Ahad Ha'Am St 1, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0632313,
+            "lng": 34.7680757
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.06454022989272,
+              "lng": 34.76946192989272
+            },
+            "southwest": {
+              "lat": 32.06184057010728,
+              "lng": 34.76676227010728
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "7to1 Lab",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 2252,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/111540538135252707538\">Uri Holzman</a>"
+            ],
+            "photo_reference": "AcnlKN0_MhTIJrH0CmwLbixtmNPwPndrTRlTs6D8Zw3Yd8pOKLpUhf5e7kCqcD806R2vSvIfUOmX8JedBRlFAij9AmGYSVoWEaBg6XlslWCWXgTvHkSSzI1EeLm7Q4OQO98wWajpNcXpxaaebApmg6NpTMbn8oMdIgM6ZlD3ouEEw_RO3GK6H_v0gZ4kjCquMZbp5zWKBKYRuZT38AhF8pxiyFCvk9nRLEnCOvgDiiKCUZo_AKtdc4e2deGRZikAZLqJIGhP9-exL43tVpCQ8P_6h5s084ustBxmA_VLlcOpPXQgyW7iq5I9MOriPESoARW4ekASEi91opLSSluZ82hwoX40iRtwGeljKhdIehEEy6VYAYqto0mqlS_kCqi9n9ZYcqjnDb40w-41gkbVyKuDd5wuuFUPqWm5vttDLHuj8U92jQZpxAyzto2nytOpYZvVkTKAFdz_NrvmDivRyRPS2qZcLX6NZY4DFLTx5XKbhUxIlsCd1xvXD_jmANwVE41gfW8JV_xD0IpR4inU4EwC1D7es0CcHT9BaU4aYgQRpgh0Vh8rzWNEkUIEVnaCgYXuu_k0LXRL",
+            "width": 4000
+          }
+        ],
+        "place_id": "ChIJrUCCWhNNHRURWNyoncUkIZU",
+        "rating": 4.3,
+        "reference": "ChIJrUCCWhNNHRURWNyoncUkIZU",
+        "types": [
+          "bar",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 433
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Allenby St 16, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0731661,
+            "lng": 34.7666307
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.07457152989272,
+              "lng": 34.76800307989272
+            },
+            "southwest": {
+              "lat": 32.07187187010728,
+              "lng": 34.76530342010727
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Potion Bar בר וויסקי בתל אביב",
+        "opening_hours": {
+          "open_now": false
+        },
+        "photos": [
+          {
+            "height": 899,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/103253875200924460224\">Potion Bar בר וויסקי בתל אביב</a>"
+            ],
+            "photo_reference": "AcnlKN1aYiYRnhF-15aFmj3gnxoMzIGSJ5cqPTR2hKNMUemeATZ9HCU4FReAxaPhbj4pXvhaw79mcjkFMOXHPBE4mPRXx3ojaJ86zLawSN5UuIfotFzTWwCaBogWJK0hDJsvpqFkbg40rZudwx4AGjwCKIIcLDyGDymlIt4W0qbuLL8__cvCHIQRpk7nT-2RYrw213wQaVONpGm8jKRccaQqk-dK5YVN7AJmxZWUlOVXy3cpDzAde6-MLqmFAvmrIuvghcNKlG_EyFfmUXmqhzlSjuJ_6PYAFcx63mFlLPjLEIXrp-edids",
+            "width": 1599
+          }
+        ],
+        "place_id": "ChIJY36nHYdMHRURox-z6Q37x54",
+        "price_level": 2,
+        "rating": 4.4,
+        "reference": "ChIJY36nHYdMHRURox-z6Q37x54",
+        "types": [
+          "bar",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 1078
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Rothschild Blvd 60, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.06442490000001,
+            "lng": 34.7760718
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.06581997989273,
+              "lng": 34.77736607989273
+            },
+            "southwest": {
+              "lat": 32.06312032010729,
+              "lng": 34.77466642010728
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Polly",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 3024,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/111535346782836130217\">שרית סקיאנו</a>"
+            ],
+            "photo_reference": "AcnlKN2Jh55H9CDVTluwEUApQeiIcJYcaWMjGmYVm3uvXWWOAQrXAaEST8Ya7zZctSjFHHM3VbfPkeI954DgashPx6DP24O5ae_BifKejLlZ7Xx3PzGPfC4w_5BO-oQ23MVFgBqkk6NecJzewvAIUWe3_gfmpCy4a5tz0n72tzLxtgt7vATIsbh3eQ2XD5MdFpOtwmatXGHe3xoTCZdPUPI0UHuJN2CejYZ_8YXVBCIS0fPkZwWW7vpFOV_DzzcXTFZepx2iYq7-o5l6WJK4mCCp71ve0yTd7PAZsf3Dt4KyNaO8eb1xgfHRU02Uaw-xJb0qAi7kz0di278FrB1x2I0176N56FJS7M6w0XSNdC7fTe0lyY75smtfh882Aea2K4io-gDcXDLoAH_cLWMoH3fQ6rkN3VmlElzylu-g8nnHi8zLDJMPHnWD1lqE_oaQBLvartAHb7T4QjSO7VoRuyE7BSFPPPxS8ueY3MAkWjQpJIsaskMr3OezI2dVyJa9Uec9eiVsIsVia6J1EmK2E6tez-1i6hbOiiS6aB9tMl6VwnOB2pKtfvHI-NgyKTeGiXqhWrLDOaDd",
+            "width": 4032
+          }
+        ],
+        "place_id": "ChIJDQA3EX1LHRURbVnMqnXQS3Y",
+        "price_level": 2,
+        "rating": 4.2,
+        "reference": "ChIJDQA3EX1LHRURbVnMqnXQS3Y",
+        "types": [
+          "bar",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 1291
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Mikve Israel St 8, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0621851,
+            "lng": 34.7745888
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.06359627989272,
+              "lng": 34.77590817989272
+            },
+            "southwest": {
+              "lat": 32.06089662010728,
+              "lng": 34.77320852010727
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Bavel TLV",
+        "opening_hours": {
+          "open_now": false
+        },
+        "photos": [
+          {
+            "height": 2947,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/107652159556473160559\">Bavel TLV</a>"
+            ],
+            "photo_reference": "AcnlKN0mHeONRmI9hpiNr20AWxK_yVKec9VMwW_jD40C4sPqF-YlVhNSsdmBLD6bOdcrCzvTlq_oU9yHDIoeZN9ZjRq1-jP6lnKMdPcgj7v3_txY-KdNsCZpRVgS76Pu13CKhjC0CawtQTtec_36jy047Q6G9Rsut4Z7U916eUc3y_WKQteVvCF_CRisGi6hse0LStkfNy_cLyiAtk_i59RpArcESf8rIX38DlLOpiQgnF8E4ypTscvjSShmZuJYo2NlO9W-oWpUfHI82PHNHvSrtsRCSLULfc7Hvk2iIWC0l3chtdHjuUo",
+            "width": 4420
+          }
+        ],
+        "place_id": "ChIJP5hRKxFLHRUR9OQSg0nq-w0",
+        "price_level": 2,
+        "rating": 4.3,
+        "reference": "ChIJP5hRKxFLHRUR9OQSg0nq-w0",
+        "types": [
+          "bar",
+          "night_club",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 529
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Nachmani St 23-25, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0658788,
+            "lng": 34.7754891
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.06718962989272,
+              "lng": 34.77682437989272
+            },
+            "southwest": {
+              "lat": 32.06448997010728,
+              "lng": 34.77412472010727
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "Library Bar",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 3024,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/113006083662698661009\">Yotam Kadishay</a>"
+            ],
+            "photo_reference": "AcnlKN2xS__sgXIEOhTr_bHIlgrjXDCrrhHcyuQuyFCtK3lMjohQAGFLYudy42vPtHuRnBq7Mo0U7MxrBeu48INveyetT26_mIzu3U02TkxyzZaummFSrPdhH1TXrpFOnw-0C5gDyY-DNtqixTb89zpg_lBBQUcm6AqyUp4ijW_LctLHYAxeYUlKDVuj3tiV_SPgBayVBVTEHxAra5ZxRyw-dCqFXTtMa0s6uvD_AKVz5xAcOVtalFiZHZ21rm_8Y2_XKxAA6whVl8fF5_c1Fmu6zV_nzklLL-CitGxwa969Kb2ecbt1oh6gaLuUfdpMDFcNeoSwx__r91qxRR8vYsv7HL4IIE6dbpodpqIg3lknlKQm-tJFZgz3lijk8dJB4mzW7_5ErHNvAxyty2kWatafrDthYHXL2KA07oO-V0GrNyikstVWlMl7hRcdTLq9epfOuBa-yWLKc8CdlumgItVJk3YCsVgFo7AlbVvGcKqofb5bxxehWoYtdWjmn_WJ3c4XoG3DINJnKvzPHF3Kc0vALjbXeAMpuKLY56dW_wDpf8c9_7YforEt-B3w_-X-xRp5YrEr6JHz",
+            "width": 4032
+          }
+        ],
+        "place_id": "ChIJs6S0nn1LHRURITpXoJu6T0g",
+        "rating": 4.4,
+        "reference": "ChIJs6S0nn1LHRURITpXoJu6T0g",
+        "types": [
+          "bar",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 175
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Shlomo Ibn Gabirol St 151, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0906802,
+            "lng": 34.7826725
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.09201842989273,
+              "lng": 34.78409292989272
+            },
+            "southwest": {
+              "lat": 32.08931877010728,
+              "lng": 34.78139327010727
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "The Mezeg",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 2136,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/116324415912844131845\">Caroline Klein</a>"
+            ],
+            "photo_reference": "AcnlKN2YAZNjlWlsV5zWFR7S1u0gpPv5FKviDVHA7rTVYrbWuvCRVUp-l5rii4Lu-O88zo3hT8-cpXbbyL8ugBS-XC0pLOTEuy_vs0TrxIUF7JwaWCTeem6-M8IMk2HQRr3C9rrrwsHSzXsB1kiy3JJ5nEGt4A41rzyQkaqFCufjYG3o7qEeEtKya_POnaki4KDYz2R9WIOFHjBN-SEW9zpRnnTKnI9v29CqLgJHOO8xZN88-ql1SHMZN5sxR_-X3jx6WrRSEkkuxQ_DeN48X60WQtKZzyp6L4N-lDcV29vGsQauVmnCmyvl8aIn2QekOErRa0867hwDpNNHqwj0ZgUoCKYv6teRxr8JAd3Noq-cYiKDQcUhFvmtIetzAxfy_5-5ukk4pp1UJUZBPp-AwWNs7HWBI9VGL2sOQjccuwMyjSr53clxi58Ni8ig-xJssSZGKNZ8BzfxHvHctlm49y83A5uCx9uO40z3sqQhEH4HJF-gZ-hBJg-XqmhxImmfEO2yXiS-0IiKbOcCU5dukIyJlED3fPhmn9ZzWHtjSI23tjXX0hj74SaMzf1ofEQSj39My3DSstOt",
+            "width": 4624
+          }
+        ],
+        "place_id": "ChIJcTB10_JLHRURQghn5G-3QAY",
+        "price_level": 2,
+        "rating": 4.3,
+        "reference": "ChIJcTB10_JLHRURQghn5G-3QAY",
+        "types": [
+          "bar",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 1152
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Harav Reines St 2, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0781869,
+            "lng": 34.7747627
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.07960317989272,
+              "lng": 34.77602352989272
+            },
+            "southwest": {
+              "lat": 32.07690352010728,
+              "lng": 34.77332387010728
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet",
+        "name": "Beer Garden",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 938,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/105310125101387439906\">ביר גארדן כיכר דיזנגוף</a>"
+            ],
+            "photo_reference": "AcnlKN3Ulev8Ym-p2kcCXZWK6-n_e4GsWya-gBDCDzQxGnPvYXszR37ZpZnQuL3uW9bbaC0DgMhqeaTMDZA1yENNDurrQrPFUpui4bPoag9LTQbz6i_jJhoNkF63xWTobgG9kUHmNCfaVQGG9EpknvY9752I3hUYCDB599QtMF8ZXrx1Da_fa-IEayZ54uxQFXL6kFh3RNHJzu81uLitFXENYX8K_lGONYbNBGzj5lY2ptp-nf4qdAq8HhkiLKiPfMkfiHCwIhFFzxDSFHoll61nR4-SR8UwQHhP6D_R7FKdy2xXpzeDZ-Y",
+            "width": 1669
+          }
+        ],
+        "place_id": "ChIJg9zCUYdLHRUR-Gfh0Ugk5Js",
+        "price_level": 2,
+        "rating": 4.5,
+        "reference": "ChIJg9zCUYdLHRUR-Gfh0Ugk5Js",
+        "types": [
+          "restaurant",
+          "bar",
+          "food",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 4637
+      },
+      {
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Dizengoff St 92, כניסה א, Tel Aviv-Yafo, Israel",
+        "geometry": {
+          "location": {
+            "lat": 32.0773002,
+            "lng": 34.7744971
+          },
+          "viewport": {
+            "northeast": {
+              "lat": 32.07864002989272,
+              "lng": 34.77578937989272
+            },
+            "southwest": {
+              "lat": 32.07594037010728,
+              "lng": 34.77308972010728
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/bar_pinlet",
+        "name": "A La Bar",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 2448,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/104894188484082909618\">A La Bar</a>"
+            ],
+            "photo_reference": "AcnlKN0YPQr048Lysdo_fCP-OzRbSZfVIglb92DhZV3XEVEyDoNrxgiyjh7bmiTprE6neY3DJmtS6HW6WDJP59-1FIytFJp3twVhYehrsRR-z86mz1s6j2YVFTNVR0m-m-PhuStFFHIlNqxN3KurlJLQ-euJiaUm3IyWOE6M07Z3PO72CBE4IfJ25JVm9nFF2nWh7I8_u64wU-APwhRStWuX5skaEjvLkPJM0qqq85_jnmlPDb-99rqKe_OyaA2TJll6yUN_NQT99H5FELxwBSfhevDHoKtp5HdVvPgMHSHdJd22jh4OvB4",
+            "width": 3264
+          }
+        ],
+        "place_id": "ChIJS8UXpIBLHRURqlDE7A4it84",
+        "price_level": 2,
+        "rating": 4.6,
+        "reference": "ChIJS8UXpIBLHRURqlDE7A4it84",
+        "types": [
+          "bar",
+          "restaurant",
+          "food",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 596
+      }
+    ],
+    "status": "OK"
+  }
+}

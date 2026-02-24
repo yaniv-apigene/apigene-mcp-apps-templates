@@ -1,0 +1,58 @@
+{
+  "name": "@apigene/mcp-app-playground",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.0.4",
+  "description": "MCP app templates with local preview and MCP demo tools",
+  "type": "module",
+  "author": "Apigene <hello@apigene.ai> (https://apigene.ai)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apigene/mcp-apps.git"
+  },
+  "homepage": "https://github.com/apigene/mcp-apps",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "templates",
+    "mcp-apps",
+    "apigene",
+    "claude",
+    "mcpjam"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.24.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "tsx": "^4.21.0",
+    "zod": "^3.24.1"
+  },
+  "bin": {
+    "mcp-app-playground": "./bin/mcp-app-playground.mjs"
+  },
+  "files": [
+    "bin",
+    "examples",
+    "playground",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "echo 'No build step — examples run as ES modules'",
+    "dev": "node bin/mcp-app-playground.mjs start",
+    "start": "node bin/mcp-app-playground.mjs start",
+    "lab": "node playground/playground-app/server.mjs",
+    "list": "node bin/mcp-app-playground.mjs list",
+    "mcp:http": "node --import tsx playground/playground-mcp-server/main.ts",
+    "mcp:stdio": "node --import tsx playground/playground-mcp-server/main.ts --stdio",
+    "build:examples": "node bin/mcp-app-playground.mjs build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6"
+  }
+}

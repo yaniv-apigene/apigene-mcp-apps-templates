@@ -1,0 +1,174 @@
+{
+  "timer": [{"total_posts": 17, "total_count": 20, "total_elapsed": 0.835}],
+  "posts": [
+    {
+      "post": {
+        "slug": "42792802",
+        "version": 1,
+        "venue_name": "בוצ'רי דה ברילוצ'ה ",
+        "page_slug": "61194239",
+        "availability_search": 0.046
+      },
+      "availability": {
+        "page": {
+          "title": "מצאנו מספר מקומות פנויים עבורך",
+          "showLess": "תראו לי פחות",
+          "showMore": "תראו לי יותר",
+          "subtitle": "ל%date% בסביבות %time% עבור %size%",
+          "generalError": "מצטערים, נראה שנתקלת בשגיאה במערכת"
+        },
+        "areas": [
+          {
+            "id": "ישיבה בפנים",
+            "icon": "inside",
+            "name": "בפנים ",
+            "text": "שולחן בפנים",
+            "options": [
+              {"time": "1830", "method": "seat", "text": "אישור מיידי", "score": 5},
+              {"time": "1900", "method": "seat", "text": "אישור מיידי", "score": 1}
+            ],
+            "score": 1
+          },
+          {
+            "id": "מרפסת",
+            "icon": "outside",
+            "name": "מרפסת - ללא עישון",
+            "text": "",
+            "options": [
+              {"time": "1900", "method": "seat", "text": "אישור מיידי", "score": 1}
+            ],
+            "score": 2
+          }
+        ],
+        "recommended": [
+          {"id": "ישיבה בפנים", "time": "1900", "method": "seat", "text": "בפנים "},
+          {"id": "מרפסת", "time": "1900", "method": "seat", "text": "מרפסת - ללא עישון"}
+        ],
+        "method": "seat",
+        "formattedRequest": {
+          "date": "רביעי 18 בפברואר",
+          "mediumDate": "רביעי 18 בפבר׳",
+          "shortDate": "ד׳ 18 בפבר׳",
+          "time": "19:00",
+          "size": "2 אנשים",
+          "service": "2 אנשים"
+        },
+        "venue": {"slug": "94694599"},
+        "availability_id": "699596cd5cf9ec002e4249e1"
+      }
+    },
+    {
+      "post": {
+        "slug": "58408121",
+        "version": 52,
+        "venue_name": "מסעדת a",
+        "page_slug": "83077556",
+        "availability_search": 0.045
+      },
+      "availability": {
+        "page": {
+          "title": "מצאנו מספר מקומות פנויים עבורך",
+          "showLess": "תראו לי פחות",
+          "showMore": "תראו לי יותר",
+          "subtitle": "ל%date% בסביבות %time% עבור %size%",
+          "generalError": "מצטערים, נראה שנתקלת בשגיאה במערכת"
+        },
+        "areas": [
+          {
+            "id": "בפנים",
+            "icon": "restaurant",
+            "name": "בפנים",
+            "text": "",
+            "options": [
+              {"time": "1915", "method": "seat", "text": "אישור מיידי", "score": 1}
+            ],
+            "score": 2
+          },
+          {
+            "id": "בר",
+            "icon": "bar",
+            "name": "בר",
+            "text": "",
+            "options": [
+              {"time": "1900", "method": "seat", "text": "אישור מיידי", "score": 1}
+            ],
+            "score": 1
+          }
+        ],
+        "recommended": [
+          {"id": "בר", "time": "1900", "method": "seat", "text": "בר"},
+          {"id": "בפנים", "time": "1915", "method": "seat", "text": "בפנים"}
+        ],
+        "method": "seat",
+        "formattedRequest": {
+          "date": "רביעי 18 בפברואר",
+          "mediumDate": "רביעי 18 בפבר׳",
+          "shortDate": "ד׳ 18 בפבר׳",
+          "time": "19:00",
+          "size": "2 אנשים",
+          "service": "2 אנשים"
+        },
+        "venue": {"slug": "24975144"},
+        "availability_id": "699593dd946c37002dcdbc22"
+      }
+    },
+    {
+      "post": {"slug": "59467439", "venue_name": "מרים  - חיים כהן "},
+      "availability": {
+        "areas": [
+          {"id": "בר", "name": "בר", "options": [{"time": "1915", "method": "seat", "text": "אישור מיידי"}]},
+          {"id": "מסעדה", "name": "מסעדה", "options": [{"time": "1900", "method": "standby", "text": "רשימת המתנה"}]}
+        ],
+        "recommended": [{"id": "בר", "time": "1915", "method": "seat", "text": "בר"}],
+        "formattedRequest": {"date": "רביעי 18 בפברואר", "shortDate": "ד׳ 18 בפבר׳", "time": "19:00", "size": "2 אנשים"}
+      }
+    },
+    {
+      "post": {"slug": "68208923", "venue_name": "סנטי"},
+      "availability": {
+        "areas": [{"id": "סנטי", "name": "סנטי", "options": [{"time": "1915", "method": "seat", "text": "אישור מיידי"}]}],
+        "recommended": [{"id": "סנטי", "time": "1915", "method": "seat", "text": "סנטי"}],
+        "formattedRequest": {"date": "רביעי 18 בפברואר", "shortDate": "ד׳ 18 בפבר׳", "time": "19:00", "size": "2 אנשים"}
+      }
+    },
+    {
+      "post": {"slug": "60878996", "venue_name": "ג'וניפר - מא פאו"},
+      "availability": {
+        "areas": [{"id": "מסעדה", "name": "מסעדה", "options": [{"time": "1900", "method": "seat", "text": "אישור מיידי"}]}],
+        "recommended": [{"id": "מסעדה", "time": "1900", "method": "seat", "text": "מסעדה"}],
+        "formattedRequest": {"date": "רביעי 18 בפברואר", "shortDate": "ד׳ 18 בפבר׳", "time": "19:00", "size": "2 אנשים"}
+      }
+    },
+    {
+      "post": {"slug": "97358841", "venue_name": " De Facto"},
+      "availability": {
+        "areas": [{"id": "חלל המסעדה", "name": "מסעדה - חלל המסעדה", "text": "דיג׳יי מהשעה 20:30", "options": [{"time": "1900", "method": "seat", "text": "אישור מיידי"}]}],
+        "recommended": [{"id": "חלל המסעדה", "time": "1900", "method": "seat", "text": "מסעדה - חלל המסעדה"}],
+        "formattedRequest": {"date": "רביעי 18 בפברואר", "shortDate": "ד׳ 18 בפבר׳", "time": "19:00", "size": "2 אנשים"}
+      }
+    },
+    {
+      "post": {"slug": "99831893", "venue_name": "לה טיגרה פלורנטין"},
+      "availability": {
+        "areas": [
+          {"id": "בפנים", "name": "בפנים", "options": [{"time": "1900", "method": "seat", "text": "אישור מיידי"}]},
+          {"id": "בר בפנים", "name": "בר בפנים", "options": [{"time": "1900", "method": "seat", "text": "אישור מיידי"}]}
+        ],
+        "recommended": [{"id": "בפנים", "time": "1900", "method": "seat", "text": "בפנים"}],
+        "formattedRequest": {"date": "רביעי 18 בפברואר", "shortDate": "ד׳ 18 בפבר׳", "time": "19:00", "size": "2 אנשים"}
+      }
+    },
+    {
+      "post": {"slug": "21745366", "venue_name": "מנרה"},
+      "availability": {
+        "areas": [
+          {"id": "בפנים", "name": "שולחן", "options": [{"time": "1900", "method": "seat", "text": "אישור מיידי"}]},
+          {"id": "בר", "name": "בר", "options": [{"time": "1900", "method": "seat", "text": "אישור מיידי"}]}
+        ],
+        "recommended": [{"id": "בפנים", "time": "1900", "method": "seat", "text": "שולחן"}],
+        "formattedRequest": {"date": "רביעי 18 בפברואר", "shortDate": "ד׳ 18 בפבר׳", "time": "19:00", "size": "2 אנשים"}
+      }
+    }
+  ],
+  "total": 28
+}

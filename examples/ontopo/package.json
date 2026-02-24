@@ -1,0 +1,20 @@
+{
+  "name": "mcp-app-ontopo",
+  "version": "1.0.0",
+  "description": "Ontopo restaurant availability results – view places and time slots in Ontopo style",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0",
+    "vite-plugin-singlefile": "^2.0.0"
+  }
+}

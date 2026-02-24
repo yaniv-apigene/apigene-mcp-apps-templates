@@ -1,0 +1,597 @@
+/* ============================================
+   SLACK MESSAGE SEARCH STYLES
+   ============================================
+   
+   Styles for displaying Slack messages in a Slack-like interface
+   ============================================ */
+
+.slack-container {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #ffffff;
+  color: #1d1c1d;
+}
+
+body.dark .slack-container {
+  background: #1a1d24;
+  color: #d1d2d3;
+}
+
+/* Header */
+.slack-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e8e8e8;
+  background: #f8f8f8;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+body.dark .slack-header {
+  background: #2c2d30;
+  border-bottom-color: #3d3e42;
+}
+
+.header-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-bar-container {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 400px;
+}
+
+.slack-search-input {
+  width: 100%;
+  padding: 8px 32px 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background: #ffffff;
+  color: #1d1c1d;
+  transition: border-color 0.2s ease;
+}
+
+.slack-search-input:focus {
+  outline: none;
+  border-color: #1264a3;
+  box-shadow: 0 0 0 3px rgba(18, 100, 163, 0.1);
+}
+
+body.dark .slack-search-input {
+  background: #1a1d24;
+  border-color: #3d3e42;
+  color: #d1d2d3;
+}
+
+body.dark .slack-search-input:focus {
+  border-color: #2eb886;
+  box-shadow: 0 0 0 3px rgba(46, 184, 134, 0.1);
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #616061;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  line-height: 1;
+  border-radius: 2px;
+}
+
+.search-clear-btn:hover {
+  background: #e8e8e8;
+  color: #1d1c1d;
+}
+
+body.dark .search-clear-btn {
+  color: #9e9ea0;
+}
+
+body.dark .search-clear-btn:hover {
+  background: #3d3e42;
+  color: #d1d2d3;
+}
+
+.slack-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.slack-filter {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #ffffff;
+  color: #1d1c1d;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+body.dark .slack-filter {
+  background: #1a1d24;
+  border-color: #3d3e42;
+  color: #d1d2d3;
+}
+
+.header-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #e8e8e8;
+}
+
+body.dark .header-bottom {
+  border-top-color: #3d3e42;
+}
+
+.search-query {
+  font-size: 14px;
+  color: #616061;
+}
+
+body.dark .search-query {
+  color: #9e9ea0;
+}
+
+.search-query strong {
+  color: #1d1c1d;
+  font-weight: 600;
+}
+
+body.dark .search-query strong {
+  color: #d1d2d3;
+}
+
+.search-stats {
+  font-size: 13px;
+  color: #616061;
+}
+
+body.dark .search-stats {
+  color: #9e9ea0;
+}
+
+/* Messages container */
+.slack-messages {
+  padding: 8px 0;
+}
+
+/* Individual message */
+.slack-message {
+  padding: 12px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.1s ease;
+}
+
+body.dark .slack-message {
+  border-bottom-color: #3d3e42;
+}
+
+.slack-message:hover {
+  background-color: #f8f8f8;
+}
+
+body.dark .slack-message:hover {
+  background-color: #2c2d30;
+}
+
+.slack-message:last-child {
+  border-bottom: none;
+}
+
+/* Message header */
+.message-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.channel-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #e8e5e5;
+  color: #1d1c1d;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.channel-badge:hover {
+  background: #d1d1d1;
+}
+
+body.dark .channel-badge {
+  background: #3d3e42;
+  color: #d1d2d3;
+}
+
+body.dark .channel-badge:hover {
+  background: #4d4e52;
+}
+
+.message-user {
+  font-weight: 600;
+  font-size: 15px;
+  color: #1d1c1d;
+}
+
+body.dark .message-user {
+  color: #d1d2d3;
+}
+
+.message-timestamp {
+  font-size: 12px;
+  color: #616061;
+  margin-left: auto;
+  cursor: help;
+}
+
+body.dark .message-timestamp {
+  color: #9e9ea0;
+}
+
+.message-link {
+  color: #616061;
+  text-decoration: none;
+  font-size: 14px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+.message-link:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+body.dark .message-link {
+  color: #9e9ea0;
+}
+
+body.dark .message-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Message content */
+.message-content {
+  margin-top: 4px;
+  padding-left: 0;
+}
+
+.message-text {
+  font-size: 15px;
+  line-height: 1.46668;
+  color: #1d1c1d;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+body.dark .message-text {
+  color: #d1d2d3;
+}
+
+/* Links */
+.slack-link {
+  color: #1264a3;
+  text-decoration: none;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.slack-link:hover {
+  text-decoration: underline;
+}
+
+body.dark .slack-link {
+  color: #2eb886;
+}
+
+/* Mentions */
+.slack-mention {
+  color: #1264a3;
+  font-weight: 600;
+  background: rgba(18, 100, 163, 0.1);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+body.dark .slack-mention {
+  color: #2eb886;
+  background: rgba(46, 184, 134, 0.15);
+}
+
+/* Channel references */
+.slack-channel-ref {
+  color: #1264a3;
+  font-weight: 600;
+}
+
+body.dark .slack-channel-ref {
+  color: #2eb886;
+}
+
+/* Rich text blocks */
+.slack-blocks {
+  margin-top: 8px;
+}
+
+.rich-text-block {
+  font-size: 15px;
+  line-height: 1.46668;
+  color: #1d1c1d;
+}
+
+body.dark .rich-text-block {
+  color: #d1d2d3;
+}
+
+.rich-text-block {
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.rich-text-block a {
+  color: #1264a3;
+  text-decoration: none;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.rich-text-block a:hover {
+  text-decoration: underline;
+}
+
+body.dark .rich-text-block a {
+  color: #2eb886;
+}
+
+/* Attachments */
+.slack-attachment {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #f8f8f8;
+  border-left: 4px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  position: relative;
+}
+
+body.dark .slack-attachment {
+  background: #2c2d30;
+  border-left-color: #3d3e42;
+}
+
+/* Color-coded attachment borders */
+.slack-attachment[style*="border-left-color: #2eb886"] {
+  border-left-color: #2eb886 !important;
+}
+
+.slack-attachment[style*="border-left-color: #a30200"] {
+  border-left-color: #a30200 !important;
+}
+
+.slack-attachment[style*="border-left-color: #ffcc02"] {
+  border-left-color: #ffcc02 !important;
+}
+
+.attachment-author {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.author-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+.author-link,
+.author-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: #1d1c1d;
+}
+
+body.dark .author-link,
+body.dark .author-name {
+  color: #d1d2d3;
+}
+
+.author-link {
+  text-decoration: none;
+}
+
+.author-link:hover {
+  text-decoration: underline;
+}
+
+.attachment-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #1d1c1d;
+}
+
+body.dark .attachment-title {
+  color: #d1d2d3;
+}
+
+.attachment-title a {
+  color: #1264a3;
+  text-decoration: none;
+}
+
+.attachment-title a:hover {
+  text-decoration: underline;
+}
+
+body.dark .attachment-title a {
+  color: #2eb886;
+}
+
+.attachment-text {
+  margin-top: 4px;
+  line-height: 1.46668;
+  color: #1d1c1d;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+body.dark .attachment-text {
+  color: #d1d2d3;
+}
+
+.attachment-fields {
+  margin-top: 8px;
+  display: grid;
+  gap: 8px;
+}
+
+.attachment-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.field-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: #1d1c1d;
+}
+
+body.dark .field-title {
+  color: #d1d2d3;
+}
+
+.field-value {
+  font-size: 13px;
+  line-height: 1.46668;
+  color: #616061;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+body.dark .field-value {
+  color: #9e9ea0;
+}
+
+.attachment-footer {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #616061;
+  line-height: 1.46668;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+body.dark .attachment-footer {
+  color: #9e9ea0;
+}
+
+/* Improve message spacing and Slack-like feel */
+.slack-message {
+  position: relative;
+}
+
+.slack-message::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+.slack-message:hover::before {
+  background: #1264a3;
+}
+
+body.dark .slack-message:hover::before {
+  background: #2eb886;
+}
+
+/* Empty state */
+.slack-messages:empty::before {
+  content: 'No messages match your filters';
+  display: block;
+  padding: 40px 20px;
+  text-align: center;
+  color: #616061;
+  font-size: 14px;
+}
+
+body.dark .slack-messages:empty::before {
+  color: #9e9ea0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .slack-header {
+    padding: 12px 16px;
+  }
+  
+  .header-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-bar-container {
+    max-width: 100%;
+  }
+  
+  .slack-filters {
+    flex-direction: column;
+  }
+  
+  .slack-filter {
+    width: 100%;
+  }
+  
+  .slack-message {
+    padding: 12px 16px;
+  }
+  
+  .message-header {
+    gap: 6px;
+  }
+  
+  .message-timestamp {
+    margin-left: 0;
+  }
+}

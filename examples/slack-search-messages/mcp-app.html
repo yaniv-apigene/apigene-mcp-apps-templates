@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MCP App: Slack Message Search</title>
+  <!--
+    Base Template for MCP Apps
+    
+    This template provides the common structure and utilities for MCP app templates.
+    It handles the standard MCP protocol message format: ui/notifications/tool-result
+    
+    To use:
+    1. Copy this entire directory (base-mcp-template)
+    2. Rename the directory to your app name (e.g., "my-app-mcp")
+    3. Update the title tag above
+    4. Add template-specific styles in src/mcp-app.css
+    5. Implement your renderData() function in src/mcp-app.ts
+    6. Add any external dependencies (like Chart.js) in the head section below
+    
+    Message Format:
+    {
+      jsonrpc: '2.0',
+      method: 'ui/notifications/tool-result',
+      params: { structuredContent: <your data> }
+    }
+    
+    See README.md for detailed guidelines.
+  -->
+  <link rel="stylesheet" href="src/global.css">
+  <link rel="stylesheet" href="src/mcp-app.css">
+  <!-- 
+    CSP Configuration Note:
+    If this app uses external resources (fonts, images, scripts, APIs), you MUST configure
+    CSP metadata in your MCP server's resources/read handler. See CSP_GUIDE.md for details.
+    
+    External dependencies require CSP configuration:
+    - External fonts → add to resourceDomains
+    - External images → add to resourceDomains  
+    - External scripts/styles → add to resourceDomains
+    - API calls → add to connectDomains
+    - Iframes → add to frameDomains
+    
+    Example: <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    Requires: resourceDomains: ["https://cdn.jsdelivr.net"]
+  -->
+  
+  <!-- 
+    ============================================
+    BOILERPLATE CODE EXAMPLES
+    ============================================
+    Copy these code snippets into src/mcp-app.ts to get started quickly.
+    Remove the comments and customize as needed.
+    ============================================
+    
+    EXAMPLE 1: Simple List Display
+    ============================================
+    
+    function renderData(data: any) {
+      const app = document.getElementById('app');
+      if (!app) return;
+      
+      const unwrapped = unwrapData(data);
+      const items = Array.isArray(unwrapped) ? unwrapped : unwrapped.items || [];
+      
+      if (items.length === 0) {
+        showEmpty('No items found');
+        return;
+      }
+      
+      app.innerHTML = `
+        <div class="container">
+          <h1>Items (${items.length})</h1>
+          <ul class="item-list">
+            ${items.map(item => `
+              <li class="item">
+                <h3>${escapeHtml(item.title || 'Untitled')}</h3>
+                <p>${escapeHtml(item.description || '')}</p>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      `;
+      
+      setTimeout(() => notifySizeChanged(), 50);
+    }
+    
+    ============================================
+    EXAMPLE 2: Table Display
+    ============================================
+    
+    function renderData(data: any) {
+      const app = document.getElementById('app');
+      if (!app) return;
+      
+      const unwrapped = unwrapData(data);
+      const columns = unwrapped.columns || [];
+      const rows = unwrapped.rows || [];
+      
+      if (rows.length === 0) {
+        showEmpty('No data available');
+        return;
+      }
+      
+      app.innerHTML = `
+        <div class="container">
+          <h1>Data Table</h1>
+          <table class="data-table">
+            <thead>
+              <tr>
+                ${columns.map(col => `<th>${escapeHtml(col)}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(row => `
+                <tr>
+                  ${Array.isArray(row) 
+                    ? row.map(cell => `<td>${escapeHtml(String(cell))}</td>`).join('')
+                    : columns.map(col => `<td>${escapeHtml(String(row[col] || ''))}</td>`).join('')
+                  }
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+      
+      setTimeout(() => notifySizeChanged(), 50);
+    }
+    
+    ============================================
+    EXAMPLE 3: Card Grid Layout
+    ============================================
+    
+    function renderData(data: any) {
+      const app = document.getElementById('app');
+      if (!app) return;
+      
+      const unwrapped = unwrapData(data);
+      const items = Array.isArray(unwrapped) ? unwrapped : unwrapped.results || [];
+      
+      if (items.length === 0) {
+        showEmpty('No items found');
+        return;
+      }
+      
+      app.innerHTML = `
+        <div class="container">
+          <h1>Results (${items.length})</h1>
+          <div class="card-grid">
+            ${items.map(item => `
+              <div class="card">
+                <h3>${escapeHtml(item.title || item.name || 'Untitled')}</h3>
+                <p>${escapeHtml(item.description || item.summary || '')}</p>
+                ${item.url ? `<a href="${escapeHtml(item.url)}" target="_blank">View →</a>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      
+      setTimeout(() => notifySizeChanged(), 50);
+    }
+    
+    ============================================
+    EXAMPLE 4: Simple Key-Value Display
+    ============================================
+    
+    function renderData(data: any) {
+      const app = document.getElementById('app');
+      if (!app) return;
+      
+      const unwrapped = unwrapData(data);
+      
+      if (!unwrapped || typeof unwrapped !== 'object') {
+        showEmpty('Invalid data format');
+        return;
+      }
+      
+      app.innerHTML = `
+        <div class="container">
+          <h1>Details</h1>
+          <dl class="details-list">
+            ${Object.entries(unwrapped).map(([key, value]) => `
+              <div class="detail-item">
+                <dt>${escapeHtml(key)}</dt>
+                <dd>${escapeHtml(String(value || ''))}</dd>
+              </div>
+            `).join('')}
+          </dl>
+        </div>
+      `;
+      
+      setTimeout(() => notifySizeChanged(), 50);
+    }
+    
+    ============================================
+    EXAMPLE 5: Searchable/Filterable List
+    ============================================
+    
+    let allData: any[] = [];
+    let filteredData: any[] = [];
+    
+    function renderData(data: any) {
+      const app = document.getElementById('app');
+      if (!app) return;
+      
+      const unwrapped = unwrapData(data);
+      allData = Array.isArray(unwrapped) ? unwrapped : [];
+      filteredData = [...allData];
+      
+      renderFiltered();
+    }
+    
+    function renderFiltered() {
+      const app = document.getElementById('app');
+      if (!app) return;
+      
+      app.innerHTML = `
+        <div class="container">
+          <input 
+            type="text" 
+            id="search" 
+            placeholder="Search..." 
+            class="search-input"
+          />
+          <div class="results">
+            ${filteredData.length === 0 
+              ? '<p class="empty">No results found</p>'
+              : filteredData.map(item => `
+                <div class="result-item">
+                  <h3>${escapeHtml(item.title || 'Untitled')}</h3>
+                  <p>${escapeHtml(item.description || '')}</p>
+                </div>
+              `).join('')
+            }
+          </div>
+        </div>
+      `;
+      
+      const searchInput = document.getElementById('search') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const query = (e.target as HTMLInputElement).value.toLowerCase();
+          filteredData = allData.filter(item => 
+            (item.title || '').toLowerCase().includes(query) ||
+            (item.description || '').toLowerCase().includes(query)
+          );
+          renderFiltered();
+        });
+      }
+      
+      setTimeout(() => notifySizeChanged(), 50);
+    }
+    
+    ============================================
+    EXAMPLE 6: Chart.js Integration
+    ============================================
+    
+    // First, add Chart.js to the <head>:
+    // <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    // Then declare it: declare const Chart: any;
+    
+    let chartInstance: any = null;
+    
+    function renderData(data: any) {
+      const app = document.getElementById('app');
+      if (!app) return;
+      
+      const unwrapped = unwrapData(data);
+      const chartData = normalizeChartData(unwrapped);
+      
+      app.innerHTML = `
+        <div class="container">
+          <h1>Chart</h1>
+          <div class="chart-wrapper">
+            <canvas id="chart"></canvas>
+          </div>
+        </div>
+      `;
+      
+      setTimeout(() => {
+        const canvas = document.getElementById('chart') as HTMLCanvasElement;
+        if (canvas) {
+          renderChart(canvas, chartData);
+        }
+        notifySizeChanged();
+      }, 50);
+    }
+    
+    function normalizeChartData(data: any) {
+      // Transform your data into Chart.js format
+      return {
+        labels: data.labels || [],
+        datasets: [{
+          label: 'Data',
+          data: data.values || [],
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        }]
+      };
+    }
+    
+    function renderChart(canvas: HTMLCanvasElement, data: any) {
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+      
+      chartInstance = new Chart(canvas, {
+        type: 'line',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+        }
+      });
+    }
+    
+    ============================================
+    EXAMPLE 7: Expandable Cards
+    ============================================
+    
+    function renderData(data: any) {
+      const app = document.getElementById('app');
+      if (!app) return;
+      
+      const items = unwrapData(data);
+      const itemsArray = Array.isArray(items) ? items : [];
+      
+      app.innerHTML = `
+        <div class="container">
+          ${itemsArray.map((item: any, index: number) => `
+            <div class="card" data-index="${index}">
+              <div class="card-header" onclick="toggleCard(${index})">
+                <h3>${escapeHtml(item.title || 'Untitled')}</h3>
+                <span class="expand-icon">▼</span>
+              </div>
+              <div class="card-content">
+                <p>${escapeHtml(item.content || item.description || '')}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      
+      // Add toggle function to window
+      (window as any).toggleCard = function(index: number) {
+        const card = document.querySelector(`[data-index="${index}"]`);
+        if (card) {
+          card.classList.toggle('expanded');
+        }
+      };
+      
+      setTimeout(() => notifySizeChanged(), 50);
+    }
+    
+    ============================================
+    USEFUL UTILITY FUNCTIONS
+    ============================================
+    
+    // Format date
+    function formatDate(date: string | number): string {
+      return new Date(date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+    
+    // Format number with commas
+    function formatNumber(num: number): string {
+      return num.toLocaleString();
+    }
+    
+    // Truncate text
+    function truncate(text: string, maxLength: number): string {
+      if (text.length <= maxLength) return text;
+      return text.slice(0, maxLength) + '...';
+    }
+    
+    // Get nested property safely
+    function getNested(obj: any, path: string, defaultValue: any = null): any {
+      return path.split('.').reduce((current, prop) => {
+        return current && current[prop] !== undefined ? current[prop] : defaultValue;
+      }, obj);
+    }
+    
+    ============================================
+    CSS CLASSES TO USE
+    ============================================
+    
+    Common classes available (from global.css):
+    - .container - Main container with padding
+    - .loading - Loading state
+    - .error - Error message display
+    - .empty - Empty state display
+    
+    Add your own classes in src/mcp-app.css
+    
+    ============================================
+  -->
+</head>
+<body>
+  <div id="app">
+    <div class="loading">
+      <div class="loading-content">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <div class="loading-text">
+          <p class="loading-message">Loading data</p>
+          <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/mcp-app.ts"></script>
+</body>
+</html>

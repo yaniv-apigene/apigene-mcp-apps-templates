@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MCP App: Zara Product</title>
+  <!--
+    Zara Product MCP App
+    
+    Displays Zara product information including:
+    - Product name, price, and description
+    - Product images gallery
+    - Color and availability information
+    - Related products
+    - Product URL
+    
+    Message Format:
+    {
+      jsonrpc: '2.0',
+      method: 'ui/notifications/tool-result',
+      params: { structuredContent: <zara product data> }
+    }
+    
+    Expected data format:
+    {
+      status_code: 200,
+      body: [{
+        product_name: string,
+        price: number,
+        currency: string,
+        colour: string,
+        description: string,
+        image: string[],
+        availability: boolean,
+        url: string,
+        ...
+      }]
+    }
+  -->
+  <link rel="stylesheet" href="src/global.css">
+  <link rel="stylesheet" href="src/mcp-app.css">
+  <!-- 
+    CSP Configuration Note:
+    This app displays images from static.zara.net.
+    The MCP server must configure CSP with:
+    resourceDomains: ["https://static.zara.net"]
+  -->
+</head>
+<body>
+  <div id="app">
+    <div class="loading">
+      <div class="loading-content">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <div class="loading-text">
+          <p class="loading-message">Loading product data</p>
+          <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/mcp-app.ts"></script>
+</body>
+</html>

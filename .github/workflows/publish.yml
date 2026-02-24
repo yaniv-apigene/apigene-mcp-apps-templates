@@ -1,0 +1,57 @@
+# Build and publish @apigene/mcp-app-playground to npm (enables npx @apigene/mcp-app-playground)
+# Trigger: push a version tag (e.g. v0.0.3) or run manually via Actions tab.
+#
+# Uses npm trusted publishing (OIDC) — no long-lived NPM_TOKEN needed for publish.
+# One-time setup: In npm package Settings → Trusted Publisher, add this workflow:
+#   Provider: GitHub Actions
+#   Organization/user: <your-org-or-username>
+#   Repository: <this-repo-name>
+#   Workflow filename: publish.yml
+#
+# If the package has private dependencies, add NPM_READ_TOKEN (read-only) to repo
+# Secrets and pass it only to npm ci (see npm docs for trusted publishing).
+
+name: Build and Publish to npm
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # Required for OIDC trusted publishing
+  contents: read
+
+jobs:
+  build-and-publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build examples
+        run: npm run build:examples
+
+      - name: Publish to npm
+        run: npm publish --access public
+
+      - name: Create success summary
+        run: |
+          echo "## ✅ NPM Package Published Successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Package:** [@apigene/mcp-app-playground](https://www.npmjs.com/package/@apigene/mcp-app-playground)" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Run with: \`npx @apigene/mcp-app-playground\`" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,500 @@
+/* ============================================
+   TEMPLATE-SPECIFIC STYLES (LinkedIn Post)
+   ============================================ */
+
+.linkedin-post-container {
+  max-width: 1128px;
+  margin: 0 auto;
+}
+
+/* Post Card */
+.post-card {
+  background: #fff;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 8px;
+}
+
+body.dark .post-card {
+  background: #1d2226;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Post Header */
+.post-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.dark .post-header {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.author-link {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+}
+
+.author-link:hover {
+  text-decoration: none;
+}
+
+.author-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-fallback {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.author-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.author-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 1.3;
+}
+
+body.dark .author-name {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.author-name:hover {
+  color: #0a66c2;
+  text-decoration: underline;
+}
+
+body.dark .author-name:hover {
+  color: #70b5f9;
+}
+
+.author-headline {
+  font-size: 0.8125rem;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 2px;
+  line-height: 1.4;
+}
+
+body.dark .author-headline {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.post-date {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.6);
+  line-height: 1.4;
+}
+
+body.dark .post-date {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Post Content */
+.post-content {
+  padding: 12px 16px;
+}
+
+.post-text {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.9);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-bottom: 12px;
+}
+
+body.dark .post-text {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.post-text-html {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.9);
+  word-wrap: break-word;
+  margin-bottom: 12px;
+}
+
+body.dark .post-text-html {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.post-images {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.post-image-wrapper {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f3f2ef;
+}
+
+body.dark .post-image-wrapper {
+  background: #192734;
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 600px;
+  object-fit: contain;
+}
+
+/* Engagement Metrics */
+.post-engagement {
+  padding: 8px 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.dark .post-engagement {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.engagement-stats {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+
+.engagement-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+body.dark .engagement-item {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.engagement-icon {
+  font-size: 1rem;
+}
+
+.engagement-count {
+  font-weight: 500;
+}
+
+.post-link-wrapper {
+  margin-top: 8px;
+}
+
+.post-link {
+  color: #0a66c2;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+body.dark .post-link {
+  color: #70b5f9;
+}
+
+.post-link:hover {
+  text-decoration: underline;
+}
+
+/* Comments Section */
+.comments-section {
+  background: #fff;
+  border-radius: 0;
+  padding: 16px 24px;
+  margin-bottom: 8px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+body.dark .comments-section {
+  background: #1d2226;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.comments-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 1.3;
+}
+
+body.dark .comments-title {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.comment-card {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.dark .comment-card {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.comment-card:last-child {
+  border-bottom: none;
+}
+
+.comment-author-link {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+}
+
+.comment-author-link:hover {
+  text-decoration: none;
+}
+
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.comment-content-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.comment-author-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 1.3;
+}
+
+body.dark .comment-author-name {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.comment-author-name:hover {
+  color: #0a66c2;
+  text-decoration: underline;
+}
+
+body.dark .comment-author-name:hover {
+  color: #70b5f9;
+}
+
+.comment-date {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+body.dark .comment-date {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.comment-text {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.9);
+  word-wrap: break-word;
+  margin-bottom: 4px;
+}
+
+body.dark .comment-text {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.comment-tagged {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 4px;
+}
+
+body.dark .comment-tagged {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.comment-reactions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+body.dark .comment-reactions {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.reaction-icon {
+  font-size: 0.875rem;
+}
+
+.reaction-count {
+  font-weight: 500;
+}
+
+/* Post Metadata */
+.post-metadata {
+  background: #fff;
+  border-radius: 0;
+  padding: 16px 24px;
+  margin-bottom: 8px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+body.dark .post-metadata {
+  background: #1d2226;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.metadata-item {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.dark .metadata-item {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.metadata-item:last-child {
+  border-bottom: none;
+}
+
+.metadata-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+  min-width: 120px;
+}
+
+body.dark .metadata-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.metadata-value {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+body.dark .metadata-value {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    padding: 0;
+    background: #f3f2ef;
+  }
+
+  body.dark {
+    background: #000000;
+  }
+
+  .linkedin-post-container {
+    max-width: 100%;
+  }
+
+  .post-card {
+    border-radius: 0;
+    margin-bottom: 0;
+  }
+
+  .post-header,
+  .post-content,
+  .post-engagement {
+    padding: 12px;
+  }
+
+  .comments-section,
+  .post-metadata {
+    padding: 16px;
+    border-radius: 0;
+    margin-bottom: 0;
+  }
+
+  .post-image {
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .post-header,
+  .post-content,
+  .post-engagement {
+    padding: 10px;
+  }
+
+  .comments-section,
+  .post-metadata {
+    padding: 12px;
+  }
+
+  .author-avatar,
+  .avatar-fallback {
+    width: 40px;
+    height: 40px;
+    font-size: 0.875rem;
+  }
+
+  .comment-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+
+  .post-image {
+    max-height: 300px;
+  }
+}

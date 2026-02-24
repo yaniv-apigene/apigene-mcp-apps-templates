@@ -1,0 +1,397 @@
+/* ============================================
+   TEMPLATE-SPECIFIC STYLES (TikTok Post)
+   ============================================ */
+
+.tiktok-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Post Card */
+.post-card {
+  background: #161823;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .post-card {
+  background: #161823;
+}
+
+body:not(.dark) .post-card {
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Post Media */
+.post-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-duration {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  transition: transform 0.2s;
+}
+
+.play-button:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Post Content */
+.post-content {
+  padding: 16px;
+}
+
+/* Profile Header */
+.profile-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+body:not(.dark) .profile-avatar {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar-fallback {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff0050 0%, #00f2ea 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+body:not(.dark) .profile-avatar-fallback {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.profile-username {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+body:not(.dark) .profile-username {
+  color: #161823;
+}
+
+.profile-username:hover {
+  opacity: 0.8;
+}
+
+.verified-badge {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff0050 0%, #00f2ea 100%);
+  color: #fff;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.profile-bio {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+body:not(.dark) .profile-bio {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.profile-followers {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+body:not(.dark) .profile-followers {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* Post Description */
+.post-description {
+  font-size: 0.9375rem;
+  color: #fff;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+body:not(.dark) .post-description {
+  color: #161823;
+}
+
+/* Music Info */
+.music-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body:not(.dark) .music-info {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.music-cover {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.music-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.music-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.music-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.music-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body:not(.dark) .music-title {
+  color: #161823;
+}
+
+.music-author {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body:not(.dark) .music-author {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Engagement Stats */
+.engagement-stats {
+  display: flex;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+body:not(.dark) .engagement-stats {
+  border-top-color: rgba(0, 0, 0, 0.1);
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-icon {
+  font-size: 1rem;
+}
+
+.stat-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+body:not(.dark) .stat-value {
+  color: #161823;
+}
+
+/* Post Meta */
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+body:not(.dark) .post-meta {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.post-time {
+  font-weight: 500;
+}
+
+.post-type {
+  text-transform: capitalize;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+body:not(.dark) .post-type {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.post-link {
+  color: #00f2ea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+  margin-left: auto;
+}
+
+body:not(.dark) .post-link {
+  color: #ff0050;
+}
+
+.post-link:hover {
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    padding: 0;
+    background: #000;
+  }
+
+  body:not(.dark) {
+    background: #f5f5f5;
+  }
+
+  .tiktok-container {
+    max-width: 100%;
+  }
+
+  .post-card {
+    border-radius: 0;
+  }
+
+  .post-content {
+    padding: 12px;
+  }
+
+  .engagement-stats {
+    gap: 12px;
+  }
+
+  .stat-item {
+    flex: 1;
+    min-width: calc(50% - 6px);
+  }
+}
+
+@media (max-width: 480px) {
+  .post-content {
+    padding: 10px;
+  }
+
+  .profile-avatar,
+  .profile-avatar-fallback {
+    width: 40px;
+    height: 40px;
+    font-size: 0.875rem;
+  }
+
+  .engagement-stats {
+    gap: 8px;
+  }
+
+  .stat-item {
+    min-width: calc(50% - 4px);
+  }
+}

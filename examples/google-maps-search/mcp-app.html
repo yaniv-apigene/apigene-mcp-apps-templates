@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MCP App: Google Maps Search</title>
+  <!--
+    Google Maps Search MCP App
+    
+    Displays Google Maps Places API search results including:
+    - Place name, address, and location
+    - Photos and ratings
+    - Price level and opening hours
+    - Business status and types
+    
+    Message Format:
+    {
+      jsonrpc: '2.0',
+      method: 'ui/notifications/tool-result',
+      params: { structuredContent: <google maps places data> }
+    }
+    
+    Expected data format:
+    {
+      status_code: 200,
+      body: {
+        results: [
+          {
+            name: string,
+            formatted_address: string,
+            rating: number,
+            price_level: number (1-4),
+            photos: [{ photo_reference: string, ... }],
+            geometry: { location: { lat: number, lng: number } },
+            opening_hours: { open_now: boolean },
+            user_ratings_total: number,
+            types: string[],
+            place_id: string,
+            ...
+          }
+        ]
+      }
+    }
+  -->
+  <link rel="stylesheet" href="src/global.css">
+  <link rel="stylesheet" href="src/mcp-app.css">
+  <!-- 
+    CSP Configuration Note:
+    This app displays images from maps.gstatic.com and maps.googleapis.com.
+    The MCP server must configure CSP with:
+    resourceDomains: ["https://maps.gstatic.com", "https://maps.googleapis.com"]
+    connectDomains: ["https://maps.googleapis.com"]
+  -->
+</head>
+<body>
+  <div id="app">
+    <div class="loading">
+      <div class="loading-content">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <div class="loading-text">
+          <p class="loading-message">Loading places</p>
+          <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/mcp-app.ts"></script>
+</body>
+</html>

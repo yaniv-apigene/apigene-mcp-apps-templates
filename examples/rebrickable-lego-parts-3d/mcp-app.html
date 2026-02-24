@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MCP App: Rebrickable</title>
+  <!--
+    Rebrickable Template for MCP Apps
+    
+    This template displays Rebrickable API responses with a LEGO-style design.
+    It handles the standard MCP protocol message format: ui/notifications/tool-result
+    
+    Message Format:
+    {
+      jsonrpc: '2.0',
+      method: 'ui/notifications/tool-result',
+      params: { structuredContent: <your data> }
+    }
+  -->
+  <link rel="stylesheet" href="src/global.css">
+  <link rel="stylesheet" href="src/mcp-app.css">
+  <!-- Three.js for 3D rendering -->
+  <script src="src/three.min.js"></script>
+  <script src="src/orbit-controls-wrapper.js"></script>
+  <script>
+    // Verify Three.js loaded and initialize wrappers
+    (function() {
+      if (typeof THREE !== 'undefined') {
+        console.log('Three.js loaded successfully from local file');
+        
+        // Initialize OrbitControls wrapper
+        if (typeof initOrbitControls === 'function') {
+          const ControlsClass = initOrbitControls();
+          if (ControlsClass) {
+            window.OrbitControls = ControlsClass;
+          }
+        }
+        
+        window.threeJsLoaded = true;
+        window.dispatchEvent(new CustomEvent('threejs-loaded'));
+      } else {
+        console.error('Three.js failed to load from local file');
+        window.threeJsLoadError = true;
+        window.dispatchEvent(new CustomEvent('threejs-load-error'));
+      }
+    })();
+  </script>
+</head>
+<body>
+  <div id="app">
+    <div class="loading">
+      <div class="loading-content">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <div class="loading-text">
+          <p class="loading-message">Building bricks...</p>
+          <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/mcp-app.ts"></script>
+</body>
+</html>
