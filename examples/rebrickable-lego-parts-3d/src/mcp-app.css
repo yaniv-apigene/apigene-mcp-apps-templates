@@ -73,15 +73,15 @@ body.dark .header-title {
 .stat-brick {
   background: var(--lego-white);
   padding: var(--mcp-space-3) var(--mcp-space-4);
-  border-radius: var(--mcp-radius-lg);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   position: relative;
-  border: 3px solid var(--lego-red);
+  border: 1px solid #e2e8f0;
 }
 
 body.dark .stat-brick {
-  background: #1e2329;
-  border-color: var(--lego-yellow);
+  background: #1e293b;
+  border-color: #334155;
 }
 
 .stat-label {
@@ -115,58 +115,33 @@ body.dark .stat-value {
   margin-top: 32px;
 }
 
-/* LEGO Brick Card */
+/* Part Card */
 .part-card {
-  background: var(--lego-white);
-  border-radius: var(--mcp-radius-lg);
+  background: #ffffff;
+  border-radius: 12px;
   padding: 20px;
-  box-shadow:
-    0 8px 16px rgba(0, 0, 0, 0.15),
-    inset 0 -4px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: relative;
-  transition: var(--mcp-transition);
-  border: 3px solid var(--lego-black);
+  transition: box-shadow 0.2s ease;
+  border: 1px solid #e2e8f0;
   overflow: hidden;
 }
 
 .part-card:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 12px 24px rgba(0, 0, 0, 0.2),
-    inset 0 -4px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 body.dark .part-card {
-  background: #1e2329;
-  border-color: #333;
-}
-
-/* LEGO Studs on top of brick */
-.part-card::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 24px;
-  height: 8px;
-  background: var(--lego-white);
-  border-radius: 50% 50% 0 0;
-  box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.1),
-    0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-body.dark .part-card::before {
-  background: #2a2f35;
+  background: #1e293b;
+  border-color: #334155;
 }
 
 /* Part Image */
 .part-image-container {
   width: 100%;
   height: 200px;
-  background: var(--lego-gray);
-  border-radius: var(--mcp-radius-lg);
+  background: transparent;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -175,22 +150,26 @@ body.dark .part-card::before {
   position: relative;
 }
 
-body.dark .part-image-container {
-  background: #2a2f35;
+/* Background only when placeholder is shown */
+.part-image-container:has(.part-image-placeholder) {
+  background: #f8fafc;
+}
+
+body.dark .part-image-container:has(.part-image-placeholder) {
+  background: #0f172a;
 }
 
 .part-image {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  border-radius: var(--mcp-radius-sm);
 }
 
 .part-image-placeholder {
   width: 80px;
   height: 80px;
   background: linear-gradient(135deg, var(--lego-red), var(--lego-yellow));
-  border-radius: var(--mcp-radius-lg);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -204,14 +183,14 @@ body.dark .part-image-container {
   width: 100%;
   height: 100%;
   min-height: 200px;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-  border-radius: var(--mcp-radius-lg);
+  background: #f8fafc;
+  border-radius: 8px;
   position: relative;
   overflow: hidden;
 }
 
 body.dark .part-3d-viewer {
-  background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+  background: #0f172a;
 }
 
 .part-3d-viewer canvas {
@@ -287,7 +266,7 @@ body.dark .part-category {
 .external-id-badge {
   display: inline-block;
   padding: 4px 10px;
-  border-radius: var(--mcp-radius-lg);
+  border-radius: 6px;
   font-size: var(--mcp-text-xs);
   font-weight: var(--mcp-font-semibold);
   text-transform: uppercase;
@@ -327,16 +306,18 @@ body.dark .part-category {
   background: var(--lego-red);
   color: white;
   text-decoration: none;
-  border-radius: var(--mcp-radius-md);
+  border-radius: 8px;
   font-weight: var(--mcp-font-semibold);
   font-size: var(--mcp-text-sm);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  transition: var(--mcp-transition);
+  transition: background-color 0.2s ease;
 }
 
 .part-link:hover {
   background: #b8122e;
+  color: white;
+  text-decoration: none;
 }
 
 body.dark .part-link {
@@ -346,6 +327,8 @@ body.dark .part-link {
 
 body.dark .part-link:hover {
   background: #ffed4e;
+  color: var(--lego-black);
+  text-decoration: none;
 }
 
 /* Pagination */
@@ -363,20 +346,18 @@ body.dark .part-link:hover {
   background: var(--lego-blue);
   color: white;
   border: none;
-  border-radius: var(--mcp-radius-lg);
+  border-radius: 8px;
   font-weight: 700;
   font-size: var(--mcp-text-sm);
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: var(--mcp-transition);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .pagination-button:hover:not(:disabled) {
-  background: #0052a3;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  background: #1d4ed8;
 }
 
 .pagination-button:disabled {

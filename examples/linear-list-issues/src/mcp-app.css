@@ -51,10 +51,11 @@ body.dark .linear-toolbar {
 }
 
 .linear-search {
-  padding: var(--mcp-space-2) var(--mcp-space-3);
+  height: 36px;
+  padding: 0 var(--mcp-space-3);
   border: 1px solid #d1d5db;
   border-radius: var(--mcp-radius-md);
-  font-size: var(--mcp-text-sm);
+  font-size: 13px;
   min-width: 200px;
   max-width: 280px;
   background: #fff;
@@ -83,7 +84,8 @@ body.dark .linear-search:focus {
 }
 
 .linear-filter {
-  padding: var(--mcp-space-2) 10px;
+  height: 36px;
+  padding: 0 10px;
   border: 1px solid #d1d5db;
   border-radius: var(--mcp-radius-md);
   font-size: 13px;

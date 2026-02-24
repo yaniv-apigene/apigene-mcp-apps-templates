@@ -262,6 +262,10 @@ body.dark .gcal-followup {
   margin-right: 4px;
 }
 
+body {
+  padding: var(--mcp-space-4);
+}
+
 /* Fullscreen */
 body.fullscreen-mode .gcal-list {
   max-height: none;
@@ -269,6 +273,12 @@ body.fullscreen-mode .gcal-list {
 
 body.fullscreen-mode .gcal-widget {
   max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: var(--mcp-space-3);
+  }
 }
 
 @media (max-width: 480px) {

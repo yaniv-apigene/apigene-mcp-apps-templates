@@ -39,10 +39,129 @@ function unwrapData(data: any): any {
   if (!data) return null;
   if (data.message?.template_data) return data.message.template_data;
   if (data.message?.response_content) return data.message.response_content;
+  if (data.data) return data.data;
   const raw = data.body ?? data;
   return raw;
 }
 
+/**
+ * Extract title from Notion page/database object
+ */
+function extractNotionTitle(item: any): string {
+  // Already transformed format
+  if (item.title && typeof item.title === "string") {
+    return item.title;
+  }
+
+  // Notion page with properties.title or properties.Name
+  if (item.properties) {
+    const titleProp = item.properties.title || item.properties.Title || item.properties.Name || item.properties.name;
+    if (titleProp) {
+      // Rich text array format
+      if (titleProp.title && Array.isArray(titleProp.title)) {
+        return titleProp.title.map((t: any) => t.plain_text || t.text?.content || "").join("");
+      }
+      if (titleProp.rich_text && Array.isArray(titleProp.rich_text)) {
+        return titleProp.rich_text.map((t: any) => t.plain_text || t.text?.content || "").join("");
+      }
+      if (typeof titleProp === "string") {
+        return titleProp;
+      }
+    }
+  }
+
+  // Database title
+  if (item.title && Array.isArray(item.title)) {
+    return item.title.map((t: any) => t.plain_text || t.text?.content || "").join("");
+  }
+
+  // Fallback
+  return item.name || "Untitled";
+}
+
+/**
+ * Extract URL from Notion object
+ */
+function extractNotionUrl(item: any): string {
+  if (item.url) return item.url;
+  if (item.id) {
+    // Construct Notion URL from ID
+    const cleanId = item.id.replace(/-/g, "");
+    return `https://www.notion.so/${cleanId}`;
+  }
+  return "#";
+}
+
+/**
+ * Extract type label from Notion object
+ */
+function extractNotionType(item: any): string {
+  if (item.type && typeof item.type === "string") return item.type;
+  if (item.object === "page") return "Page";
+  if (item.object === "database") return "Database";
+  if (item.object === "block") return "Block";
+  return "";
+}
+
+/**
+ * Extract timestamp from Notion object
+ */
+function extractNotionTimestamp(item: any): string {
+  if (item.timestamp) return item.timestamp;
+  const date = item.last_edited_time || item.created_time;
+  if (date) {
+    try {
+      return new Date(date).toLocaleDateString();
+    } catch {
+      return "";
+    }
+  }
+  return "";
+}
+
+/**
+ * Extract highlight/description from Notion object
+ */
+function extractNotionHighlight(item: any): string {
+  if (item.highlight) return item.highlight;
+  if (item.description && Array.isArray(item.description)) {
+    return item.description.map((t: any) => t.plain_text || "").join("");
+  }
+  if (item.description && typeof item.description === "string") {
+    return item.description;
+  }
+  // Try to get excerpt from properties
+  if (item.properties) {
+    for (const key of ["Description", "description", "Summary", "summary", "Excerpt", "excerpt"]) {
+      const prop = item.properties[key];
+      if (prop?.rich_text && Array.isArray(prop.rich_text)) {
+        const text = prop.rich_text.map((t: any) => t.plain_text || "").join("");
+        if (text) return text;
+      }
+    }
+  }
+  return "";
+}
+
+/**
+ * Transform raw Notion API result to normalized format
+ */
+function normalizeNotionResult(item: any): any {
+  // If already in expected format, return as-is
+  if (item.title && typeof item.title === "string" && item.url) {
+    return item;
+  }
+
+  return {
+    title: extractNotionTitle(item),
+    url: extractNotionUrl(item),
+    type: extractNotionType(item),
+    timestamp: extractNotionTimestamp(item),
+    highlight: extractNotionHighlight(item),
+    // Keep original data for debugging
+    _raw: item
+  };
+}
 
 function escapeHtml(str: any): string {
   if (typeof str !== "string") return String(str);
@@ -64,8 +183,22 @@ function showEmpty(message: string = "No results found.") {
 function getResultsFromResponse(data: any): any[] {
   const raw = unwrapData(data);
   if (!raw) return [];
-  const results = raw.results ?? raw.items ?? [];
-  return Array.isArray(results) ? results : [];
+
+  // Handle various response formats
+  let results: any[] = [];
+
+  if (Array.isArray(raw)) {
+    results = raw;
+  } else if (raw.results && Array.isArray(raw.results)) {
+    results = raw.results;
+  } else if (raw.items && Array.isArray(raw.items)) {
+    results = raw.items;
+  } else if (raw.pages && Array.isArray(raw.pages)) {
+    results = raw.pages;
+  }
+
+  // Normalize each result to expected format
+  return results.map(normalizeNotionResult);
 }
 
 function truncate(str: string, maxLen: number): string {

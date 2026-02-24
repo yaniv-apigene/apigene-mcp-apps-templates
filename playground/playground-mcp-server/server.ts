@@ -175,13 +175,21 @@ const TEMPLATE_CSP_CONFIGS: Record<string, CSPConfig> = {
   },
   "brightdata-instagram-post": {
     connectDomains: ["https://api.brightdata.com"],
-    resourceDomains: ["https://*.cdninstagram.com", "https://scontent.cdninstagram.com"],
+    resourceDomains: [
+      "https://*.cdninstagram.com",
+      "https://scontent.cdninstagram.com",
+      "https://*.fbcdn.net",
+    ],
     frameDomains: [],
     baseUriDomains: [],
   },
   "brightdata-instagram-profile": {
     connectDomains: ["https://api.brightdata.com"],
-    resourceDomains: ["https://*.cdninstagram.com", "https://scontent.cdninstagram.com"],
+    resourceDomains: [
+      "https://*.cdninstagram.com",
+      "https://scontent.cdninstagram.com",
+      "https://*.fbcdn.net",
+    ],
     frameDomains: [],
     baseUriDomains: [],
   },

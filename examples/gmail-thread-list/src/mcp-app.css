@@ -252,6 +252,10 @@ body.dark .gmail-followup {
   opacity: 0.95;
 }
 
+body {
+  padding: var(--mcp-space-4);
+}
+
 /* Fullscreen */
 body.fullscreen-mode .gmail-list {
   max-height: none;
@@ -259,6 +263,12 @@ body.fullscreen-mode .gmail-list {
 
 body.fullscreen-mode .gmail-widget {
   max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: var(--mcp-space-3);
+  }
 }
 
 @media (max-width: 480px) {

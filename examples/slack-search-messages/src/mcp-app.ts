@@ -508,14 +508,16 @@ function renderMessage(message: any): string {
   // Message content
   html += '<div class="message-content">';
 
-  // Text content
-  if (text) {
-    html += `<div class="message-text">${processText(text)}</div>`;
-  }
+  // Render blocks OR text (not both - they often contain the same content)
+  // Check if blocks have rich_text content
+  const hasRichTextBlocks = blocks.some((b: any) => b.type === 'rich_text' && b.elements?.length > 0);
 
-  // Blocks (rich text)
-  if (blocks.length > 0) {
+  if (hasRichTextBlocks) {
+    // Prefer blocks for richer formatting
     html += renderBlocks(blocks);
+  } else if (text) {
+    // Fall back to text if no rich_text blocks
+    html += `<div class="message-text">${processText(text)}</div>`;
   }
 
   // Attachments

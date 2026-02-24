@@ -1,0 +1,48 @@
+{
+  "status_code": 200,
+  "body": {
+    "count": 60820,
+    "next": "https://rebrickable.com/api/v3/lego/parts/?page=2",
+    "previous": null,
+    "results": [
+      {
+        "part_num": "003381",
+        "name": "Sticker Sheet for Set 663-1",
+        "part_cat_id": 58,
+        "part_url": "https://rebrickable.com/parts/003381/sticker-sheet-for-set-663-1/",
+        "part_img_url": "https://cdn.rebrickable.com/media/parts/photos/58/003381.jpg",
+        "external_ids": {
+          "BrickLink": ["663stk01"],
+          "BrickOwl": ["781719"],
+          "LDraw": ["003381"]
+        }
+      },
+      {
+        "part_num": "3001",
+        "name": "Brick 2 x 4",
+        "part_cat_id": 11,
+        "part_url": "https://rebrickable.com/parts/3001/brick-2-x-4/",
+        "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/300121.jpg",
+        "external_ids": {
+          "BrickLink": ["3001"],
+          "BrickOwl": ["212168"],
+          "LEGO": ["3001"],
+          "LDraw": ["3001"]
+        }
+      },
+      {
+        "part_num": "3003",
+        "name": "Brick 2 x 2",
+        "part_cat_id": 11,
+        "part_url": "https://rebrickable.com/parts/3003/brick-2-x-2/",
+        "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/300301.jpg",
+        "external_ids": {
+          "BrickLink": ["3003"],
+          "BrickOwl": ["672438"],
+          "LEGO": ["3003"],
+          "LDraw": ["3003"]
+        }
+      }
+    ]
+  }
+}

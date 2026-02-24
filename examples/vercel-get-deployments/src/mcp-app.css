@@ -1,30 +1,45 @@
 /* ============================================
-   Vercel Deployments - Minimalistic Dark Theme
+   Vercel Deployments - Card-Based Layout
    ============================================ */
 
-/* Vercel Brand Accent Override */
 :root {
   --mcp-accent: #000000;
-  --mcp-accent-hover: #333333;
+  --mcp-accent-hover: #171717;
   --mcp-accent-light: rgba(0, 0, 0, 0.05);
   --mcp-accent-rgb: 0, 0, 0;
 }
 
+body.dark {
+  --mcp-accent: #ffffff;
+  --mcp-accent-hover: #e5e5e5;
+  --mcp-accent-light: rgba(255, 255, 255, 0.1);
+  --mcp-accent-rgb: 255, 255, 255;
+}
+
 /* Container */
 .deployments-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0;
+  padding: 24px;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+body.dark .deployments-container {
+  background: #0a0a0a;
 }
 
 /* Header */
 .deployments-header {
-  background: #0a0a0a;
-  border-bottom: 1px solid #1a1a1a;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   padding: 20px 24px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+body.dark .deployments-header {
+  background: #18181b;
+  border-color: #27272a;
 }
 
 .header-content {
@@ -36,141 +51,197 @@
 .header-title {
   display: flex;
   align-items: center;
-  gap: var(--mcp-space-3);
+  gap: 12px;
 }
 
 .vercel-icon {
+  color: #000000;
+  width: 28px;
+  height: 28px;
+}
+
+body.dark .vercel-icon {
   color: #ffffff;
-  width: 24px;
-  height: 24px;
 }
 
 .header-title h1 {
-  font-size: 1.25rem;
-  font-weight: var(--mcp-font-semibold);
-  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #000000;
   margin: 0;
+}
+
+body.dark .header-title h1 {
+  color: #ffffff;
 }
 
 .header-meta {
   font-size: 0.875rem;
-  color: #666666;
+  color: #6b7280;
   font-weight: 500;
+  background: #f4f4f5;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+body.dark .header-meta {
+  color: #a1a1aa;
+  background: #27272a;
 }
 
 /* Deployments List */
 .deployments-list {
-  background: #000000;
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 /* Deployment Card */
 .deployment-card {
-  background: #0a0a0a;
-  border-bottom: 1px solid #1a1a1a;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   padding: 20px 24px;
-  transition: var(--mcp-transition);
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .deployment-card:hover {
-  background: #0f0f0f;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
 }
 
-.deployment-card:last-child {
-  border-bottom: none;
+body.dark .deployment-card {
+  background: #18181b;
+  border-color: #27272a;
 }
 
-/* Deployment Main Section */
-.deployment-main {
-  display: flex;
-  gap: var(--mcp-space-4);
-  margin-bottom: var(--mcp-space-3);
+body.dark .deployment-card:hover {
+  border-color: #3f3f46;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Status Indicator */
+/* Error Card */
+.deployment-card.error {
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
+
+.deployment-card.error:hover {
+  border-color: #f87171;
+}
+
+body.dark .deployment-card.error {
+  background: #1f1515;
+  border-color: #7f1d1d;
+}
+
+body.dark .deployment-card.error:hover {
+  border-color: #991b1b;
+}
+
+/* Status Badge - Top Right */
 .deployment-status {
+  position: absolute;
+  top: 16px;
+  right: 16px;
   display: flex;
   align-items: center;
-  gap: var(--mcp-space-2);
-  min-width: 100px;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .status-icon {
-  font-size: 1rem;
-  font-weight: var(--mcp-font-semibold);
-}
-
-.status-label {
   font-size: 0.875rem;
-  font-weight: 500;
-  text-transform: capitalize;
 }
 
-/* Deployment Info */
-.deployment-info {
-  flex: 1;
-  min-width: 0;
+/* Deployment Main - No flex with status since status is absolute */
+.deployment-main {
+  padding-right: 140px;
+  margin-bottom: 12px;
 }
 
+/* Deployment Name */
 .deployment-name {
-  font-size: var(--mcp-text-sm);
-  font-weight: 500;
-  color: #e5e5e5;
-  margin-bottom: var(--mcp-space-1-5);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 8px;
 }
 
+body.dark .deployment-name {
+  color: #fafafa;
+}
+
+/* Deployment Meta */
 .deployment-meta {
   display: flex;
   align-items: center;
-  gap: var(--mcp-space-3);
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .deployment-time {
-  font-size: 0.8125rem;
-  color: #666666;
+  font-size: 0.875rem;
+  color: #6b7280;
 }
 
+body.dark .deployment-time {
+  color: #a1a1aa;
+}
+
+/* Badges */
 .deployment-env,
 .deployment-source,
 .deployment-duration {
   font-size: 0.75rem;
-  padding: 2px var(--mcp-space-2);
-  border-radius: var(--mcp-radius-md);
+  padding: 4px 10px;
+  border-radius: 6px;
   font-weight: 500;
-  color: #ffffff;
 }
 
 .deployment-env {
-  /* Background color set inline via style attribute */
+  color: #ffffff;
 }
 
-.deployment-source {
-  background: #1a1a1a;
-  color: #999999;
-}
-
+.deployment-source,
 .deployment-duration {
-  background: #1a1a1a;
-  color: #999999;
+  background: #f4f4f5;
+  color: #52525b;
+}
+
+body.dark .deployment-source,
+body.dark .deployment-duration {
+  background: #27272a;
+  color: #a1a1aa;
 }
 
 /* Commit Info */
 .deployment-commit {
   display: flex;
   align-items: center;
-  gap: var(--mcp-space-2);
-  padding: var(--mcp-space-2) 0;
-  color: #999999;
-  font-size: 0.8125rem;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid #f4f4f5;
+  margin-top: 12px;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+body.dark .deployment-commit {
+  border-top-color: #27272a;
+  color: #a1a1aa;
 }
 
 .deployment-commit svg {
   flex-shrink: 0;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .commit-message {
@@ -178,135 +249,160 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #cccccc;
+  color: #374151;
+}
+
+body.dark .commit-message {
+  color: #d4d4d8;
 }
 
 .commit-sha {
-  font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
   font-size: 0.75rem;
-  background: #1a1a1a;
-  padding: 2px var(--mcp-space-1-5);
-  border-radius: var(--mcp-radius-sm);
-  color: #999999;
+  background: #f4f4f5;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+body.dark .commit-sha {
+  background: #27272a;
+  color: #a1a1aa;
 }
 
 /* Creator Info */
 .deployment-creator {
   display: flex;
   align-items: center;
-  gap: var(--mcp-space-2);
-  padding: var(--mcp-space-1-5) 0;
-  font-size: 0.8125rem;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 8px;
 }
 
-.creator-label {
-  color: #666666;
+body.dark .deployment-creator {
+  color: #71717a;
 }
 
 .creator-name {
-  color: #999999;
+  color: #374151;
   font-weight: 500;
+}
+
+body.dark .creator-name {
+  color: #d4d4d8;
 }
 
 /* Error Message */
 .deployment-error {
   display: flex;
-  align-items: flex-start;
-  gap: var(--mcp-space-2);
-  padding: var(--mcp-space-2) var(--mcp-space-3);
-  background: #1a0f0f;
-  border-left: 2px solid #f44336;
-  border-radius: var(--mcp-radius-md);
-  margin: var(--mcp-space-2) 0;
-  font-size: 0.8125rem;
-  color: #ff8a80;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #fee2e2;
+  border-radius: 8px;
+  margin-top: 12px;
+  font-size: 0.875rem;
+  color: #dc2626;
 }
 
 .deployment-error svg {
   flex-shrink: 0;
-  margin-top: 2px;
   opacity: 0.8;
+}
+
+body.dark .deployment-error {
+  background: #2d1f1f;
+  color: #fca5a5;
 }
 
 /* Actions */
 .deployment-actions {
   display: flex;
-  gap: var(--mcp-space-3);
-  margin-top: var(--mcp-space-3);
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f4f4f5;
+}
+
+body.dark .deployment-actions {
+  border-top-color: #27272a;
 }
 
 .deployment-link,
 .deployment-inspector {
   display: inline-flex;
   align-items: center;
-  gap: var(--mcp-space-1-5);
-  padding: var(--mcp-space-1-5) var(--mcp-space-3);
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  border-radius: var(--mcp-radius-md);
-  color: #e5e5e5;
-  font-size: 0.8125rem;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #000000;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.875rem;
   font-weight: 500;
   text-decoration: none;
-  transition: var(--mcp-transition);
+  transition: background 0.15s ease;
 }
 
-.deployment-link:hover,
-.deployment-inspector:hover {
-  background: #2a2a2a;
-  border-color: #3a3a3a;
+.deployment-link:hover {
+  background: #171717;
   color: #ffffff;
+  text-decoration: none;
 }
 
-.deployment-link svg,
-.deployment-inspector svg {
-  opacity: 0.7;
+.deployment-inspector {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #374151;
 }
 
-/* Dark mode support (already dark by default) */
-body.dark .deployments-header {
-  background: #0a0a0a;
-  border-bottom-color: #1a1a1a;
+.deployment-inspector:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #374151;
 }
 
-body.dark .deployments-list {
-  background: #000000;
+body.dark .deployment-link {
+  background: #ffffff;
+  color: #000000;
 }
 
-body.dark .deployment-card {
-  background: #0a0a0a;
-  border-bottom-color: #1a1a1a;
+body.dark .deployment-link:hover {
+  background: #e5e5e5;
+  color: #000000;
 }
 
-body.dark .deployment-card:hover {
-  background: #0f0f0f;
+body.dark .deployment-inspector {
+  background: #27272a;
+  border-color: #3f3f46;
+  color: #fafafa;
 }
 
-/* Responsive Design */
+body.dark .deployment-inspector:hover {
+  background: #3f3f46;
+  color: #fafafa;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .deployments-header {
-    padding: var(--mcp-space-4);
-  }
-
-  .header-title h1 {
-    font-size: 1.125rem;
-  }
-
-  .header-meta {
-    font-size: 0.8125rem;
+  .deployments-container {
+    padding: 16px;
   }
 
   .deployment-card {
-    padding: var(--mcp-space-4);
-  }
-
-  .deployment-main {
-    flex-direction: column;
-    gap: var(--mcp-space-3);
+    padding: 16px;
   }
 
   .deployment-status {
-    min-width: auto;
+    position: static;
+    margin-bottom: 12px;
+    display: inline-flex;
+  }
+
+  .deployment-main {
+    padding-right: 0;
   }
 
   .deployment-actions {
@@ -321,32 +417,36 @@ body.dark .deployment-card:hover {
 }
 
 @media (max-width: 480px) {
-  .deployments-header {
-    padding: var(--mcp-space-3);
+  .deployments-container {
+    padding: 12px;
   }
 
   .header-content {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--mcp-space-2);
-  }
-
-  .deployment-card {
-    padding: var(--mcp-space-3);
-  }
-
-  .deployment-meta {
-    gap: var(--mcp-space-2);
+    gap: 12px;
   }
 
   .deployment-name {
-    font-size: 0.875rem;
+    font-size: 1rem;
+  }
+
+  .deployment-meta {
+    gap: 8px;
   }
 }
 
-/* Loading and Error States (ensuring dark theme) */
-body.dark .loading,
-body.dark .error,
-body.dark .empty {
-  color: #999999;
+/* Loading States */
+.loading .spinner {
+  border-top-color: var(--mcp-accent);
+  border-right-color: var(--mcp-accent);
+}
+
+.loading .spinner-ring {
+  border-top-color: rgba(var(--mcp-accent-rgb), 0.2);
+  border-right-color: rgba(var(--mcp-accent-rgb), 0.2);
+}
+
+.loading .dot {
+  background-color: var(--mcp-accent);
 }

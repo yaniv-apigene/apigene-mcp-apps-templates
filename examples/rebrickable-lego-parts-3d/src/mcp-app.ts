@@ -287,8 +287,8 @@ function renderPartCard(part: any, index: number): string {
  * Render Rebrickable API response
  */
 function renderData(data: any) {
-  const app = document.getElementById('app');
-  if (!app) return;
+  const appEl = document.getElementById('app');
+  if (!appEl) return;
 
   if (!data) {
     showEmpty('No data received');
@@ -296,29 +296,54 @@ function renderData(data: any) {
   }
 
   try {
-    // Unwrap data to get the body
-    const unwrapped = unwrapData(data);
+    app.sendLog({ level: "debug", data: `Raw data: ${JSON.stringify(data).slice(0, 500)}`, logger: APP_NAME });
 
-    // Handle Rebrickable API response format
-    let body = unwrapped;
-    if (data.body) {
-      body = data.body;
-    } else if (unwrapped.body) {
-      body = unwrapped.body;
-    } else if (unwrapped.results) {
-      body = unwrapped;
+    // Deep search for results array
+    function findResults(obj: any, depth = 0): any[] {
+      if (depth > 5) return [];
+      if (!obj || typeof obj !== 'object') return [];
+
+      // Direct array
+      if (Array.isArray(obj)) return obj;
+
+      // Parse string if JSON
+      if (typeof obj === 'string') {
+        try {
+          return findResults(JSON.parse(obj), depth);
+        } catch {
+          return [];
+        }
+      }
+
+      // Check common result keys
+      if (Array.isArray(obj.results)) return obj.results;
+      if (Array.isArray(obj.items)) return obj.items;
+      if (Array.isArray(obj.parts)) return obj.parts;
+      if (Array.isArray(obj.data)) return obj.data;
+
+      // Check nested body
+      if (obj.body) return findResults(obj.body, depth + 1);
+      if (obj.data && typeof obj.data === 'object') return findResults(obj.data, depth + 1);
+
+      return [];
     }
 
-    // Extract parts/results
-    const results = body.results || body.items || (Array.isArray(body) ? body : []);
-    const count = body.count || results.length;
-    const next = body.next;
-    const previous = body.previous;
+    const results = findResults(data);
+    app.sendLog({ level: "debug", data: `Found ${results.length} results`, logger: APP_NAME });
+
+    // Get count from various places
+    let count = results.length;
+    if (data?.body?.count) count = data.body.count;
+    else if (data?.count) count = data.count;
 
     if (!results || results.length === 0) {
       showEmpty('No parts found.');
       return;
     }
+
+    // Get pagination info
+    const next = data?.body?.next || data?.next;
+    const previous = data?.body?.previous || data?.previous;
 
     // Build HTML
     let html = '<div class="container">';
@@ -362,7 +387,7 @@ function renderData(data: any) {
 
     html += '</div>';
 
-    app.innerHTML = html;
+    appEl.innerHTML = html;
 
     // Initialize 3D viewers after DOM is ready
     setTimeout(() => {

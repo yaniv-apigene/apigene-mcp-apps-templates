@@ -818,10 +818,14 @@ body.dark .back-button:hover {
   border-color: #374151;
 }
 
+body {
+  padding: var(--mcp-space-4);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   body {
-    padding: 16px;
+    padding: var(--mcp-space-3);
   }
   
   .header h1 {

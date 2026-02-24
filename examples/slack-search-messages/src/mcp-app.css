@@ -120,10 +120,10 @@ body.dark .search-clear-btn:hover {
 }
 
 .slack-filter {
-  padding: 6px 10px;
+  padding: var(--mcp-space-2) 10px;
   border: 1px solid #ddd;
   border-radius: var(--mcp-radius-sm);
-  font-size: 13px;
+  font-size: var(--mcp-text-sm);
   background: #ffffff;
   color: #1d1c1d;
   cursor: pointer;

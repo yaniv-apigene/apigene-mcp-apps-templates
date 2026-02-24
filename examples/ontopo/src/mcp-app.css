@@ -1,5 +1,15 @@
 /* Ontopo look and feel: clean, light grey/white, rounded, RTL-friendly */
 
+body {
+  padding: var(--mcp-space-4);
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: var(--mcp-space-3);
+  }
+}
+
 .ontopo-container {
   max-width: 560px;
   margin: 0 auto;

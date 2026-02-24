@@ -650,7 +650,17 @@ body.dark .ga-footer {
   color: #80868b;
 }
 
+body {
+  padding: var(--mcp-space-4);
+}
+
 /* ── Responsive ── */
+@media (max-width: 768px) {
+  body {
+    padding: var(--mcp-space-3);
+  }
+}
+
 @media (max-width: 640px) {
   .ga-summary-cards {
     grid-template-columns: repeat(2, 1fr);

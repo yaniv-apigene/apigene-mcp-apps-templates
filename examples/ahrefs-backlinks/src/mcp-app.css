@@ -147,7 +147,7 @@ body.dark {
 }
 
 .sort-select {
-  padding: 8px 32px 8px 12px;
+  padding: 10px 32px 10px 12px;
   font-size: var(--mcp-text-sm);
   border: 1px solid var(--ahrefs-border);
   border-radius: var(--mcp-radius-lg);

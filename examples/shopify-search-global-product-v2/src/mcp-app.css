@@ -12,7 +12,13 @@
 
 body {
   margin: 0;
-  padding: 0;
+  padding: var(--mcp-space-4);
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: var(--mcp-space-3);
+  }
 }
 
 html.fullscreen-mode {

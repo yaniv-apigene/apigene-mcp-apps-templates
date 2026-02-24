@@ -620,10 +620,14 @@ body.dark .pagination-info {
   color: #9aa0a6;
 }
 
+body {
+  padding: var(--mcp-space-4);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   body {
-    padding: 12px;
+    padding: var(--mcp-space-3);
   }
   
   .people-grid {
