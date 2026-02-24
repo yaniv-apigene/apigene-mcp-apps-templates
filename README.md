@@ -43,8 +43,8 @@ npm start
 ### Create a New Template
 
 ```bash
-# Clone the recommended base template
-cp -r examples/base-template-sdk examples/my-app
+# Copy the base template
+cp -r examples/base-template examples/my-app
 cd examples/my-app
 npm install
 npm run build
@@ -79,41 +79,41 @@ Then open `examples/my-app/src/mcp-app.ts` and implement `renderData()`.
 
 ---
 
-## Base Templates
-
-### `examples/base-template-sdk` ★ Recommended
-
-Uses `@modelcontextprotocol/ext-apps` for utilities (theme, fonts, auto-resize). Builds to a single `dist/mcp-app.html` via Vite.
-
-**Best for:** Most use cases. Full dark mode, responsive layout, host styling.
-
-```bash
-cd examples/base-template-sdk
-npm install && npm run build
-```
+## Base Template
 
 ### `examples/base-template`
 
-Zero-dependency, no build step. TypeScript loaded as ES modules directly.
+The single base template for all MCP Apps. It uses the official `@modelcontextprotocol/ext-apps` SDK (theme, fonts, host styling) and builds to a single `dist/mcp-app.html` via Vite.
 
-**Best for:** Maximum simplicity, no build toolchain.
+**Includes:** Dark mode, responsive layout, host context (theme/fonts/display mode), tool result/cancel/teardown handling.
+
+```bash
+cd examples/base-template
+npm install && npm run build
+```
+
+See `examples/base-template/README.md` for SDK usage, event handlers, and customization. For Content Security Policy (e.g. external scripts/fonts), see `examples/base-template/CSP_GUIDE.md`.
 
 ---
 
 ## Template Architecture
 
-Every MCP App template follows the same contract:
+Every MCP App template follows the same contract (from `examples/base-template`):
 
 ```
 my-app/
-├── mcp-app.html        # Entry point
+├── mcp-app.html          # Entry point (loads CSS and TS module for dev)
 ├── src/
-│   ├── mcp-app.ts      # ★ Implement renderData() here
-│   ├── mcp-app.css     # App-specific styles
-│   └── global.css      # Shared base styles (do not modify)
-├── response.json       # Mock payload for local preview
-├── dist/mcp-app.html   # Built single-file output
-└── package.json
+│   ├── mcp-app.ts        # ★ Implement renderData() here; SDK + handlers
+│   ├── mcp-app.css       # App-specific styles
+│   └── global.css        # Shared base styles (do not modify)
+├── package.json          # Scripts: build, dev; deps: @modelcontextprotocol/ext-apps
+├── vite.config.ts        # Vite + single-file output
+├── template-metadata.json # Optional: uiElements, mcpFeatures for playground
+├── CSP_GUIDE.md          # Content Security Policy for external resources
+├── response.json         # Optional: mock payload for playground preview
+└── dist/
+    └── mcp-app.html      # Built single-file bundle (npm run build)
 ```
 
 ### Key customization points in `src/mcp-app.ts`
@@ -125,15 +125,18 @@ my-app/
 | `renderData(data)` | **Main function** — renders tool result into DOM |
 | `unwrapData(data)` | Strips nested wrappers from MCP payloads |
 | `escapeHtml(str)` | XSS-safe HTML insertion |
+| `showError(msg)`, `showEmpty(msg)` | Error and empty-state UI |
 
-### MCP Protocol Messages Handled
+The template uses the SDK `App` and registers handlers before `app.connect()`: `app.ontoolresult`, `app.onhostcontextchanged`, `app.ontoolcancelled`, `app.onteardown`, etc. See `examples/base-template/README.md` for the full list.
 
-| Message | Action |
-|---------|--------|
-| `ui/notifications/tool-result` | Calls `renderData()` |
-| `ui/notifications/host-context-changed` | Applies theme, fonts, display mode |
-| `ui/notifications/tool-cancelled` | Shows cancellation error |
-| `ui/resource-teardown` | Cleans up, responds with `result: {}` |
+### MCP protocol (under the SDK)
+
+| Message | SDK / behavior |
+|---------|----------------|
+| `ui/notifications/tool-result` | `app.ontoolresult` → `renderData()` |
+| `ui/notifications/host-context-changed` | `app.onhostcontextchanged` → theme, fonts, display mode |
+| `ui/notifications/tool-cancelled` | `app.ontoolcancelled` → error UI |
+| `ui/resource-teardown` | `app.onteardown` → cleanup, `result: {}` |
 
 ---
 
@@ -183,7 +186,7 @@ npm run dev
 1. **Copy the base template**
 
    ```bash
-   cp -r examples/base-template-sdk examples/my-service-my-tool
+   cp -r examples/base-template examples/my-service-my-tool
    cd examples/my-service-my-tool
    ```
 
@@ -235,9 +238,9 @@ npm run dev
 - Never modify `src/global.css` — it's the shared base
 - Always support dark mode via `body.dark` CSS class
 - Always escape user data with `escapeHtml()`
-- Use `ResizeObserver` / `setupSizeChangedNotifications()` for size updates
-- Do not call `app.connect()` — keep manual message handling for proxy compatibility
-- System fonts only — no external font imports
+- Register SDK event handlers before calling `app.connect()`
+- Clean up resources in `app.onteardown`
+- System fonts only — no external font imports (or configure CSP per `CSP_GUIDE.md`)
 - Current protocol version: `2026-01-26`
 
 ---

@@ -152,7 +152,7 @@ function listTemplates() {
   for (const name of items) {
     console.log("  " + style(c.cyan, name));
   }
-  console.log(style(c.dim, "\n Use one as a base: cp -r examples/base-template-sdk examples/my-app"));
+  console.log(style(c.dim, "\n Use one as a base: cp -r examples/base-template examples/my-app"));
 }
 
 function getTemplatesWithBuild() {
