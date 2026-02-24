@@ -21,7 +21,7 @@ on:
 
 permissions:
   id-token: write   # Required for OIDC trusted publishing
-  contents: read
+  contents: write   # read for checkout; write for creating GitHub releases
 
 jobs:
   build-and-publish:
@@ -55,3 +55,9 @@ jobs:
           echo "**Version:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Run with: \`npx @apigene/mcp-app-playground\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          name: ${{ github.ref_name }}
