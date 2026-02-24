@@ -7,34 +7,92 @@ import { randomUUID } from "node:crypto";
 import type { Request, Response } from "express";
 import { createServer } from "./server.js";
 
+type Session = { server: McpServer; transport: StreamableHTTPServerTransport };
+
+function isInitializeMessage(body: unknown): boolean {
+  if (body && typeof body === "object" && "method" in body) {
+    return (body as { method?: string }).method === "initialize";
+  }
+  if (Array.isArray(body)) {
+    return body.some((m) => m && typeof m === "object" && "method" in m && (m as { method?: string }).method === "initialize");
+  }
+  return false;
+}
+
 async function startHttp(createMcpServer: () => McpServer): Promise<void> {
   const port = parseInt(process.env.PORT ?? "3001", 10);
   const app = createMcpExpressApp({ host: "127.0.0.1" });
-  app.use(cors());
+  app.use(
+    cors({
+      exposedHeaders: ["mcp-session-id"],
+      allowedHeaders: ["Content-Type", "mcp-session-id", "mcp-protocol-version", "accept"],
+    }),
+  );
 
-  // Single server/transport instance keeps UI state between calls in local dev.
-  const server = createMcpServer();
-  const transport = new StreamableHTTPServerTransport({
-    sessionIdGenerator: () => randomUUID(),
-  });
-  await server.connect(transport);
+  // One server + transport per session so multiple clients (playground UI + Claude Desktop) can connect.
+  const sessions = new Map<string, Session>();
+
+  async function getOrCreateSession(sessionId: string | undefined, isNewSession: boolean): Promise<Session | null> {
+    if (sessionId) {
+      return sessions.get(sessionId) ?? null;
+    }
+    if (!isNewSession) return null;
+    const id = randomUUID();
+    const server = createMcpServer();
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => id,
+      onsessionclosed: () => {
+        sessions.delete(id);
+        Promise.allSettled([transport.close(), server.close()]).catch(() => {});
+      },
+    });
+    await server.connect(transport);
+    sessions.set(id, { server, transport });
+    return { server, transport };
+  }
 
   app.all("/mcp", async (req: Request, res: Response) => {
-    // GET (e.g. user opened URL in browser): show short explanation
+    // GET without Accept: text/event-stream (e.g. user opened URL in browser): show short explanation
     if (req.method === "GET") {
-      res.setHeader("Content-Type", "text/plain; charset=utf-8");
-      res.status(200).send(
-        "MCP server (Model Context Protocol)\n\n" +
-          "This URL is an MCP endpoint — it is not a webpage.\n" +
-          "Add it to your AI client (Cursor, Claude Desktop, etc.) as an MCP server:\n" +
-          "  http://localhost:" +
-          port +
-          "/mcp\n\n" +
-          "Then use the demo tools (e.g. list_demo_apps, show_demo_app) from your AI host.\n" +
-          "Preview templates in the browser at: http://localhost:4311\n",
-      );
+      const accept = req.headers["accept"] ?? "";
+      if (!accept.includes("text/event-stream")) {
+        res.setHeader("Content-Type", "text/plain; charset=utf-8");
+        res.status(200).send(
+          "MCP server (Model Context Protocol)\n\n" +
+            "This URL is an MCP endpoint — it is not a webpage.\n" +
+            "Add it to your AI client (Cursor, Claude Desktop, etc.) as an MCP server:\n" +
+            "  http://localhost:" +
+            port +
+            "/mcp\n\n" +
+            "Then use the demo tools (e.g. list_demo_apps, show_demo_app) from your AI host.\n" +
+            "Preview templates in the browser at: http://localhost:4311\n",
+        );
+        return;
+      }
+    }
+
+    const sessionId = req.headers["mcp-session-id"] as string | undefined;
+    const isInitialize = req.method === "POST" && isInitializeMessage(req.body);
+    const session = await getOrCreateSession(sessionId, isInitialize);
+
+    if (!session) {
+      if (sessionId) {
+        res.status(404).json({
+          jsonrpc: "2.0",
+          error: { code: -32001, message: "Session not found" },
+          id: null,
+        });
+      } else {
+        res.status(400).json({
+          jsonrpc: "2.0",
+          error: { code: -32600, message: "Invalid Request: Mcp-Session-Id header is required for non-initialization requests" },
+          id: null,
+        });
+      }
       return;
     }
+
+    const { transport } = session;
     try {
       await transport.handleRequest(req, res, req.body);
     } catch (error) {
@@ -68,7 +126,11 @@ async function startHttp(createMcpServer: () => McpServer): Promise<void> {
 
   const shutdown = () => {
     console.log("\nShutting down...");
-    Promise.allSettled([transport.close(), server.close()]).finally(() => {
+    const closes = Array.from(sessions.values()).flatMap(({ server, transport }) => [
+      transport.close(),
+      server.close(),
+    ]);
+    Promise.allSettled(closes).finally(() => {
       httpServer.close(() => process.exit(0));
     });
   };

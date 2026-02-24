@@ -33,7 +33,7 @@ rsync -av \
   --exclude='node_modules' \
   --exclude='dist' \
   --exclude='.DS_Store' \
-  templates/base-template-sdk/ templates/my-app-mcp/
+  examples/base-template/ templates/my-app-mcp/
 
 # 2) Install deps
 cd templates/my-app-mcp
