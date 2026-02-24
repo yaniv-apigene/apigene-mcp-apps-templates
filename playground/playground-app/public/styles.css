@@ -143,6 +143,19 @@ body {
   margin-top: 8px;
 }
 
+.config-block {
+  flex: 1;
+  min-width: 0;
+  max-height: 160px;
+  overflow: auto;
+  margin: 0;
+}
+
+.mcp-server-row .mcp-server-copy {
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+
 .code-block {
   margin: 6px 0;
   padding: 8px 10px;

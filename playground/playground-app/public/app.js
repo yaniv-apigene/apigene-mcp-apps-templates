@@ -7,6 +7,15 @@ const filterClearBtn = document.getElementById("filter-clear");
 
 const MCP_SERVER_URL = "http://localhost:3001/mcp";
 
+const CLAUDE_DESKTOP_CONFIG = {
+  mcpServers: {
+    "mcp-app-playground": {
+      command: "npx",
+      args: ["mcp-remote", MCP_SERVER_URL],
+    },
+  },
+};
+
 /** Canonical UI element and MCP feature tags (match TEMPLATE_METADATA.md) */
 const UI_ELEMENT_OPTIONS = [
   "chart",
@@ -52,6 +61,27 @@ function initMcpCopy() {
       }, 2000);
     } catch (err) {
       console.error("Copy failed:", err);
+    }
+  });
+}
+
+function initClaudeConfigCopy() {
+  const preEl = document.getElementById("claude-desktop-config");
+  const btn = document.getElementById("claude-config-copy");
+  if (!preEl || !btn) return;
+  const configStr = JSON.stringify(CLAUDE_DESKTOP_CONFIG, null, 2);
+  preEl.textContent = configStr;
+  btn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(configStr);
+      btn.textContent = "Copied!";
+      btn.classList.add("copied");
+      setTimeout(() => {
+        btn.textContent = "Copy";
+        btn.classList.remove("copied");
+      }, 2000);
+    } catch (err) {
+      console.error("Copy config failed:", err);
     }
   });
 }
@@ -343,6 +373,7 @@ if (filterClearBtn) {
 }
 
 initMcpCopy();
+initClaudeConfigCopy();
 
 async function init() {
   try {

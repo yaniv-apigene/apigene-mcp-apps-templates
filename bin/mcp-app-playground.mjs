@@ -29,6 +29,12 @@ function style(use, ...parts) {
   return use + parts.join("") + c.reset;
 }
 
+/** OSC 8 hyperlink: clickable link in supported terminals (iTerm2, VS Code, Windows Terminal). */
+function link(url, label = url) {
+  if (!tty) return label;
+  return "\x1b]8;;" + url + "\x07" + label + "\x1b]8;;\x07";
+}
+
 function help() {
   const title = style(c.bold, "mcp-app-playground");
   const dim = (s) => style(c.dim, s);
@@ -113,18 +119,40 @@ function runDev(shouldOpenBrowser = false) {
     process.exit(0);
   });
 
-  console.log(style(c.bold, "\n MCP Apps Playground\n"));
-  console.log(style(c.dim, " Starting servers...\n"));
-  console.log("  " + style(c.cyan, "Playground") + "  " + style(c.blue, "http://localhost:4311") + style(c.dim, "  — preview examples in the browser"));
-  console.log("  " + style(c.cyan, "MCP server") + "  " + style(c.blue, "http://localhost:3001/mcp") + style(c.dim, "  — add this URL in Cursor / Claude / your MCP client\n"));
-  console.log(style(c.bold, " MCP tools (use after adding the server URL above):\n"));
-  console.log("  " + style(c.green, "list_demo_apps") + style(c.dim, "  — list all demo apps you can try; call this first to see available apps"));
-  console.log("  " + style(c.green, "show_demo_app") + style(c.dim, "  — open a demo by name, e.g. show_demo_app with template: \"xyz-users\" or say \"show demo app xyz-users\"\n"));
-  if (shouldOpenBrowser) {
-    console.log(style(c.dim, " Opening playground in your browser in a moment.\n"));
-    setTimeout(() => openBrowser("http://127.0.0.1:4311"), 1800);
+  const titleLine = "  ◆  MCP Apps Playground";
+  const spinnerFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "◆"];
+  function printBannerRest() {
+    console.log(style(c.dim, "  Starting servers...\n"));
+    console.log("  " + style(c.cyan, "Playground") + "   " + style(c.blue, link("http://localhost:4311", "http://localhost:4311")) + style(c.dim, "  — preview examples in the browser"));
+    console.log("  " + style(c.cyan, "MCP server") + "  " + style(c.blue, link("http://localhost:3001/mcp", "http://localhost:3001/mcp")) + style(c.dim, "  — add this URL in Cursor / Claude / your MCP client\n"));
+    console.log(style(c.bold, "  MCP tools") + style(c.dim, " (use after adding the server URL above):\n"));
+    console.log("  " + style(c.green, "list_demo_apps") + style(c.dim, "  List all demo apps; call this first to see what you can try"));
+    console.log("  " + style(c.green, "show_demo_app") + style(c.dim, "   Open a demo by name"));
+    if (shouldOpenBrowser) {
+      console.log(style(c.dim, "  Opening playground in your browser in a moment.\n"));
+      setTimeout(() => openBrowser("http://127.0.0.1:4311"), 1800);
+    }
+    console.log(style(c.dim, "  Press Ctrl+C to stop.\n"));
   }
-  console.log(style(c.dim, " Press Ctrl+C to stop.\n"));
+  if (tty && spinnerFrames.length > 1) {
+    let i = 0;
+    const prefix = "  ";
+    const suffix = "  MCP Apps Playground";
+    process.stdout.write("\n" + prefix + style(c.cyan, spinnerFrames[0]) + suffix);
+    const iv = setInterval(() => {
+      i += 1;
+      const frame = spinnerFrames[Math.min(i, spinnerFrames.length - 1)];
+      process.stdout.write("\r" + prefix + style(c.cyan, frame) + suffix);
+      if (i >= spinnerFrames.length - 1) {
+        clearInterval(iv);
+        process.stdout.write("\r" + prefix + style(c.bold + c.cyan, "◆ " + suffix.trim()) + "\n");
+        printBannerRest();
+      }
+    }, 70);
+  } else {
+    console.log(style(c.bold, "\n" + titleLine + "\n"));
+    printBannerRest();
+  }
 
   spawnNamed("MCP Apps Playground", "node", ["server.mjs"], labDir);
   spawnNamed("MCP HTTP Server", "node", ["--import", "tsx", mcpMain], repoRoot);
@@ -245,18 +273,18 @@ if (cmd === "list") {
 } else if (cmd === "start" || cmd === "dev" || !cmd) {
   runDev(!cmd);
 } else if (cmd === "lab") {
-  console.log(style(c.bold, "\n MCP Apps Playground") + style(c.dim, " (preview only)\n"));
-  console.log("  " + style(c.blue, "http://localhost:4311") + style(c.dim, "  — open in your browser to preview examples\n"));
-  console.log(style(c.dim, " Press Ctrl+C to stop.\n"));
+  console.log(style(c.bold, "\n  ◆  MCP Apps Playground") + style(c.dim, " (preview only)\n"));
+  console.log("  " + style(c.blue, link("http://localhost:4311", "http://localhost:4311")) + style(c.dim, "  — open in your browser to preview examples\n"));
+  console.log(style(c.dim, "  Press Ctrl+C to stop.\n"));
   run("node", ["server.mjs"], labDir);
 } else if (cmd === "mcp") {
   if (sub === "stdio") {
-    console.log(style(c.bold, "\n MCP server (stdio)") + style(c.dim, " — for CLI hosts\n"));
+    console.log(style(c.bold, "\n  ◆  MCP server (stdio)") + style(c.dim, " — for CLI hosts\n"));
     run("node", ["--import", "tsx", mcpMain, "--stdio"], repoRoot);
   } else {
-    console.log(style(c.bold, "\n MCP server (HTTP)\n"));
-    console.log("  " + style(c.blue, "http://localhost:3001/mcp") + style(c.dim, "  — connect MCP clients to this endpoint\n"));
-    console.log(style(c.dim, " Press Ctrl+C to stop.\n"));
+    console.log(style(c.bold, "\n  ◆  MCP server (HTTP)\n"));
+    console.log("  " + style(c.blue, link("http://localhost:3001/mcp", "http://localhost:3001/mcp")) + style(c.dim, "  — connect MCP clients to this endpoint\n"));
+    console.log(style(c.dim, "  Press Ctrl+C to stop.\n"));
     run("node", ["--import", "tsx", mcpMain], repoRoot);
   }
 } else {
